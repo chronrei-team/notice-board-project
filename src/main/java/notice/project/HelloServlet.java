@@ -1,4 +1,4 @@
-package com.wplab.noticeboardproject.noticeboardproject;
+package notice.project;
 
 import java.io.*;
 
