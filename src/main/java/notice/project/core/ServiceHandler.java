@@ -1,5 +1,7 @@
 package notice.project.core;
 
+import org.sqlite.SQLiteConfig;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -82,7 +84,9 @@ public class ServiceHandler implements InvocationHandler {
         Class.forName("org.sqlite.JDBC");
 
         try {
-            conn = DriverManager.getConnection(dbUrl);
+            SQLiteConfig config = new SQLiteConfig();
+            config.enforceForeignKeys(true);
+            conn = DriverManager.getConnection(dbUrl, config.toProperties());
             conn.setAutoCommit(false);
             System.out.println("트랜잭션 시작 (생성자 주입 방식): " + actualMethod.getName());
 
