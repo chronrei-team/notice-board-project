@@ -58,14 +58,16 @@ public abstract class BaseRepository {
     }
 
     protected void executeCommand(String sql, Object... params) throws SQLException {
-        var pstmt = conn.prepareStatement(sql);
-        setParameters(pstmt, params);
-        pstmt.executeUpdate();
+        try (var pstmt = conn.prepareStatement(sql)) {
+            setParameters(pstmt, params);
+            pstmt.executeUpdate();
+        }
     }
 
     protected ResultSet executeQuery(String sql, Object... params) throws SQLException {
-        var pstmt = conn.prepareStatement(sql);
-        setParameters(pstmt, params);
-        return pstmt.executeQuery();
+        try (var pstmt = conn.prepareStatement(sql)) {
+            setParameters(pstmt, params);
+            return pstmt.executeQuery();
+        }
     }
 }
