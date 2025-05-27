@@ -64,10 +64,19 @@ public abstract class BaseRepository {
         }
     }
 
-    protected ResultSet executeQuery(String sql, Object... params) throws SQLException {
-        try (var pstmt = conn.prepareStatement(sql)) {
-            setParameters(pstmt, params);
-            return pstmt.executeQuery();
+    protected QueryResult executeQuery(String sql, Object... params) throws SQLException {
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = conn.prepareStatement(sql); // conn은 클래스 멤버 변수 등으로 가정
+            setParameters(pstmt, params); // setParameters는 직접 구현해야 함
+            rs = pstmt.executeQuery();
+            return new QueryResult(pstmt, rs); // pstmt와 rs를 함께 반환
+        } catch (SQLException e) {
+            // 예외 발생 시, 생성된 리소스가 있다면 닫아줘야 함
+            if (rs != null) try { rs.close(); } catch (SQLException suppressed) { e.addSuppressed(suppressed); }
+            if (pstmt != null) try { pstmt.close(); } catch (SQLException suppressed) { e.addSuppressed(suppressed); }
+            throw e;
         }
     }
 }

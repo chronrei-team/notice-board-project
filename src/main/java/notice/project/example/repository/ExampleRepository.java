@@ -1,16 +1,16 @@
 package notice.project.example.repository;
 
 import notice.project.core.BaseRepository;
+import notice.project.core.QueryResult;
 import notice.project.entity.Users;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 public class ExampleRepository extends BaseRepository {
     public Users findBy(String id) throws SQLException {
-        try (var rs = executeQuery("SELECT * FROM Users WHERE id = ?", id)) {
+        try (QueryResult query = executeQuery("SELECT * FROM Users WHERE id = ?", id)) {
+            var rs = query.Set;
             if (rs.next()) {
                 return new Users(
                         rs.getString("id"),
