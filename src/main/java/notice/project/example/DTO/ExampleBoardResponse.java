@@ -1,6 +1,7 @@
 package notice.project.example.DTO;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class ExampleBoardResponse {
     private final Integer id;
@@ -10,8 +11,9 @@ public class ExampleBoardResponse {
     private final String content;
     private final Integer viewCount;
     private final Integer recommendCount;
+    private final String userName;
 
-    public ExampleBoardResponse(Integer id, String userId, LocalDateTime createdAt, String title, String content, Integer viewCount, Integer recommendCount) {
+    public ExampleBoardResponse(Integer id, String userId, LocalDateTime createdAt, String title, String content, Integer viewCount, Integer recommendCount, String userName) {
         this.id = id;
         this.userId = userId;
         this.createdAt = createdAt;
@@ -19,6 +21,7 @@ public class ExampleBoardResponse {
         this.content = content;
         this.viewCount = viewCount;
         this.recommendCount = recommendCount;
+        this.userName = userName;
     }
 
     public Integer getId() {
@@ -47,5 +50,15 @@ public class ExampleBoardResponse {
 
     public Integer getRecommendCount() {
         return recommendCount;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public String getCreatedAtFormatted() {
+        if (createdAt == null) return "";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return createdAt.format(formatter);
     }
 }

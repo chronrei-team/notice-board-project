@@ -12,12 +12,13 @@ import java.util.List;
 public class ExampleBoardRepository extends BaseRepository {
     List<Posts> list = new ArrayList<>();
     public List<Posts> findAll() throws SQLException {
-        try (QueryResult query = executeQuery("SELECT * FROM Posts ORDER BY createdAt DESC")) {
+        try (QueryResult query = executeQuery("select p.*, u.userName from Posts p, users u where p.userId=u.id order by p.createdAt desc;")) {
             var rs = query.Set;
-            if (rs.next()) {
+            while (rs.next()) {
                 Posts post = new Posts();
                 post.id = rs.getInt("id");
                 post.userId = rs.getString("userId");
+                post.userName = rs.getString("userName");
                 post.title = rs.getString("title");
                 post.content = rs.getString("content");
                 post.createdAt = rs.getString("createdAt") != null

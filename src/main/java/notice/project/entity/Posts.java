@@ -13,6 +13,9 @@ public class Posts {
     /** 작성자 유저 ID (FK, users.id 참조) */
     public String userId;
 
+    /** 유저 ID를 이름으로 바꾸기 위한 용도 */
+    public String userName;
+
     /** 제목 */
     public String title;
 

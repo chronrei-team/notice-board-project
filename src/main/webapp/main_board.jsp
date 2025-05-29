@@ -1,12 +1,13 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.util.List, notice.project.example.DTO.ExampleBoardResponse" %>
 <%
-
+    List<ExampleBoardResponse> posts = (List<ExampleBoardResponse>) request.getAttribute("posts");
 %>
 <!DOCTYPE html>
 <html>
 <head>
     <title>메인 페이지</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -406,6 +407,11 @@
                     >
                         조회수
                     </th>
+                    <th
+                            class="py-3 px-4 text-sm font-medium text-gray-500 w-24 text-center"
+                    >
+                        추천수
+                    </th>
                 </tr>
                 </thead>
                 <tbody>
@@ -431,126 +437,26 @@
                     </td>
                 </tr>
                 <!-- 일반 게시글 -->
+                <%
+                    if (posts != null) {
+                        for (ExampleBoardResponse post : posts) {
+
+                %>
                 <tr class="border-t border-gray-200 hover:bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">325</td>
+                    <td class="py-3 px-4 text-sm text-gray-500 text-center"><%= post.getId() %></td>
                     <td class="py-3 px-4">
                         <a href="#" class="text-sm hover:text-primary"
-                        >오늘 날씨가 정말 좋네요! 다들 주말 계획은 어떻게
-                            되시나요?</a
+                        ><%= post.getTitle() %></a
                         >
                         <span class="ml-1 text-gray-500 text-xs">[8]</span>
                     </td>
-                    <td class="py-3 px-4 text-sm text-gray-600">김민준</td>
-                    <td class="py-3 px-4 text-sm text-gray-500">2025-05-13</td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">42</td>
+                    <td class="py-3 px-4 text-sm text-gray-600"><%= post.getUserName() %></td>
+                    <td class="py-3 px-4 text-sm text-gray-500"><%= post.getCreatedAtFormatted() %></td>
+                    <td class="py-3 px-4 text-sm text-gray-500 text-center"><%= post.getViewCount() %></td>
+                    <td class="py-3 px-4 text-sm text-gray-500 text-center"><%= post.getRecommendCount() %></td>
                 </tr>
-                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">324</td>
-                    <td class="py-3 px-4">
-                        <a href="#" class="text-sm hover:text-primary"
-                        >맛집 추천 부탁드립니다! 강남역 근처 회식하기 좋은 곳
-                            있을까요?</a
-                        >
-                        <span class="ml-1 text-gray-500 text-xs">[15]</span>
-                        <div class="inline-block ml-1">
-                            <i class="ri-attachment-2 text-gray-400 text-sm"></i>
-                        </div>
-                    </td>
-                    <td class="py-3 px-4 text-sm text-gray-600">박서연</td>
-                    <td class="py-3 px-4 text-sm text-gray-500">2025-05-13</td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">87</td>
-                </tr>
-                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">323</td>
-                    <td class="py-3 px-4">
-                        <a href="#" class="text-sm hover:text-primary"
-                        >신입 개발자 취업 준비 중인데 포트폴리오 조언
-                            부탁드립니다.</a
-                        >
-                        <span class="ml-2 text-red-500 text-xs">NEW</span>
-                        <span class="ml-1 text-gray-500 text-xs">[4]</span>
-                    </td>
-                    <td class="py-3 px-4 text-sm text-gray-600">이지훈</td>
-                    <td class="py-3 px-4 text-sm text-gray-500">2025-05-12</td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">36</td>
-                </tr>
-                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">322</td>
-                    <td class="py-3 px-4">
-                        <a href="#" class="text-sm hover:text-primary"
-                        >여름 휴가 계획 공유해요! 제주도 vs 강원도 어디가
-                            좋을까요?</a
-                        >
-                        <span class="ml-1 text-gray-500 text-xs">[21]</span>
-                        <div class="inline-block ml-1">
-                            <i class="ri-image-line text-gray-400 text-sm"></i>
-                        </div>
-                    </td>
-                    <td class="py-3 px-4 text-sm text-gray-600">최하은</td>
-                    <td class="py-3 px-4 text-sm text-gray-500">2025-05-11</td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">112</td>
-                </tr>
-                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">321</td>
-                    <td class="py-3 px-4">
-                        <a href="#" class="text-sm hover:text-primary"
-                        >요즘 인기있는 OTT 추천 좀 해주세요. 넷플릭스 다 봤어요.</a
-                        >
-                        <span class="ml-1 text-gray-500 text-xs">[12]</span>
-                    </td>
-                    <td class="py-3 px-4 text-sm text-gray-600">정도윤</td>
-                    <td class="py-3 px-4 text-sm text-gray-500">2025-05-10</td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">78</td>
-                </tr>
-                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">320</td>
-                    <td class="py-3 px-4">
-                        <a href="#" class="text-sm hover:text-primary"
-                        >재택근무 효율적으로 하는 팁 공유합니다!</a
-                        >
-                        <span class="ml-1 text-gray-500 text-xs">[9]</span>
-                    </td>
-                    <td class="py-3 px-4 text-sm text-gray-600">김소희</td>
-                    <td class="py-3 px-4 text-sm text-gray-500">2025-05-09</td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">64</td>
-                </tr>
-                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">319</td>
-                    <td class="py-3 px-4">
-                        <a href="#" class="text-sm hover:text-primary"
-                        >주식 초보인데 시작하기 좋은 종목 추천해주세요.</a
-                        >
-                        <span class="ml-1 text-gray-500 text-xs">[18]</span>
-                    </td>
-                    <td class="py-3 px-4 text-sm text-gray-600">박준혁</td>
-                    <td class="py-3 px-4 text-sm text-gray-500">2025-05-08</td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">95</td>
-                </tr>
-                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">318</td>
-                    <td class="py-3 px-4">
-                        <a href="#" class="text-sm hover:text-primary"
-                        >운동 시작하려고 하는데 헬스장 vs 홈트레이닝 어떤게
-                            좋을까요?</a
-                        >
-                        <span class="ml-1 text-gray-500 text-xs">[14]</span>
-                    </td>
-                    <td class="py-3 px-4 text-sm text-gray-600">이수진</td>
-                    <td class="py-3 px-4 text-sm text-gray-500">2025-05-07</td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">82</td>
-                </tr>
-                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">317</td>
-                    <td class="py-3 px-4">
-                        <a href="#" class="text-sm hover:text-primary"
-                        >이번 주말 개봉하는 영화 추천 부탁드려요!</a
-                        >
-                        <span class="ml-1 text-gray-500 text-xs">[7]</span>
-                    </td>
-                    <td class="py-3 px-4 text-sm text-gray-600">최민수</td>
-                    <td class="py-3 px-4 text-sm text-gray-500">2025-05-06</td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">53</td>
-                </tr>
+                <%      }
+                    } %>
                 </tbody>
             </table>
         </div>

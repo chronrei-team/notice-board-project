@@ -1,5 +1,6 @@
 package notice.project.example.controller;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,7 +16,7 @@ import java.sql.SQLException;
 
 @WebServlet("/board")
 public class ExampleBoard extends HttpServlet {
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setContentType("text/html");
 
         try {
@@ -26,24 +27,8 @@ public class ExampleBoard extends HttpServlet {
 
             var resp = service.getPostList();
 
-
-            PrintWriter out = response.getWriter();
-            out.println("<html><body>");
-            out.println("<h1>게시판 목록</h1>");
-            out.println("<table border='1'>");
-            out.println("<tr><th>번호</th><th>제목</th><th>작성자</th><th>작성일</th><th>조회수</th><th>추천수</th></tr>");
-            for (var post : resp) {
-                out.println("<tr>");
-                out.println("<td>" + post.getId() + "</td>");
-                out.println("<td><a href='/board?id=" + post.getId() + "'>" + post.getTitle() + "</a></td>");
-                out.println("<td>" + post.getUserId() + "</td>");
-                out.println("<td>" + post.getCreatedAt() + "</td>");
-                out.println("<td>" + post.getViewCount() + "</td>");
-                out.println("<td>" + post.getRecommendCount() + "</td>");
-                out.println("</tr>");
-            }
-            out.println("</table>");
-            out.println("</body></html>");
+            request.setAttribute("posts", resp);
+            request.getRequestDispatcher("/main_board.jsp").forward(request, response);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
