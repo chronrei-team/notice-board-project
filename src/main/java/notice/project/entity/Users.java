@@ -1,14 +1,8 @@
 package notice.project.entity;
 
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.UUID;
 
-
-import java.time.LocalDateTime;
-import java.util.Objects;
-import java.util.UUID;
 
 public class Users {
 
@@ -30,14 +24,14 @@ public class Users {
     /** 탈퇴 시간 (nullable) */
     public LocalDateTime deletedAt;
 
-    /** 계정 상태 (e.g., "ACTIVE", "INACTIVE", "DELETED") */
-    public String status;
+    /** 계정 상태 (e.g., "ACTIVE", "INACTIVE") */
+    public UserStatus status;
 
     /** 닉네임 (사용자 이름) */
     public String userName;
 
     /** 권한 (e.g., "USER", "ADMIN") */
-    public String role;
+    public UserRole role;
 
     public ArrayList<Comments> comments;
     public ArrayList<Posts> posts;

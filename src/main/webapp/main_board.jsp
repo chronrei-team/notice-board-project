@@ -234,7 +234,7 @@
                         <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
                             로그인
                         </h2>
-                        <form id="loginForm" class="space-y-4">
+                        <form id="loginForm" action="<%=request.getContextPath()%>/auth/login" method="post" class="space-y-4">
                             <div>
                                 <label
                                         for="userName"
@@ -279,16 +279,17 @@
                         <div class="text-center mt-4 text-sm text-gray-600">
                             아직 회원이 아니신가요?
                             <a
-                                    href="#"
+                                    href="<%=request.getContextPath()%>/auth/register"
                                     class="text-primary hover:text-primary/90 font-medium"
                             >회원가입</a
                             >
                         </div>
                     </div>
                 </div>
-                <button
+                <a
+                        href="<%=request.getContextPath()%>/auth/register"
                         class="bg-primary text-white bg-blue-700 px-4 py-2 rounded-lg text-sm hover:bg-primary/90 whitespace-nowrap inline-block"
-                >회원가입</button
+                >회원가입</a
                 >
                 <!-- 모바일 메뉴 버튼 -->
                 <button
@@ -754,16 +755,6 @@
                 loginModal.classList.add("hidden");
                 document.body.style.overflow = "";
             }
-        });
-        loginForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const userName = document.getElementById("userName").value;
-            const password = document.getElementById("password").value;
-            if (!userName || !password) {
-                return;
-            }
-            console.log("Login attempt:", { email: userName, password });
-            // Here you would typically make an API call to your backend
         });
         const searchTypeButton = document.getElementById("searchTypeButton");
         const searchTypeDropdown = document.getElementById("searchTypeDropdown");
