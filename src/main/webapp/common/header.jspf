@@ -1,0 +1,221 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: soo_mini
+  Date: 25. 5. 29.
+  Time: 오후 8:36
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<header class="bg-white shadow-sm">
+    <div class="container mx-auto px-4 py-4">
+        <div class="flex items-center justify-between">
+            <!-- 로고 -->
+            <div class="flex items-center">
+                <a href="#" class="flex items-center">
+                    <span class="text-2xl font-['Pacifico'] text-primary">logo</span>
+                </a>
+                <!-- 네비게이션 메뉴 -->
+                <nav class="hidden md:flex ml-10">
+                    <ul class="flex space-x-8">
+                        <li>
+                            <a
+                                    href="<%=request.getContextPath()%>/"
+                                    class="text-gray-700 hover:text-primary font-medium"
+                            >홈</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                    href="#"
+                                    class="text-gray-700 hover:text-primary font-medium"
+                            >게시판</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                    href="#"
+                                    class="text-gray-700 hover:text-primary font-medium"
+                            >갤러리</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                    href="#"
+                                    class="text-gray-700 hover:text-primary font-medium"
+                            >공지사항</a
+                            >
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <!-- 검색창 -->
+            <div
+                    class="hidden md:flex items-center justify-center flex-1 max-w-md mx-4"
+            >
+                <form class="relative w-full flex items-center">
+                    <div class="relative flex-1">
+                        <div
+                                class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400"
+                        >
+                            <i class="ri-search-line"></i>
+                        </div>
+                        <input
+                                type="text"
+                                placeholder="검색어를 입력하세요"
+                                class="custom-search w-full py-2 pl-10 pr-24 border border-gray-300 rounded-button text-sm focus:border-primary transition-colors"
+                        />
+                        <div
+                                class="absolute right-2 top-1/2 transform -translate-y-1/2"
+                        >
+                            <button
+                                    type="button"
+                                    id="searchTypeButton"
+                                    class="flex items-center justify-center px-3 py-1 text-sm text-gray-600 hover:text-primary"
+                            >
+                                <span id="selectedSearchType">제목</span>
+                                <i class="ri-arrow-down-s-line ml-1"></i>
+                            </button>
+                            <div
+                                    id="searchTypeDropdown"
+                                    class="hidden absolute right-0 top-full mt-1 w-24 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+                            >
+                                <div class="py-1">
+                                    <button
+                                            type="button"
+                                            class="search-type-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary"
+                                            data-value="title"
+                                    >
+                                        제목
+                                    </button>
+                                    <button
+                                            type="button"
+                                            class="search-type-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary"
+                                            data-value="content"
+                                    >
+                                        내용
+                                    </button>
+                                    <button
+                                            type="button"
+                                            class="search-type-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary"
+                                            data-value="author"
+                                    >
+                                        작성자
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                            type="submit"
+                            class="ml-2 bg-primary bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-primary/90 whitespace-nowrap"
+                    >
+                        검색
+                    </button>
+                </form>
+            </div>
+            <!-- 로그인/회원가입 버튼 -->
+            <div class="flex items-center space-x-3">
+                <button
+                        id="loginButton"
+                        class="text-gray-700 hover:text-primary whitespace-nowrap text-sm"
+                >
+                    로그인
+                </button>
+                <div
+                        id="loginModal"
+                        class="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center hidden z-50"
+                >
+                    <div class="bg-white rounded-lg w-full max-w-md p-6 relative">
+                        <button
+                                id="closeLoginModal"
+                                class="absolute right-4 top-4 text-gray-400 hover:text-gray-600"
+                        >
+                            <div class="w-6 h-6 flex items-center justify-center">
+                                <i class="ri-close-line"></i>
+                            </div>
+                        </button>
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
+                            로그인
+                        </h2>
+                        <form id="loginForm" action="<%=request.getContextPath()%>/auth/login" method="post" class="space-y-4">
+                            <div>
+                                <label
+                                        for="userName"
+                                        class="block text-sm font-medium text-gray-700 mb-1"
+                                >닉네임</label
+                                >
+                                <input
+                                        type="text"
+                                        id="userName"
+                                        name="userName"
+                                        required
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-button focus:border-primary focus:ring-1 focus:ring-primary text-sm"
+                                        placeholder="닉네임을 입력하세요"
+                                />
+                            </div>
+                            <div>
+                                <label
+                                        for="password"
+                                        class="block text-sm font-medium text-gray-700 mb-1"
+                                >비밀번호</label
+                                >
+                                <input
+                                        type="password"
+                                        id="password"
+                                        name="password"
+                                        required
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-button focus:border-primary focus:ring-1 focus:ring-primary text-sm"
+                                        placeholder="비밀번호를 입력하세요"
+                                />
+                            </div>
+                            <div class="flex items-center justify-between text-sm mb-1">
+                                <a href="#" class="text-gray-600 hover:text-primary">
+                                    아이디/비밀번호 찾기
+                                </a>
+                                <button
+                                        type="submit"
+                                        class="bg-primary bg-gray-100 text-gray-700 px-4 py-2 rounded-lg">
+                                    로그인
+                                </button>
+                            </div>
+                        </form>
+                        <div class="text-center mt-4 text-sm text-gray-600">
+                            아직 회원이 아니신가요?
+                            <a
+                                    href="<%=request.getContextPath()%>/auth/register"
+                                    class="text-primary hover:text-primary/90 font-medium"
+                            >회원가입</a
+                            >
+                        </div>
+                    </div>
+                </div>
+                <a
+                        href="<%=request.getContextPath()%>/auth/register"
+                        class="bg-primary text-white bg-blue-700 px-4 py-2 rounded-lg text-sm hover:bg-primary/90 whitespace-nowrap inline-block"
+                >회원가입</a
+                >
+                <!-- 모바일 메뉴 버튼 -->
+                <button
+                        class="md:hidden w-10 h-10 flex items-center justify-center text-gray-700"
+                >
+                    <i class="ri-menu-line ri-lg"></i>
+                </button>
+            </div>
+        </div>
+        <!-- 모바일 검색창 -->
+        <div class="mt-4 md:hidden">
+            <div class="relative">
+                <input
+                        type="text"
+                        placeholder="게시글 검색"
+                        class="custom-search w-full py-2 pl-10 pr-4 border border-gray-300 rounded-button text-sm focus:border-primary transition-colors"
+                />
+                <div
+                        class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400"
+                >
+                    <i class="ri-search-line"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
