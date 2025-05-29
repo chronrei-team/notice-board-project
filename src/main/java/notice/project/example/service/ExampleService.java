@@ -1,6 +1,7 @@
 package notice.project.example.service;
 
 import notice.project.core.Transactional;
+import notice.project.example.DTO.ExamplePassword;
 import notice.project.example.DTO.ExampleResponse;
 import notice.project.example.repository.ExampleRepository;
 import notice.project.exceptions.UserNotFoundException;
@@ -21,5 +22,14 @@ public class ExampleService implements IExampleService {
         var user = repo.findBy(userId);
         if (user == null) throw new UserNotFoundException();
         return new ExampleResponse(user.userName);
+    }
+
+    @Override
+    @Transactional
+    public ExamplePassword getPassword(String userId) throws SQLException, UserNotFoundException {
+        // 비지니스 로직
+        var user = repo.findBy(userId);
+        if (user == null) throw new UserNotFoundException();
+        return new ExamplePassword(user.passwordHash);
     }
 }

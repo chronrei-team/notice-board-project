@@ -35,21 +35,6 @@ public class Posts {
     public ArrayList<Comments> comments;
     public ArrayList<PostFiles> postFiles;
 
-    // 모든 필드를 받는 생성자
-    public Posts(Integer id, String userId, String title, String content, LocalDateTime createdAt,
-                LocalDateTime updatedAt, Integer viewCount, Integer recommendCount,
-                 ArrayList<Comments> comments, ArrayList<PostFiles> postFiles, Users user) {
-        this.id = id;
-        this.userId = userId;
-        this.title = title;
-        this.content = content;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.viewCount = (viewCount != null) ? viewCount : 0;
-        this.recommendCount = (recommendCount != null) ? recommendCount : 0;
-        this.comments = comments;
-        this.postFiles = postFiles;
-        this.user = user;
-    }
+
 
 }
