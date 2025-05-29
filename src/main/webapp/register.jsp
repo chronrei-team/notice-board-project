@@ -8,30 +8,6 @@
 <head>
   <title>회원가입</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            primary: "#4F46E5",
-            secondary: "#8B5CF6",
-          },
-          borderRadius: {
-            none: "0px",
-            sm: "4px",
-            DEFAULT: "8px",
-            md: "12px",
-            lg: "16px",
-            xl: "20px",
-            "2xl": "24px",
-            "3xl": "32px",
-            full: "9999px",
-            button: "8px", // Consistent button radius
-          },
-        },
-      },
-    };
-  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -47,32 +23,6 @@
     body {
       font-family: 'Noto Sans KR', sans-serif;
       color: #333;
-    }
-    .custom-checkbox {
-      appearance: none;
-      width: 1.25rem;
-      height: 1.25rem;
-      border: 2px solid #d1d5db;
-      border-radius: 4px;
-      position: relative;
-      cursor: pointer;
-      transition: all 0.2s;
-      flex-shrink: 0; /* Prevent shrinking in flex layouts */
-    }
-    .custom-checkbox:checked {
-      background-color: #4F46E5;
-      border-color: #4F46E5;
-    }
-    .custom-checkbox:checked::after {
-      content: '';
-      position: absolute;
-      left: 6px;
-      top: 2px;
-      width: 6px;
-      height: 10px;
-      border: solid white;
-      border-width: 0 2px 2px 0;
-      transform: rotate(45deg);
     }
     .custom-search:focus,
     .form-input:focus { /* Unified focus style for inputs */
@@ -162,7 +112,8 @@
 
     <div class="text-center mt-8 text-sm text-gray-600">
       이미 계정이 있으신가요?
-      <a href="#" id="openLoginModalFromRegister" class="text-primary hover:text-primary/90 font-medium">로그인</a>
+      <a href="<%=request.getContextPath()%>/auth/login"
+         class="text-primary hover:text-primary/90 font-medium">로그인</a>
     </div>
   </div>
 </main>
@@ -178,107 +129,6 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    // Header scripts (Login Modal, Search Dropdown, Mobile Menu)
-    const loginButton = document.getElementById("loginButton");
-    const loginModal = document.getElementById("loginModal");
-    const closeLoginModal = document.getElementById("closeLoginModal");
-
-    function openModal() {
-      loginModal.classList.remove("hidden");
-      document.body.style.overflow = "hidden";
-    }
-    function closeModal() {
-      loginModal.classList.add("hidden");
-      document.body.style.overflow = "";
-    }
-
-    if (loginButton) loginButton.addEventListener("click", openModal);
-    if (closeLoginModal) closeLoginModal.addEventListener("click", closeModal);
-
-    if (loginModal) {
-      loginModal.addEventListener("click", (e) => {
-        if (e.target === loginModal) {
-          closeModal();
-        }
-      });
-    }
-
-    const openLoginModalFromRegister = document.getElementById("openLoginModalFromRegister");
-    if(openLoginModalFromRegister) {
-      openLoginModalFromRegister.addEventListener("click", (e) => {
-        e.preventDefault();
-        openModal();
-      });
-    }
-
-
-    const searchTypeButton = document.getElementById("searchTypeButton");
-    const searchTypeDropdown = document.getElementById("searchTypeDropdown");
-    const selectedSearchType = document.getElementById("selectedSearchType");
-    const searchTypeOptions = document.querySelectorAll(".search-type-option");
-
-    if (searchTypeButton) {
-      searchTypeButton.addEventListener("click", function (e) {
-        e.stopPropagation();
-        if (searchTypeDropdown) searchTypeDropdown.classList.toggle("hidden");
-      });
-    }
-
-    if (searchTypeOptions) {
-      searchTypeOptions.forEach((option) => {
-        option.addEventListener("click", function () {
-          if (selectedSearchType) selectedSearchType.textContent = this.textContent;
-          if (searchTypeDropdown) searchTypeDropdown.classList.add("hidden");
-        });
-      });
-    }
-
-    document.addEventListener("click", function (e) {
-      if (searchTypeButton && !searchTypeButton.contains(e.target) && searchTypeDropdown) {
-        searchTypeDropdown.classList.add("hidden");
-      }
-    });
-
-    const menuButton = document.querySelector(".ri-menu-line")?.parentElement;
-    const mobileNav = document.querySelector("header nav"); // More specific selector
-
-    if (menuButton && mobileNav) {
-      menuButton.addEventListener("click", function () {
-        mobileNav.classList.toggle("hidden"); // Base toggle
-        // For mobile-specific layout classes
-        mobileNav.classList.toggle("md:flex"); // Ensure it's hidden on md, then re-shown by JS if needed
-        mobileNav.classList.toggle("flex-col");
-        mobileNav.classList.toggle("absolute");
-        mobileNav.classList.toggle("top-16"); // Adjust based on header height
-        mobileNav.classList.toggle("right-4");
-        mobileNav.classList.toggle("bg-white");
-        mobileNav.classList.toggle("shadow-lg");
-        mobileNav.classList.toggle("p-4");
-        mobileNav.classList.toggle("rounded");
-        mobileNav.classList.toggle("z-50");
-
-        const ul = mobileNav.querySelector("ul");
-        if (ul) {
-          if (mobileNav.classList.contains("flex-col")) { // When mobile menu is open
-            ul.classList.remove("flex", "space-x-8");
-            ul.classList.add("flex-col", "space-y-4");
-          } else { // When mobile menu is closed or on desktop
-            ul.classList.add("flex", "space-x-8");
-            ul.classList.remove("flex-col", "space-y-4");
-          }
-        }
-      });
-    }
-
-    // Custom checkbox styling (already in main page, but good to ensure it's here)
-    const checkboxes = document.querySelectorAll(".custom-checkbox");
-    checkboxes.forEach(checkbox => {
-      checkbox.addEventListener("change", function () {
-        // Tailwind's :checked pseudo-class handles this if set up in <style>
-        // This JS part is actually redundant if custom-checkbox:checked styles are defined
-      });
-    });
-
     // Registration form specific script
     const registrationForm = document.getElementById("registrationForm");
     if (registrationForm) {

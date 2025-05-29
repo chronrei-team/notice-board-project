@@ -7,30 +7,6 @@
 <head>
     <title>메인 페이지</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: "#4F46E5",
-                        secondary: "#8B5CF6",
-                    },
-                    borderRadius: {
-                        none: "0px",
-                        sm: "4px",
-                        DEFAULT: "8px",
-                        md: "12px",
-                        lg: "16px",
-                        xl: "20px",
-                        "2xl": "24px",
-                        "3xl": "32px",
-                        full: "9999px",
-                        button: "8px",
-                    },
-                },
-            },
-        };
-    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -516,53 +492,8 @@
         </div>
     </div>
 </main>
-<!-- 푸터 영역 -->
-<%--<footer class="bg-gray-800 text-white py-6">--%>
-<%--    <div class="container mx-auto px-4">--%>
-<%--        <div class="text-center text-gray-400 text-sm">--%>
-<%--            © 2025 커뮤니티 주식회사. All rights reserved.--%>
-<%--        </div>--%>
-<%--    </div>--%>
-<%--</footer>--%>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const loginButton = document.getElementById("loginButton");
-        const loginModal = document.getElementById("loginModal");
-        const closeLoginModal = document.getElementById("closeLoginModal");
-        const loginForm = document.getElementById("loginForm");
-        loginButton.addEventListener("click", () => {
-            loginModal.classList.remove("hidden");
-            document.body.style.overflow = "hidden";
-        });
-        closeLoginModal.addEventListener("click", () => {
-            loginModal.classList.add("hidden");
-            document.body.style.overflow = "";
-        });
-        loginModal.addEventListener("click", (e) => {
-            if (e.target === loginModal) {
-                loginModal.classList.add("hidden");
-                document.body.style.overflow = "";
-            }
-        });
-        const searchTypeButton = document.getElementById("searchTypeButton");
-        const searchTypeDropdown = document.getElementById("searchTypeDropdown");
-        const selectedSearchType = document.getElementById("selectedSearchType");
-        const searchTypeOptions = document.querySelectorAll(".search-type-option");
-        searchTypeButton.addEventListener("click", function (e) {
-            e.stopPropagation();
-            searchTypeDropdown.classList.toggle("hidden");
-        });
-        searchTypeOptions.forEach((option) => {
-            option.addEventListener("click", function () {
-                selectedSearchType.textContent = this.textContent;
-                searchTypeDropdown.classList.add("hidden");
-            });
-        });
-        document.addEventListener("click", function (e) {
-            if (!searchTypeButton.contains(e.target)) {
-                searchTypeDropdown.classList.add("hidden");
-            }
-        });
         const menuButton = document.querySelector(".ri-menu-line").parentElement;
         const mobileNav = document.querySelector("nav");
         menuButton.addEventListener("click", function () {
@@ -587,17 +518,6 @@
                 mobileNav.querySelector("ul").classList.remove("flex-col");
                 mobileNav.querySelector("ul").classList.add("space-x-8");
                 mobileNav.querySelector("ul").classList.remove("space-y-4");
-            }
-        });
-    });
-    document.addEventListener("DOMContentLoaded", function () {
-        // 체크박스 커스텀 기능
-        const checkbox = document.querySelector(".custom-checkbox");
-        checkbox.addEventListener("change", function () {
-            if (this.checked) {
-                this.classList.add("bg-primary", "border-primary");
-            } else {
-                this.classList.remove("bg-primary", "border-primary");
             }
         });
     });
