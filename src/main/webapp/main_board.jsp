@@ -1,4 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%
+
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -201,7 +204,7 @@
                     </div>
                     <button
                             type="submit"
-                            class="ml-2 bg-primary text-white px-4 py-2 !rounded-button text-sm hover:bg-primary/90 whitespace-nowrap"
+                            class="ml-2 bg-primary bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-primary/90 whitespace-nowrap"
                     >
                         검색
                     </button>
@@ -217,7 +220,7 @@
                 </button>
                 <div
                         id="loginModal"
-                        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50"
+                        class="fixed inset-0 bg-black/30 bg-opacity-50 flex items-center justify-center hidden z-50"
                 >
                     <div class="bg-white rounded-lg w-full max-w-md p-6 relative">
                         <button
@@ -234,17 +237,17 @@
                         <form id="loginForm" class="space-y-4">
                             <div>
                                 <label
-                                        for="email"
+                                        for="userName"
                                         class="block text-sm font-medium text-gray-700 mb-1"
-                                >이메일</label
+                                >닉네임</label
                                 >
                                 <input
-                                        type="email"
-                                        id="email"
-                                        name="email"
+                                        type="text"
+                                        id="userName"
+                                        name="userName"
                                         required
                                         class="w-full px-3 py-2 border border-gray-300 rounded-button focus:border-primary focus:ring-1 focus:ring-primary text-sm"
-                                        placeholder="이메일 주소를 입력하세요"
+                                        placeholder="닉네임을 입력하세요"
                                 />
                             </div>
                             <div>
@@ -262,61 +265,18 @@
                                         placeholder="비밀번호를 입력하세요"
                                 />
                             </div>
-                            <div class="flex items-center justify-between text-sm">
-                                <div class="flex items-center">
-                                    <input
-                                            type="checkbox"
-                                            id="remember"
-                                            name="remember"
-                                            class="custom-checkbox"
-                                    />
-                                    <label for="remember" class="ml-2 text-gray-600"
-                                    >자동 로그인</label
-                                    >
-                                </div>
-                                <a href="#" class="text-gray-600 hover:text-primary"
-                                >아이디/비밀번호 찾기</a
-                                >
+                            <div class="flex items-center justify-between text-sm mb-1">
+                                <a href="#" class="text-gray-600 hover:text-primary">
+                                    아이디/비밀번호 찾기
+                                </a>
+                                <button
+                                        type="submit"
+                                        class="bg-primary bg-gray-100 text-gray-700 px-4 py-2 rounded-lg">
+                                    로그인
+                                </button>
                             </div>
-                            <button
-                                    type="submit"
-                                    class="w-full bg-primary text-white py-2 !rounded-button hover:bg-primary/90"
-                            >
-                                로그인
-                            </button>
                         </form>
-                        <div class="relative my-6">
-                            <div class="absolute inset-0 flex items-center">
-                                <div class="w-full border-t border-gray-200"></div>
-                            </div>
-                            <div class="relative flex justify-center text-sm">
-                                <span class="px-2 bg-white text-gray-500">간편 로그인</span>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-3 gap-3 mb-6">
-                            <button
-                                    class="flex items-center justify-center py-2 px-4 border border-gray-300 rounded-button hover:bg-gray-50"
-                            >
-                                <div class="w-6 h-6 flex items-center justify-center">
-                                    <i class="ri-kakao-talk-fill text-[#FAE100]"></i>
-                                </div>
-                            </button>
-                            <button
-                                    class="flex items-center justify-center py-2 px-4 border border-gray-300 rounded-button hover:bg-gray-50"
-                            >
-                                <div class="w-6 h-6 flex items-center justify-center">
-                                    <i class="ri-naver-fill text-[#03C75A]"></i>
-                                </div>
-                            </button>
-                            <button
-                                    class="flex items-center justify-center py-2 px-4 border border-gray-300 rounded-button hover:bg-gray-50"
-                            >
-                                <div class="w-6 h-6 flex items-center justify-center">
-                                    <i class="ri-google-fill text-[#4285F4]"></i>
-                                </div>
-                            </button>
-                        </div>
-                        <div class="text-center text-sm text-gray-600">
+                        <div class="text-center mt-4 text-sm text-gray-600">
                             아직 회원이 아니신가요?
                             <a
                                     href="#"
@@ -326,11 +286,9 @@
                         </div>
                     </div>
                 </div>
-                <a
-                        href="https://readdy.ai/home/794bfdf2-75c4-4d76-8583-1799c03dda83/254d9dbf-0809-4d6e-b18d-dda8ec89cc9b"
-                        data-readdy="true"
-                        class="bg-primary text-white px-4 py-2 !rounded-button text-sm hover:bg-primary/90 whitespace-nowrap inline-block"
-                >회원가입</a
+                <button
+                        class="bg-primary text-white bg-blue-700 px-4 py-2 rounded-lg text-sm hover:bg-primary/90 whitespace-nowrap inline-block"
+                >회원가입</button
                 >
                 <!-- 모바일 메뉴 버튼 -->
                 <button
@@ -376,7 +334,7 @@
         <div class="flex overflow-x-auto mb-6 pb-2">
             <div class="bg-gray-100 p-1 rounded-full flex space-x-1">
                 <button
-                        class="px-4 py-2 !rounded-full bg-primary text-white whitespace-nowrap"
+                        class="px-4 py-2 !rounded-full bg-primary text-gray-700 font-bold whitespace-nowrap"
                 >
                     전체
                 </button>
@@ -770,13 +728,13 @@
     </div>
 </main>
 <!-- 푸터 영역 -->
-<footer class="bg-gray-800 text-white py-6">
-    <div class="container mx-auto px-4">
-        <div class="text-center text-gray-400 text-sm">
-            © 2025 커뮤니티 주식회사. All rights reserved.
-        </div>
-    </div>
-</footer>
+<%--<footer class="bg-gray-800 text-white py-6">--%>
+<%--    <div class="container mx-auto px-4">--%>
+<%--        <div class="text-center text-gray-400 text-sm">--%>
+<%--            © 2025 커뮤니티 주식회사. All rights reserved.--%>
+<%--        </div>--%>
+<%--    </div>--%>
+<%--</footer>--%>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const loginButton = document.getElementById("loginButton");
@@ -799,12 +757,12 @@
         });
         loginForm.addEventListener("submit", (e) => {
             e.preventDefault();
-            const email = document.getElementById("email").value;
+            const userName = document.getElementById("userName").value;
             const password = document.getElementById("password").value;
-            if (!email || !password) {
+            if (!userName || !password) {
                 return;
             }
-            console.log("Login attempt:", { email, password });
+            console.log("Login attempt:", { email: userName, password });
             // Here you would typically make an API call to your backend
         });
         const searchTypeButton = document.getElementById("searchTypeButton");
