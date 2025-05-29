@@ -44,16 +44,19 @@ public class LoginController extends HttpServlet {
 
             response.sendRedirect(request.getContextPath() + "/");
         } catch (UserNotFoundException e) {
-            LoginResponse loginDO = new LoginResponse("유저가 존재하지 않습니다.");
+            LoginResponse loginDO = new LoginResponse("유저가 존재하지 않습니다.",
+                    userName, password);
             request.setAttribute("LoginResponse", loginDO);
             request.getRequestDispatcher("/login.jsp").forward(request, response);
         } catch (InvalidPasswordException e) {
-            LoginResponse loginDO = new LoginResponse("비밀번호가 일치하지 않습니다.");
+            LoginResponse loginDO = new LoginResponse("비밀번호가 일치하지 않습니다.",
+                    userName, password);
             request.setAttribute("LoginResponse", loginDO);
             request.getRequestDispatcher("/login.jsp").forward(request, response);
         }
         catch (Exception e) {
-            LoginResponse loginDO = new LoginResponse("알 수 없는 오류가 발생했습니다.");
+            LoginResponse loginDO = new LoginResponse("알 수 없는 오류가 발생했습니다.",
+                    userName, password);
             request.setAttribute("LoginResponse", loginDO);
             request.getRequestDispatcher("/login.jsp").forward(request, response);
         }

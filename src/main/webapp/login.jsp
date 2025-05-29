@@ -1,7 +1,7 @@
 <%@ page import="notice.project.auth.DTO.LoginResponse" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
-    LoginResponse loginErrorMessage = (LoginResponse)request.getAttribute("LoginResponse");
+    LoginResponse loginDO = (LoginResponse)request.getAttribute("LoginResponse");
 %>
 <!DOCTYPE html>
 <html>
@@ -61,14 +61,16 @@
                 <label for="regNickname" class="block text-sm font-medium text-gray-700 mb-1">닉네임</label>
                 <input type="text" id="regNickname" name="userName" required
                        class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-button text-sm"
-                       placeholder="닉네임을 입력하세요">
+                       placeholder="닉네임을 입력하세요"
+                       value="<%=(loginDO != null && loginDO.getUserName() != null) ? loginDO.getUserName() : ""%>">
             </div>
 
             <div class="input-group">
                 <label for="regPassword" class="block text-sm font-medium text-gray-700 mb-1">비밀번호</label>
                 <input type="password" id="regPassword" name="password" required
                        class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-button text-sm pr-10"
-                       placeholder="비밀번호를 입력하세요">
+                       placeholder="비밀번호를 입력하세요"
+                       value="<%=(loginDO != null && loginDO.getPassword() != null) ? loginDO.getPassword() : ""%>">
                 <span class="password-toggle" onclick="togglePasswordVisibility('regPassword', this)">
                     <i class="ri-eye-off-line"></i>
                 </span>
@@ -76,10 +78,9 @@
             </div>
 
             <%
-                if (loginErrorMessage != null) {
-
+                if (loginDO != null) {
             %>
-            <p class="text-red-500"><%=loginErrorMessage%></p>
+                    <p class="text-red-500"><%=loginDO.getMessage()%></p>
             <%
                 }
             %>
