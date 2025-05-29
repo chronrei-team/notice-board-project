@@ -53,8 +53,8 @@ public class UserRepository extends BaseRepository {
 
     public void update(Users user) throws SQLException {
         executeCommand("update Users " +
-                "set id = ?, passwordHash = ?, createdAt = ?, lastLoginAt = ?, deletedAt = ?, status = ?, " +
-                "userName = ? role = ?" +
+                "set id = ?, passwordHash = ?, createdAt = ?, updatedAt = ?, lastLoginAt = ?, deletedAt = ?, status = ?, " +
+                "userName = ?, role = ?" +
                 "where id = ?",
                 user.id,
                 user.passwordHash,

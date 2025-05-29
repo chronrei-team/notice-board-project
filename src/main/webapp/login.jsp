@@ -61,14 +61,14 @@
                 <label for="regNickname" class="block text-sm font-medium text-gray-700 mb-1">닉네임</label>
                 <input type="text" id="regNickname" name="userName" required
                        class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-button text-sm"
-                       placeholder="닉네임을 입력하세요 (2~10자)">
+                       placeholder="닉네임을 입력하세요">
             </div>
 
             <div class="input-group">
                 <label for="regPassword" class="block text-sm font-medium text-gray-700 mb-1">비밀번호</label>
                 <input type="password" id="regPassword" name="password" required
                        class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-button text-sm pr-10"
-                       placeholder="비밀번호를 입력하세요 (영문, 숫자, 특수문자 조합 8~16자)">
+                       placeholder="비밀번호를 입력하세요">
                 <span class="password-toggle" onclick="togglePasswordVisibility('regPassword', this)">
                     <i class="ri-eye-off-line"></i>
                 </span>

@@ -2,6 +2,8 @@ package notice.project.example.repository;
 
 import notice.project.core.BaseRepository;
 import notice.project.core.QueryResult;
+import notice.project.entity.UserRole;
+import notice.project.entity.UserStatus;
 import notice.project.entity.Users;
 
 import java.sql.SQLException;
@@ -25,9 +27,9 @@ public class ExampleRepository extends BaseRepository {
                 user.deletedAt = rs.getString("deletedAt") != null
                         ? LocalDateTime.parse(rs.getString("deletedAt"))
                         : null;
-                user.status = rs.getString("status");
+                user.status = UserStatus.valueOf(rs.getString("status"));
                 user.userName = rs.getString("userName");
-                user.role = rs.getString("role");
+                user.role = UserRole.valueOf(rs.getString("role"));
 
                 return user;
             }

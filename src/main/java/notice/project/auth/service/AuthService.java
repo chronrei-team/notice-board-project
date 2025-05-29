@@ -1,6 +1,5 @@
 package notice.project.auth.service;
 
-import notice.project.auth.DTO.LoginResponse;
 import notice.project.auth.repository.UserRepository;
 import notice.project.core.Transactional;
 import notice.project.entity.UserRole;
@@ -69,11 +68,11 @@ public class AuthService implements IAuthService {
 
     @Override
     @Transactional
-    public LoginResponse verifyLogin(String userName, String password) throws SQLException, UserNotFoundException, InvalidPasswordException {
+    public Users verifyLogin(String userName, String password) throws SQLException, UserNotFoundException, InvalidPasswordException {
         var user = userRepository.findBy(userName);
         if (user == null) throw new UserNotFoundException();
         try {
-            if (verifyPassword(password, user.passwordHash))
+            if (!verifyPassword(password, user.passwordHash))
                 throw new InvalidPasswordException();
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new InvalidPasswordException();
@@ -82,7 +81,7 @@ public class AuthService implements IAuthService {
         user.lastLoginAt = LocalDateTime.now();
         userRepository.update(user);
 
-        return new LoginResponse(userName);
+        return user;
     }
 
     @Override

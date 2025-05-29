@@ -1,4 +1,5 @@
-<%--
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="notice.project.entity.Users" %><%--
   Created by IntelliJ IDEA.
   User: soo_mini
   Date: 25. 5. 29.
@@ -6,9 +7,8 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<%--<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>--%>
 <%
-
+    Users token = (Users)request.getAttribute("token");
 %>
 <header class="bg-white shadow-sm">
     <div class="container mx-auto px-4 py-4">
@@ -118,25 +118,28 @@
                 </form>
             </div>
             <!-- 로그인/회원가입 버튼 -->
-            <div class="flex items-center space-x-3">
-                <a
-                        href="<%=request.getContextPath()%>/auth/login"
-                        class="text-gray-700 hover:text-primary whitespace-nowrap text-sm"
-                >
-                    로그인
-                </a>
-                <a
-                        href="<%=request.getContextPath()%>/auth/register"
-                        class="bg-primary text-white bg-blue-700 px-4 py-2 rounded-lg text-sm hover:bg-primary/90 whitespace-nowrap inline-block"
-                >회원가입</a
-                >
-                <!-- 모바일 메뉴 버튼 -->
-                <button
-                        class="md:hidden w-10 h-10 flex items-center justify-center text-gray-700"
-                >
-                    <i class="ri-menu-line ri-lg"></i>
-                </button>
-            </div>
+            <c:if test="${token == null}">
+                <div class="flex items-center space-x-3">
+                    <a
+                            href="<%=request.getContextPath()%>/auth/login"
+                            class="text-gray-700 hover:text-primary whitespace-nowrap text-sm"
+                    >
+                        로그인
+                    </a>
+                    <a
+                            href="<%=request.getContextPath()%>/auth/register"
+                            class="bg-primary text-white bg-blue-700 px-4 py-2 rounded-lg text-sm hover:bg-primary/90 whitespace-nowrap inline-block"
+                    >회원가입</a
+                    >
+                    <!-- 모바일 메뉴 버튼 -->
+                    <button
+                            class="md:hidden w-10 h-10 flex items-center justify-center text-gray-700"
+                    >
+                        <i class="ri-menu-line ri-lg"></i>
+                    </button>
+                </div>
+            </c:if>
+
         </div>
         <!-- 모바일 검색창 -->
         <div class="mt-4 md:hidden">
