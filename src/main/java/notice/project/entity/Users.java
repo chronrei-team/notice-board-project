@@ -41,21 +41,4 @@ public class Users {
 
     public ArrayList<Comments> comments;
     public ArrayList<Posts> posts;
-
-    // 모든 필드를 받는 생성자
-    public Users(String id, String passwordHash, LocalDateTime createdAt, LocalDateTime updatedAt,
-                LocalDateTime lastLoginAt, LocalDateTime deletedAt, String status, String userName, String role
-            , ArrayList<Comments> comments, ArrayList<Posts> posts) {
-        this.id = id;
-        this.passwordHash = passwordHash;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.lastLoginAt = lastLoginAt;
-        this.deletedAt = deletedAt;
-        this.status = status;
-        this.userName = userName;
-        this.role = role;
-        this.comments = comments;
-        this.posts = posts;
-    }
 }

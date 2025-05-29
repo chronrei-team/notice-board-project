@@ -33,20 +33,4 @@ public class Comments {
     public ArrayList<Comments> subComments;
     public ArrayList<CommentImages> images;
 
-    // 모든 필드를 받는 생성자
-    public Comments(Integer id, Integer postId, Integer parentCommentId, String referenceCommentUserId,
-                   String userId, String content, LocalDateTime createdAt,
-                    Users writer, Posts post, ArrayList<Comments> subComments, ArrayList<CommentImages> images) {
-        this.id = id;
-        this.postId = postId;
-        this.parentCommentId = parentCommentId;
-        this.referenceCommentUserId = referenceCommentUserId;
-        this.userId = userId;
-        this.content = content;
-        this.createdAt = createdAt;
-        this.writer = writer;
-        this.post = post;
-        this.subComments = subComments;
-        this.images = images;
-    }
 }

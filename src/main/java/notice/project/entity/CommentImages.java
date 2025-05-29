@@ -21,14 +21,4 @@ public class CommentImages {
     public LocalDateTime uploadedAt;
 
     public Comments comment;
-
-    // 모든 필드를 받는 생성자
-    public CommentImages(Integer id, Integer commentId, String name, String url, LocalDateTime uploadedAt, Comments comment) {
-        this.id = id;
-        this.commentId = commentId;
-        this.name = name;
-        this.url = url;
-        this.uploadedAt = uploadedAt;
-        this.comment = comment;
-    }
 }
