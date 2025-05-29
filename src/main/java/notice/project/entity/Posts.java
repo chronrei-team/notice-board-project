@@ -35,6 +35,4 @@ public class Posts {
     public ArrayList<Comments> comments;
     public ArrayList<PostFiles> postFiles;
 
-
-
 }

@@ -12,25 +12,24 @@ public class ExampleRepository extends BaseRepository {
         try (QueryResult query = executeQuery("SELECT * FROM Users WHERE id = ?", id)) {
             var rs = query.Set;
             if (rs.next()) {
-                return new Users(
-                        rs.getString("id"),
-                        rs.getString("passwordHash"),
-                        LocalDateTime.parse(rs.getString("createdAt")),
-                        rs.getString("updatedAt") != null
-                                ? LocalDateTime.parse(rs.getString("updatedAt"))
-                                : null,
-                        rs.getString("lastLoginAt") != null
-                                ? LocalDateTime.parse(rs.getString("lastLoginAt"))
-                                : null,
-                        rs.getString("deletedAt") != null
-                                ? LocalDateTime.parse(rs.getString("deletedAt"))
-                                : null,
-                        rs.getString("status"),
-                        rs.getString("userName"),
-                        rs.getString("role"),
-                        null,
-                        null
-                );
+                var user = new Users();
+                user.id = rs.getString("id");
+                user.passwordHash = rs.getString("passwordHash");
+                user.createdAt = LocalDateTime.parse(rs.getString("createdAt"));
+                user.updatedAt = rs.getString("updatedAt") != null
+                        ? LocalDateTime.parse(rs.getString("updatedAt"))
+                        : null;
+                user.lastLoginAt = rs.getString("lastLoginAt") != null
+                        ? LocalDateTime.parse(rs.getString("lastLoginAt"))
+                        : null;
+                user.deletedAt = rs.getString("deletedAt") != null
+                        ? LocalDateTime.parse(rs.getString("deletedAt"))
+                        : null;
+                user.status = rs.getString("status");
+                user.userName = rs.getString("userName");
+                user.role = rs.getString("role");
+
+                return user;
             }
             return null;
         }

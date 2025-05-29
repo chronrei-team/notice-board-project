@@ -25,16 +25,4 @@ public class PostFiles {
 
     public Posts post;
 
-    // 모든 필드를 받는 생성자
-    public PostFiles(Integer id, Integer postId, String name, String url, String fileType, LocalDateTime uploadedAt,
-                     Posts post) {
-        this.id = id;
-        this.postId = postId;
-        this.name = name;
-        this.url = url;
-        this.fileType = fileType;
-        this.uploadedAt = uploadedAt;
-        this.post = post;
-    }
-
 }
