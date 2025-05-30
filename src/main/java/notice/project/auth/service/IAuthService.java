@@ -9,6 +9,6 @@ import notice.project.exceptions.UserNotFoundException;
 import java.sql.SQLException;
 
 public interface IAuthService {
-    Users verifyLogin(String id, String password) throws SQLException, UserNotFoundException, InvalidPasswordException;
+    Users verifyLogin(String userName, String password) throws SQLException, UserNotFoundException, InvalidPasswordException;
     void register(String userName, String password) throws SQLException, AlreadyRegistedException, InvalidUserNameException;
 }
