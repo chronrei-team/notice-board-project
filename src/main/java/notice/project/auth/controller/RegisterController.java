@@ -62,8 +62,9 @@ public class RegisterController extends HttpServlet {
         } catch (AlreadyRegistedException e) {
             registerDO = new RegisterResponse("이미 사용중인 닉네임 입니다.", null,
                     userName, password);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            registerDO = new RegisterResponse("알 수 없는 오류가 발생했습니다.", null,
+                    userName, password);
         }
 
         request.setAttribute("RegisterResponse", registerDO);
