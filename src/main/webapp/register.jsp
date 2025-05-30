@@ -92,14 +92,14 @@
         if (registerDO != null) {
           if (registerDO.getFailMessage() != null) {
       %>
-            <p class="text-red-500"><%=registerDO.getFailMessage()%></p>
+            <p class="mb-4 p-3 rounded-md bg-red-100 text-red-700"><%=registerDO.getFailMessage()%></p>
       <%
           }
       %>
       <%
           if (registerDO.getSuccessMessage() != null) {
       %>
-            <p class="text-green-500"><%=registerDO.getSuccessMessage()%></p>
+            <p class="mb-4 p-3 rounded-md bg-green-100 text-green-700"><%=registerDO.getSuccessMessage()%></p>
       <%
           }
         }

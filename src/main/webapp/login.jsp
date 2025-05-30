@@ -80,7 +80,7 @@
             <%
                 if (loginDO != null) {
             %>
-                    <p class="text-red-500"><%=loginDO.getMessage()%></p>
+                    <p class="mb-4 p-3 rounded-md bg-red-100 text-red-700"><%=loginDO.getMessage()%></p>
             <%
                 }
             %>
