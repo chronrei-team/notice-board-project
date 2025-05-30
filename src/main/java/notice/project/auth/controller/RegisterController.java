@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 @WebServlet("/auth/register")
 public class RegisterController extends HttpServlet {
     private IAuthService authService;
-    private static final String REGEX_HAS_WHITESPACE_OR_SPECIAL_CHAR = ".*\\s.*|.*[^a-zA-Z0-9가-힣ㄱ-ㅎㅏ-ㅣ\\s].*";
 
     @Override
     public void init() throws ServletException {
@@ -42,9 +41,6 @@ public class RegisterController extends HttpServlet {
         RegisterResponse registerDO = null;
 
         try {
-            if (userName == null || hasWhitespaceOrSpecialChar(userName)) {
-                throw new InvalidUserNameException();
-            }
             if (password == null) {
                 throw new PasswordNotFoundException();
             }
@@ -71,12 +67,4 @@ public class RegisterController extends HttpServlet {
         request.getRequestDispatcher("/register.jsp").forward(request, response);
     }
 
-    private static boolean hasWhitespaceOrSpecialChar(String input) {
-        if (input == null) {
-            return false;
-        }
-        Pattern pattern = Pattern.compile(REGEX_HAS_WHITESPACE_OR_SPECIAL_CHAR);
-        Matcher matcher = pattern.matcher(input);
-        return matcher.matches();
-    }
 }
