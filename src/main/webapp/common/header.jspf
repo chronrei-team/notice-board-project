@@ -1,0 +1,282 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="notice.project.entity.Users" %><%--
+  Created by IntelliJ IDEA.
+  User: soo_mini
+  Date: 25. 5. 29.
+  Time: 오후 8:36
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%
+    Users token = (Users)request.getAttribute("token");
+%>
+<header class="bg-white shadow-sm">
+    <div class="container mx-auto px-4 py-4">
+        <div class="flex items-center justify-between">
+            <!-- 로고 -->
+            <div class="flex items-center">
+                <a href="#" class="flex items-center">
+                    <span class="text-2xl font-['Pacifico'] text-primary">logo</span>
+                </a>
+                <!-- 네비게이션 메뉴 -->
+                <nav class="hidden md:flex ml-10">
+                    <ul class="flex space-x-8">
+                        <li>
+                            <a
+                                    href="<%=request.getContextPath()%>/"
+                                    class="text-gray-700 hover:text-primary font-medium"
+                            >홈</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                    href="#"
+                                    class="text-gray-700 hover:text-primary font-medium"
+                            >게시판</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                    href="#"
+                                    class="text-gray-700 hover:text-primary font-medium"
+                            >갤러리</a
+                            >
+                        </li>
+                        <li>
+                            <a
+                                    href="#"
+                                    class="text-gray-700 hover:text-primary font-medium"
+                            >공지사항</a
+                            >
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <!-- 검색창 -->
+            <div
+                    class="hidden md:flex items-center justify-center flex-1 max-w-md mx-4"
+            >
+                <form class="relative w-full flex items-center">
+                    <div class="relative flex-1">
+                        <div
+                                class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400"
+                        >
+                            <i class="ri-search-line"></i>
+                        </div>
+                        <input
+                                type="text"
+                                placeholder="검색어를 입력하세요"
+                                class="custom-search w-full py-2 pl-10 pr-24 border border-gray-300 rounded-button text-sm focus:border-primary transition-colors"
+                        />
+                        <div
+                                class="absolute right-2 top-1/2 transform -translate-y-1/2"
+                        >
+                            <button
+                                    type="button"
+                                    id="searchTypeButton"
+                                    class="flex items-center justify-center px-3 py-1 text-sm text-gray-600 hover:text-primary"
+                            >
+                                <span id="selectedSearchType">제목</span>
+                                <i class="ri-arrow-down-s-line ml-1"></i>
+                            </button>
+                            <div
+                                    id="searchTypeDropdown"
+                                    class="hidden absolute right-0 top-full mt-1 w-24 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+                            >
+                                <div class="py-1">
+                                    <button
+                                            type="button"
+                                            class="search-type-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary"
+                                            data-value="title"
+                                    >
+                                        제목
+                                    </button>
+                                    <button
+                                            type="button"
+                                            class="search-type-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary"
+                                            data-value="content"
+                                    >
+                                        내용
+                                    </button>
+                                    <button
+                                            type="button"
+                                            class="search-type-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary"
+                                            data-value="author"
+                                    >
+                                        작성자
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button
+                            type="submit"
+                            class="ml-2 bg-primary bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-primary/90 whitespace-nowrap"
+                    >
+                        검색
+                    </button>
+                </form>
+            </div>
+            <!-- 로그인/회원가입 버튼 -->
+            <c:if test="${token == null}">
+                <div class="flex items-center space-x-3">
+                    <a
+                            href="<%=request.getContextPath()%>/auth/login"
+                            class="text-gray-700 hover:text-primary whitespace-nowrap text-sm"
+                    >
+                        로그인
+                    </a>
+                    <a
+                            href="<%=request.getContextPath()%>/auth/register"
+                            class="bg-primary text-white bg-blue-700 px-4 py-2 rounded-lg text-sm hover:bg-primary/90 whitespace-nowrap inline-block"
+                    >회원가입</a
+                    >
+                    <!-- 모바일 메뉴 버튼 -->
+                    <button
+                            class="md:hidden w-10 h-10 flex items-center justify-center text-gray-700"
+                    >
+                        <i class="ri-menu-line ri-lg"></i>
+                    </button>
+                </div>
+            </c:if>
+            <c:if test="${token != null}">
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button
+                                class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                                id="profile-menu-button"
+                        >
+                            <i class="ri-user-line text-gray-600"></i>
+                        </button>
+                        <div
+                                id="profile-dropdown"
+                                class="hidden absolute right-0 mt-2 w-48 bg-white rounded shadow-lg py-2 z-20"
+                        >
+                            <div class="px-4 py-3 border-b border-gray-100">
+                                <p class="text-sm font-medium text-gray-900"><%=token.userName%></p>
+                            </div>
+                            <a
+                                    href="#"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
+                            >
+                                <div class="w-4 h-4 flex items-center justify-center mr-2">
+                                    <i class="ri-user-settings-line"></i>
+                                </div>
+                                프로필 설정
+                            </a>
+                            <a
+                                    href="#"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
+                            >
+                                <div class="w-4 h-4 flex items-center justify-center mr-2">
+                                    <i class="ri-file-list-line"></i>
+                                </div>
+                                내 게시글
+                            </a>
+                            <a
+                                    href="#"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
+                            >
+                                <div class="w-4 h-4 flex items-center justify-center mr-2">
+                                    <i class="ri-chat-1-line"></i>
+                                </div>
+                                내 댓글
+                            </a>
+                            <div class="border-t border-gray-100">
+                                <a
+                                        href="#"
+                                        class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-50 flex items-center"
+                                >
+                                    <div class="w-4 h-4 flex items-center justify-center mr-2">
+                                        <i class="ri-logout-box-line"></i>
+                                    </div>
+                                    로그아웃
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </c:if>
+        </div>
+        <!-- 모바일 검색창 -->
+        <div class="mt-4 md:hidden">
+            <div class="relative">
+                <input
+                        type="text"
+                        placeholder="게시글 검색"
+                        class="custom-search w-full py-2 pl-10 pr-4 border border-gray-300 rounded-button text-sm focus:border-primary transition-colors"
+                />
+                <div
+                        class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400"
+                >
+                    <i class="ri-search-line"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const searchTypeButton = document.getElementById("searchTypeButton");
+        const searchTypeDropdown = document.getElementById("searchTypeDropdown");
+        const selectedSearchType = document.getElementById("selectedSearchType");
+        const searchTypeOptions = document.querySelectorAll(".search-type-option");
+        searchTypeButton.addEventListener("click", function (e) {
+            e.stopPropagation();
+            searchTypeDropdown.classList.toggle("hidden");
+        });
+        searchTypeOptions.forEach((option) => {
+            option.addEventListener("click", function () {
+                selectedSearchType.textContent = this.textContent;
+                searchTypeDropdown.classList.add("hidden");
+            });
+        });
+        document.addEventListener("click", function (e) {
+            if (!searchTypeButton.contains(e.target)) {
+                searchTypeDropdown.classList.add("hidden");
+            }
+        });
+
+        const profileButton = document.getElementById("profile-menu-button");
+        const profileDropdown = document.getElementById("profile-dropdown");
+        let isDropdownOpen = false;
+        profileButton.addEventListener("click", (e) => {
+            e.stopPropagation();
+            isDropdownOpen = !isDropdownOpen;
+            profileDropdown.classList.toggle("hidden");
+        });
+        document.addEventListener("click", (e) => {
+            if (isDropdownOpen && !profileDropdown.contains(e.target)) {
+                profileDropdown.classList.add("hidden");
+                isDropdownOpen = false;
+            }
+        });
+
+        const menuButton = document.querySelector(".ri-menu-line").parentElement;
+        const mobileNav = document.querySelector("nav");
+        menuButton.addEventListener("click", function () {
+            mobileNav.classList.toggle("hidden");
+            mobileNav.classList.toggle("flex");
+            mobileNav.classList.toggle("flex-col");
+            mobileNav.classList.toggle("absolute");
+            mobileNav.classList.toggle("top-16");
+            mobileNav.classList.toggle("right-4");
+            mobileNav.classList.toggle("bg-white");
+            mobileNav.classList.toggle("shadow-lg");
+            mobileNav.classList.toggle("p-4");
+            mobileNav.classList.toggle("rounded");
+            mobileNav.classList.toggle("z-50");
+            if (mobileNav.classList.contains("absolute")) {
+                mobileNav.querySelector("ul").classList.remove("flex");
+                mobileNav.querySelector("ul").classList.add("flex-col");
+                mobileNav.querySelector("ul").classList.remove("space-x-8");
+                mobileNav.querySelector("ul").classList.add("space-y-4");
+            } else {
+                mobileNav.querySelector("ul").classList.add("flex");
+                mobileNav.querySelector("ul").classList.remove("flex-col");
+                mobileNav.querySelector("ul").classList.add("space-x-8");
+                mobileNav.querySelector("ul").classList.remove("space-y-4");
+            }
+        });
+    });
+</script>

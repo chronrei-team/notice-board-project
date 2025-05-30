@@ -1,4 +1,4 @@
-package notice.project.example.repository;
+package notice.project.auth.repository;
 
 import notice.project.core.BaseRepository;
 import notice.project.core.QueryResult;
@@ -9,9 +9,9 @@ import notice.project.entity.Users;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
-public class ExampleRepository extends BaseRepository {
-    public Users findBy(String id) throws SQLException {
-        try (QueryResult query = executeQuery("SELECT * FROM Users WHERE id = ?", id)) {
+public class UserRepository extends BaseRepository {
+    public Users findBy(String userName) throws SQLException {
+        try (QueryResult query = executeQuery("SELECT * FROM Users WHERE userName = ?", userName)) {
             var rs = query.Set;
             if (rs.next()) {
                 var user = new Users();
@@ -35,5 +35,36 @@ public class ExampleRepository extends BaseRepository {
             }
             return null;
         }
+    }
+
+    public void insert(Users user) throws SQLException {
+        executeCommand("insert into Users " +
+                "values(?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                user.id,
+                user.passwordHash,
+                user.createdAt,
+                null,
+                null,
+                null,
+                user.status.name(),
+                user.userName,
+                user.role.name());
+    }
+
+    public void update(Users user) throws SQLException {
+        executeCommand("update Users " +
+                "set id = ?, passwordHash = ?, createdAt = ?, updatedAt = ?, lastLoginAt = ?, deletedAt = ?, status = ?, " +
+                "userName = ?, role = ?" +
+                "where id = ?",
+                user.id,
+                user.passwordHash,
+                user.createdAt,
+                user.updatedAt,
+                user.lastLoginAt,
+                user.deletedAt,
+                user.status.name(),
+                user.userName,
+                user.role.name(),
+                user.id);
     }
 }
