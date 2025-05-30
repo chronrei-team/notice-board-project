@@ -1,9 +1,9 @@
-package notice.project.example.DTO;
+package notice.project.posts.DTO;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class ExampleBoardResponse {
+public class BoardResponse {
     private final Integer id;
     private final String userId;
     private final LocalDateTime createdAt;
@@ -11,9 +11,10 @@ public class ExampleBoardResponse {
     private final String content;
     private final Integer viewCount;
     private final Integer recommendCount;
+    private final LocalDateTime updatedAt;
     private final String userName;
 
-    public ExampleBoardResponse(Integer id, String userId, LocalDateTime createdAt, String title, String content, Integer viewCount, Integer recommendCount, String userName) {
+    public BoardResponse(Integer id, String userId, LocalDateTime createdAt, String title, String content, Integer viewCount, Integer recommendCount, LocalDateTime updatedAt, String userName) {
         this.id = id;
         this.userId = userId;
         this.createdAt = createdAt;
@@ -21,6 +22,7 @@ public class ExampleBoardResponse {
         this.content = content;
         this.viewCount = viewCount;
         this.recommendCount = recommendCount;
+        this.updatedAt = updatedAt;
         this.userName = userName;
     }
 
@@ -54,6 +56,10 @@ public class ExampleBoardResponse {
 
     public String getUserName() {
         return userName;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
     public String getCreatedAtFormatted() {

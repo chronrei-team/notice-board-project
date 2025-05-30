@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.List, notice.project.example.DTO.ExampleBoardResponse" %>
+<%@ page import="java.util.List, notice.project.posts.DTO.BoardResponse" %>
 <%
-    List<ExampleBoardResponse> posts = (List<ExampleBoardResponse>) request.getAttribute("posts");
+    List<BoardResponse> posts = (List<BoardResponse>) request.getAttribute("posts");
 %>
 <!DOCTYPE html>
 <html>
@@ -439,7 +439,7 @@
                 <!-- 일반 게시글 -->
                 <%
                     if (posts != null) {
-                        for (ExampleBoardResponse post : posts) {
+                        for (BoardResponse post : posts) {
 
                 %>
                 <tr class="border-t border-gray-200 hover:bg-gray-50/50">
