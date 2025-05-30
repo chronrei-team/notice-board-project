@@ -7,5 +7,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface IBoardService {
-    List<BoardResponse> getPostList() throws SQLException, UserNotFoundException;
+    List<BoardResponse> getPostList(int page, int pageSize) throws SQLException, UserNotFoundException;
+    int getTotalCount() throws SQLException, UserNotFoundException;
 }

@@ -18,8 +18,14 @@ public class BoardService implements IBoardService {
 
     @Override
     @Transactional
-    public List<BoardResponse> getPostList() throws SQLException, UserNotFoundException {
+    public List<BoardResponse> getPostList(int page, int pageSize) throws SQLException, UserNotFoundException {
 
-        return repo.findAll();
+        return repo.findAll(page, pageSize);
+    }
+
+    @Override
+    @Transactional
+    public int getTotalCount() throws SQLException {
+        return repo.countAll();
     }
 }

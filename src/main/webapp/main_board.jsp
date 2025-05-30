@@ -257,139 +257,61 @@
                 </div>
             </div>
             <!-- 일반 게시글 -->
+            <%
+                if (posts != null) {
+                    for (BoardResponse post : posts) {
+
+            %>
             <div class="border border-gray-200 p-4 rounded bg-white">
                 <div class="mb-2">
                     <a href="#" class="font-medium hover:text-primary"
-                    >오늘 날씨가 정말 좋네요! 다들 주말 계획은 어떻게 되시나요?</a
+                    ><%= post.getTitle() %></a
                     >
                 </div>
                 <div class="flex justify-between text-sm">
-                    <div class="text-gray-600">김민준</div>
+                    <div class="text-gray-600"><%= post.getUserName() %></div>
                     <div class="flex items-center space-x-3 text-gray-500">
-                        <span>2025-05-13</span>
+                        <span><%= post.getCreatedAtFormatted() %></span>
                         <div class="flex items-center">
                             <i class="ri-eye-line mr-1 text-gray-400"></i>
-                            <span>42</span>
+                            <span><%= post.getViewCount() %></span>
                         </div>
                         <div class="flex items-center">
                             <i class="ri-chat-1-line mr-1 text-gray-400"></i>
-                            <span>8</span>
+                            <span><%= post.getRecommendCount() %></span>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="border border-gray-200 p-4 rounded bg-white">
-                <div class="mb-2">
-                    <a href="#" class="font-medium hover:text-primary"
-                    >맛집 추천 부탁드립니다! 강남역 근처 회식하기 좋은 곳
-                        있을까요?</a
-                    >
-                    <i class="ri-attachment-2 text-gray-400 text-sm ml-1"></i>
-                </div>
-                <div class="flex justify-between text-sm">
-                    <div class="text-gray-600">박서연</div>
-                    <div class="flex items-center space-x-3 text-gray-500">
-                        <span>2025-05-13</span>
-                        <div class="flex items-center">
-                            <i class="ri-eye-line mr-1 text-gray-400"></i>
-                            <span>87</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="ri-chat-1-line mr-1 text-gray-400"></i>
-                            <span>15</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="border border-gray-200 p-4 rounded bg-white">
-                <div class="mb-2">
-                    <a href="#" class="font-medium hover:text-primary"
-                    >신입 개발자 취업 준비 중인데 포트폴리오 조언 부탁드립니다.</a
-                    >
-                    <span class="ml-2 text-red-500 text-xs">NEW</span>
-                </div>
-                <div class="flex justify-between text-sm">
-                    <div class="text-gray-600">이지훈</div>
-                    <div class="flex items-center space-x-3 text-gray-500">
-                        <span>2025-05-12</span>
-                        <div class="flex items-center">
-                            <i class="ri-eye-line mr-1 text-gray-400"></i>
-                            <span>36</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="ri-chat-1-line mr-1 text-gray-400"></i>
-                            <span>4</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="border border-gray-200 p-4 rounded bg-white">
-                <div class="mb-2">
-                    <a href="#" class="font-medium hover:text-primary"
-                    >여름 휴가 계획 공유해요! 제주도 vs 강원도 어디가 좋을까요?</a
-                    >
-                    <i class="ri-image-line text-gray-400 text-sm ml-1"></i>
-                </div>
-                <div class="flex justify-between text-sm">
-                    <div class="text-gray-600">최하은</div>
-                    <div class="flex items-center space-x-3 text-gray-500">
-                        <span>2025-05-11</span>
-                        <div class="flex items-center">
-                            <i class="ri-eye-line mr-1 text-gray-400"></i>
-                            <span>112</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="ri-chat-1-line mr-1 text-gray-400"></i>
-                            <span>21</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <%
+                    }
+                }
+            %>
         </div>
         <!-- 페이지네이션 -->
         <div class="flex justify-center mt-8">
             <nav class="flex items-center space-x-1">
                 <a
-                        href="#"
+                        href="?page=1"
                         class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-500"
                 >
                     <i class="ri-arrow-left-s-line"></i>
                 </a>
+                <%
+                    int totalPages = (int) request.getAttribute("totalPages");
+                    int currentPage = (int) request.getAttribute("currentPage");
+                    for (int i = 1; i <= totalPages; i++) {
+                        boolean isActive = (i == currentPage);
+                %>
                 <a
-                        href="#"
-                        class="pagination-btn active w-9 h-9 flex items-center justify-center rounded-full"
-                >1</a
+                        href="?page=<%= i %>"
+                        class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full <%= isActive ? "active" : "text-gray-500" %>"
+                ><%= i %></a
                 >
+                <% } %>
+
                 <a
-                        href="#"
-                        class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-700"
-                >2</a
-                >
-                <a
-                        href="#"
-                        class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-700"
-                >3</a
-                >
-                <a
-                        href="#"
-                        class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-700"
-                >4</a
-                >
-                <a
-                        href="#"
-                        class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-700"
-                >5</a
-                >
-                <span class="w-9 h-9 flex items-center justify-center text-gray-500"
-                >...</span
-                >
-                <a
-                        href="#"
-                        class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-700"
-                >10</a
-                >
-                <a
-                        href="#"
+                        href="?page=<%= totalPages %>"
                         class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-500"
                 >
                     <i class="ri-arrow-right-s-line"></i>
