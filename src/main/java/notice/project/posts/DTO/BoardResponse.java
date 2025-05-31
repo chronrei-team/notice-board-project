@@ -13,8 +13,10 @@ public class BoardResponse {
     private final Integer recommendCount;
     private final LocalDateTime updatedAt;
     private final String userName;
+    private final Integer postId;
+    private final Integer commentCount;
 
-    public BoardResponse(Integer id, String userId, LocalDateTime createdAt, String title, String content, Integer viewCount, Integer recommendCount, LocalDateTime updatedAt, String userName) {
+    public BoardResponse(Integer id, String userId, LocalDateTime createdAt, String title, String content, Integer viewCount, Integer recommendCount, LocalDateTime updatedAt, String userName, Integer postId, Integer commentCount) {
         this.id = id;
         this.userId = userId;
         this.createdAt = createdAt;
@@ -24,6 +26,8 @@ public class BoardResponse {
         this.recommendCount = recommendCount;
         this.updatedAt = updatedAt;
         this.userName = userName;
+        this.postId = postId;
+        this.commentCount = commentCount;
     }
 
     public Integer getId() {
@@ -57,6 +61,10 @@ public class BoardResponse {
     public String getUserName() {
         return userName;
     }
+
+    public Integer getPostId() { return postId; }
+
+    public Integer getCommentCount() { return commentCount; }
 
     public LocalDateTime getUpdatedAt() {
         return updatedAt;

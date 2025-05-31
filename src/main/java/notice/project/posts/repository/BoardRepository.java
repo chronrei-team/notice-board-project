@@ -17,7 +17,8 @@ public class BoardRepository extends BaseRepository {
 
     public List<BoardResponse> findAllRaw(int offset, int limit) throws SQLException {
         List<BoardResponse> list = new ArrayList<>();
-        String sql = "select p.*, u.userName from Posts p, users u where p.userId=u.id order by p.createdAt desc limit ? offset ?;";
+        String sql = "select p.*, u.userName, (SELECT COUNT(*) FROM comments c WHERE c.postId = p.id) AS comment_count, p.id as postId" +
+                " from Posts p, users u where p.userId=u.id order by p.createdAt desc limit ? offset ?";
         try (QueryResult query = executeQuery(sql, limit, offset)) {
             var rs = query.Set;
             while (rs.next()) {
@@ -31,7 +32,7 @@ public class BoardRepository extends BaseRepository {
                 list.add(new BoardResponse(
                         rs.getInt("id"), rs.getString("userId"), createdAt, rs.getString("title"),
                         rs.getString("content"), rs.getInt("viewCount"), rs.getInt("recommendCount"),
-                        updatedAt, rs.getString("userName")
+                        updatedAt, rs.getString("userName"), rs.getInt("postId"), rs.getInt("comment_count")
                 ));
             }
         }

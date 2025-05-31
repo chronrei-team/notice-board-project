@@ -1,11 +1,12 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.List, notice.project.posts.DTO.BoardResponse" %>
+<%@ page import="java.util.List, notice.project.posts.DTO.BoardResponse, notice.project.posts.DTO.PageResponse" %>
 <%
-    List<BoardResponse> posts = (List<BoardResponse>) request.getAttribute("posts");
+    PageResponse<BoardResponse> pageResult = (PageResponse<BoardResponse>) request.getAttribute("pageResult");
+    List<BoardResponse> posts = pageResult != null ? pageResult.getData() : null;
     String errorMessage = (String) request.getAttribute("errorMessage");
-    int currentPage = (request.getAttribute("currentPage") != null) ? (int)request.getAttribute("currentPage") : 1;
-    int startPage = (request.getAttribute("startPage") != null) ? (int) request.getAttribute("startPage") : 1;
-    int endPage = (request.getAttribute("endPage") != null) ? (int) request.getAttribute("endPage") : 1;
+    int currentPage = pageResult.getCurrentPage();
+    int startPage = pageResult.getStartPage();
+    int endPage = pageResult.getEndPage();
     int maxButtons = (request.getAttribute("totalButtons") != null) ? (int) request.getAttribute("totalButtons") : 5;
 %>
 <!DOCTYPE html>
@@ -218,7 +219,7 @@
                 </tr>
                 <!-- 일반 게시글 -->
                 <%
-                    if (posts != null) {
+                    if (posts != null && !posts.isEmpty()) {
                         for (BoardResponse post : posts) {
 
                 %>
@@ -228,7 +229,7 @@
                         <a href="#" class="text-sm hover:text-primary"
                         ><%= post.getTitle() %></a
                         >
-                        <span class="ml-1 text-gray-500 text-xs">[8]</span>
+                        <span class="ml-1 text-gray-500 text-xs">[<%= post.getCommentCount() %>]</span>
                     </td>
                     <td class="py-3 px-4 text-sm text-gray-600"><%= post.getUserName() %></td>
                     <td class="py-3 px-4 text-sm text-gray-500"><%= post.getCreatedAtFormatted() %></td>
@@ -324,15 +325,19 @@
                     <i class="ri-arrow-left-s-line"></i>
                 </a>
                 <%
-                    for (int i = startPage; i <= endPage; i++) {
-                        boolean isActive = (i == currentPage);
+                    if (pageResult != null) {
+                        for (int i = startPage; i <= endPage; i++) {
+                            boolean isActive = (i == currentPage);
                 %>
                 <a
                         href="?page=<%= i %>"
                         class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full <%= isActive ? "active" : "text-gray-500" %>"
                 ><%= i %></a
                 >
-                <% } %>
+                <%
+                        }
+                    }
+                %>
 
                 <a
                         href="?page=<%= (currentPage < endPage) ? (currentPage + 1) : endPage %>"
