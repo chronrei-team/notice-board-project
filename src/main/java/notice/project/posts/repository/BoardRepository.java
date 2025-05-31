@@ -11,10 +11,14 @@ import java.util.List;
 
 public class BoardRepository extends BaseRepository {
     public List<BoardResponse> findAll(int page, int pageSize) throws SQLException {
-        List<BoardResponse> list = new ArrayList<>();
         int offset = (page - 1) * pageSize;
+        return findAllRaw(offset, pageSize);
+    }
+
+    public List<BoardResponse> findAllRaw(int offset, int limit) throws SQLException {
+        List<BoardResponse> list = new ArrayList<>();
         String sql = "select p.*, u.userName from Posts p, users u where p.userId=u.id order by p.createdAt desc limit ? offset ?;";
-        try (QueryResult query = executeQuery(sql, pageSize, offset)) {
+        try (QueryResult query = executeQuery(sql, limit, offset)) {
             var rs = query.Set;
             while (rs.next()) {
                 LocalDateTime createdAt = rs.getString("createdAt") != null
@@ -32,15 +36,5 @@ public class BoardRepository extends BaseRepository {
             }
         }
         return list;
-    }
-    public int countAll() throws SQLException {
-        String sql = "select count(*) as total from Posts";
-        try (var query = executeQuery(sql)) {
-            var rs = query.Set;
-            if (rs.next()) {
-                return rs.getInt("total");
-            }
-        }
-        return 0;
     }
 }

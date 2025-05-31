@@ -8,5 +8,6 @@ import java.util.List;
 
 public interface IBoardService {
     List<BoardResponse> getPostList(int page, int pageSize) throws SQLException, UserNotFoundException;
-    int getTotalCount() throws SQLException, UserNotFoundException;
+    List<BoardResponse> getPostListForPagination(int currentPage, int pageSize, int maxPagesToCheck) throws SQLException;
+    List<BoardResponse> getPostListExtra(int offset, int limit) throws SQLException, UserNotFoundException;
 }

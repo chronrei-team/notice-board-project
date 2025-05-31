@@ -2,6 +2,11 @@
 <%@ page import="java.util.List, notice.project.posts.DTO.BoardResponse" %>
 <%
     List<BoardResponse> posts = (List<BoardResponse>) request.getAttribute("posts");
+    String errorMessage = (String) request.getAttribute("errorMessage");
+    int currentPage = (request.getAttribute("currentPage") != null) ? (int)request.getAttribute("currentPage") : 1;
+    int startPage = (request.getAttribute("startPage") != null) ? (int) request.getAttribute("startPage") : 1;
+    int endPage = (request.getAttribute("endPage") != null) ? (int) request.getAttribute("endPage") : 1;
+    int maxButtons = (request.getAttribute("totalButtons") != null) ? (int) request.getAttribute("totalButtons") : 5;
 %>
 <!DOCTYPE html>
 <html>
@@ -152,6 +157,16 @@
         </div>
         <!-- 게시글 테이블 (데스크톱) -->
         <div class="overflow-x-auto mb-6">
+            <%
+                if (posts == null) {
+            %>
+                <div style="background-color:#fee2e2; color:#b91c1c; padding: 12px; margin-bottom: 16px; border-radius: 4px; font-weight:bold;">
+                    오류: <%= errorMessage != null ? errorMessage : "알 수 없는 오류가 발생했습니다." %>
+                </div>
+            <%
+                }
+                else {
+            %>
             <table class="board-table w-full min-w-full border-collapse">
                 <thead>
                 <tr class="bg-gray-50 text-left">
@@ -224,6 +239,7 @@
                     } %>
                 </tbody>
             </table>
+            <% } %>
         </div>
         <!-- 게시글 카드 (모바일) -->
         <div class="board-cards space-y-4 mb-6">
@@ -289,18 +305,26 @@
             %>
         </div>
         <!-- 페이지네이션 -->
+        <%
+            if (startPage < 1) {
+                startPage = 1;
+                endPage = startPage + maxButtons - 1;
+            }
+            if (endPage < startPage) {
+                endPage = startPage;
+            }
+        %>
         <div class="flex justify-center mt-8">
             <nav class="flex items-center space-x-1">
+
                 <a
-                        href="?page=1"
+                        href="?page=<%= (currentPage > 1) ? (currentPage - 1) : 1 %>"
                         class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-500"
                 >
                     <i class="ri-arrow-left-s-line"></i>
                 </a>
                 <%
-                    int totalPages = (int) request.getAttribute("totalPages");
-                    int currentPage = (int) request.getAttribute("currentPage");
-                    for (int i = 1; i <= totalPages; i++) {
+                    for (int i = startPage; i <= endPage; i++) {
                         boolean isActive = (i == currentPage);
                 %>
                 <a
@@ -311,7 +335,7 @@
                 <% } %>
 
                 <a
-                        href="?page=<%= totalPages %>"
+                        href="?page=<%= (currentPage < endPage) ? (currentPage + 1) : endPage %>"
                         class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-500"
                 >
                     <i class="ri-arrow-right-s-line"></i>

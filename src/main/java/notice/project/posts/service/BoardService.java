@@ -25,7 +25,15 @@ public class BoardService implements IBoardService {
 
     @Override
     @Transactional
-    public int getTotalCount() throws SQLException {
-        return repo.countAll();
+    public List<BoardResponse> getPostListForPagination(int currentPage, int pageSize, int maxPagesToCheck) throws SQLException {
+        int offset = (currentPage - 1) * pageSize;
+        int limit = pageSize * maxPagesToCheck;
+        return repo.findAllRaw(offset, limit);
+    }
+
+    @Override
+    @Transactional
+    public List<BoardResponse> getPostListExtra(int offset, int limit) throws SQLException, UserNotFoundException {
+        return repo.findAllRaw(offset, limit);
     }
 }
