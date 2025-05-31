@@ -1,6 +1,13 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.util.List, notice.project.posts.DTO.BoardResponse, notice.project.posts.DTO.PageResponse" %>
 <%
-
+    PageResponse<BoardResponse> pageResult = (PageResponse<BoardResponse>) request.getAttribute("pageResult");
+    List<BoardResponse> posts = pageResult != null ? pageResult.getData() : null;
+    String errorMessage = (String) request.getAttribute("errorMessage");
+    int currentPage = pageResult.getCurrentPage();
+    int startPage = pageResult.getStartPage();
+    int endPage = pageResult.getEndPage();
+    int maxButtons = (request.getAttribute("totalButtons") != null) ? (int) request.getAttribute("totalButtons") : 5;
 %>
 <!DOCTYPE html>
 <html>
@@ -151,6 +158,16 @@
         </div>
         <!-- 게시글 테이블 (데스크톱) -->
         <div class="overflow-x-auto mb-6">
+            <%
+                if (posts == null) {
+            %>
+                <div style="background-color:#fee2e2; color:#b91c1c; padding: 12px; margin-bottom: 16px; border-radius: 4px; font-weight:bold;">
+                    오류: <%= errorMessage != null ? errorMessage : "알 수 없는 오류가 발생했습니다." %>
+                </div>
+            <%
+                }
+                else {
+            %>
             <table class="board-table w-full min-w-full border-collapse">
                 <thead>
                 <tr class="bg-gray-50 text-left">
@@ -170,6 +187,11 @@
                             class="py-3 px-4 text-sm font-medium text-gray-500 w-24 text-center"
                     >
                         조회수
+                    </th>
+                    <th
+                            class="py-3 px-4 text-sm font-medium text-gray-500 w-24 text-center"
+                    >
+                        추천수
                     </th>
                 </tr>
                 </thead>
@@ -196,128 +218,29 @@
                     </td>
                 </tr>
                 <!-- 일반 게시글 -->
+                <%
+                    if (posts != null && !posts.isEmpty()) {
+                        for (BoardResponse post : posts) {
+
+                %>
                 <tr class="border-t border-gray-200 hover:bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">325</td>
+                    <td class="py-3 px-4 text-sm text-gray-500 text-center"><%= post.getId() %></td>
                     <td class="py-3 px-4">
                         <a href="#" class="text-sm hover:text-primary"
-                        >오늘 날씨가 정말 좋네요! 다들 주말 계획은 어떻게
-                            되시나요?</a
+                        ><%= post.getTitle() %></a
                         >
-                        <span class="ml-1 text-gray-500 text-xs">[8]</span>
+                        <span class="ml-1 text-gray-500 text-xs">[<%= post.getCommentCount() %>]</span>
                     </td>
-                    <td class="py-3 px-4 text-sm text-gray-600">김민준</td>
-                    <td class="py-3 px-4 text-sm text-gray-500">2025-05-13</td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">42</td>
+                    <td class="py-3 px-4 text-sm text-gray-600"><%= post.getUserName() %></td>
+                    <td class="py-3 px-4 text-sm text-gray-500"><%= post.getCreatedAtFormatted() %></td>
+                    <td class="py-3 px-4 text-sm text-gray-500 text-center"><%= post.getViewCount() %></td>
+                    <td class="py-3 px-4 text-sm text-gray-500 text-center"><%= post.getRecommendCount() %></td>
                 </tr>
-                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">324</td>
-                    <td class="py-3 px-4">
-                        <a href="#" class="text-sm hover:text-primary"
-                        >맛집 추천 부탁드립니다! 강남역 근처 회식하기 좋은 곳
-                            있을까요?</a
-                        >
-                        <span class="ml-1 text-gray-500 text-xs">[15]</span>
-                        <div class="inline-block ml-1">
-                            <i class="ri-attachment-2 text-gray-400 text-sm"></i>
-                        </div>
-                    </td>
-                    <td class="py-3 px-4 text-sm text-gray-600">박서연</td>
-                    <td class="py-3 px-4 text-sm text-gray-500">2025-05-13</td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">87</td>
-                </tr>
-                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">323</td>
-                    <td class="py-3 px-4">
-                        <a href="#" class="text-sm hover:text-primary"
-                        >신입 개발자 취업 준비 중인데 포트폴리오 조언
-                            부탁드립니다.</a
-                        >
-                        <span class="ml-2 text-red-500 text-xs">NEW</span>
-                        <span class="ml-1 text-gray-500 text-xs">[4]</span>
-                    </td>
-                    <td class="py-3 px-4 text-sm text-gray-600">이지훈</td>
-                    <td class="py-3 px-4 text-sm text-gray-500">2025-05-12</td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">36</td>
-                </tr>
-                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">322</td>
-                    <td class="py-3 px-4">
-                        <a href="#" class="text-sm hover:text-primary"
-                        >여름 휴가 계획 공유해요! 제주도 vs 강원도 어디가
-                            좋을까요?</a
-                        >
-                        <span class="ml-1 text-gray-500 text-xs">[21]</span>
-                        <div class="inline-block ml-1">
-                            <i class="ri-image-line text-gray-400 text-sm"></i>
-                        </div>
-                    </td>
-                    <td class="py-3 px-4 text-sm text-gray-600">최하은</td>
-                    <td class="py-3 px-4 text-sm text-gray-500">2025-05-11</td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">112</td>
-                </tr>
-                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">321</td>
-                    <td class="py-3 px-4">
-                        <a href="#" class="text-sm hover:text-primary"
-                        >요즘 인기있는 OTT 추천 좀 해주세요. 넷플릭스 다 봤어요.</a
-                        >
-                        <span class="ml-1 text-gray-500 text-xs">[12]</span>
-                    </td>
-                    <td class="py-3 px-4 text-sm text-gray-600">정도윤</td>
-                    <td class="py-3 px-4 text-sm text-gray-500">2025-05-10</td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">78</td>
-                </tr>
-                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">320</td>
-                    <td class="py-3 px-4">
-                        <a href="#" class="text-sm hover:text-primary"
-                        >재택근무 효율적으로 하는 팁 공유합니다!</a
-                        >
-                        <span class="ml-1 text-gray-500 text-xs">[9]</span>
-                    </td>
-                    <td class="py-3 px-4 text-sm text-gray-600">김소희</td>
-                    <td class="py-3 px-4 text-sm text-gray-500">2025-05-09</td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">64</td>
-                </tr>
-                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">319</td>
-                    <td class="py-3 px-4">
-                        <a href="#" class="text-sm hover:text-primary"
-                        >주식 초보인데 시작하기 좋은 종목 추천해주세요.</a
-                        >
-                        <span class="ml-1 text-gray-500 text-xs">[18]</span>
-                    </td>
-                    <td class="py-3 px-4 text-sm text-gray-600">박준혁</td>
-                    <td class="py-3 px-4 text-sm text-gray-500">2025-05-08</td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">95</td>
-                </tr>
-                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">318</td>
-                    <td class="py-3 px-4">
-                        <a href="#" class="text-sm hover:text-primary"
-                        >운동 시작하려고 하는데 헬스장 vs 홈트레이닝 어떤게
-                            좋을까요?</a
-                        >
-                        <span class="ml-1 text-gray-500 text-xs">[14]</span>
-                    </td>
-                    <td class="py-3 px-4 text-sm text-gray-600">이수진</td>
-                    <td class="py-3 px-4 text-sm text-gray-500">2025-05-07</td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">82</td>
-                </tr>
-                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">317</td>
-                    <td class="py-3 px-4">
-                        <a href="#" class="text-sm hover:text-primary"
-                        >이번 주말 개봉하는 영화 추천 부탁드려요!</a
-                        >
-                        <span class="ml-1 text-gray-500 text-xs">[7]</span>
-                    </td>
-                    <td class="py-3 px-4 text-sm text-gray-600">최민수</td>
-                    <td class="py-3 px-4 text-sm text-gray-500">2025-05-06</td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">53</td>
-                </tr>
+                <%      }
+                    } %>
                 </tbody>
             </table>
+            <% } %>
         </div>
         <!-- 게시글 카드 (모바일) -->
         <div class="board-cards space-y-4 mb-6">
@@ -351,139 +274,73 @@
                 </div>
             </div>
             <!-- 일반 게시글 -->
+            <%
+                if (posts != null) {
+                    for (BoardResponse post : posts) {
+
+            %>
             <div class="border border-gray-200 p-4 rounded bg-white">
                 <div class="mb-2">
                     <a href="#" class="font-medium hover:text-primary"
-                    >오늘 날씨가 정말 좋네요! 다들 주말 계획은 어떻게 되시나요?</a
+                    ><%= post.getTitle() %></a
                     >
                 </div>
                 <div class="flex justify-between text-sm">
-                    <div class="text-gray-600">김민준</div>
+                    <div class="text-gray-600"><%= post.getUserName() %></div>
                     <div class="flex items-center space-x-3 text-gray-500">
-                        <span>2025-05-13</span>
+                        <span><%= post.getCreatedAtFormatted() %></span>
                         <div class="flex items-center">
                             <i class="ri-eye-line mr-1 text-gray-400"></i>
-                            <span>42</span>
+                            <span><%= post.getViewCount() %></span>
                         </div>
                         <div class="flex items-center">
                             <i class="ri-chat-1-line mr-1 text-gray-400"></i>
-                            <span>8</span>
+                            <span><%= post.getRecommendCount() %></span>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="border border-gray-200 p-4 rounded bg-white">
-                <div class="mb-2">
-                    <a href="#" class="font-medium hover:text-primary"
-                    >맛집 추천 부탁드립니다! 강남역 근처 회식하기 좋은 곳
-                        있을까요?</a
-                    >
-                    <i class="ri-attachment-2 text-gray-400 text-sm ml-1"></i>
-                </div>
-                <div class="flex justify-between text-sm">
-                    <div class="text-gray-600">박서연</div>
-                    <div class="flex items-center space-x-3 text-gray-500">
-                        <span>2025-05-13</span>
-                        <div class="flex items-center">
-                            <i class="ri-eye-line mr-1 text-gray-400"></i>
-                            <span>87</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="ri-chat-1-line mr-1 text-gray-400"></i>
-                            <span>15</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="border border-gray-200 p-4 rounded bg-white">
-                <div class="mb-2">
-                    <a href="#" class="font-medium hover:text-primary"
-                    >신입 개발자 취업 준비 중인데 포트폴리오 조언 부탁드립니다.</a
-                    >
-                    <span class="ml-2 text-red-500 text-xs">NEW</span>
-                </div>
-                <div class="flex justify-between text-sm">
-                    <div class="text-gray-600">이지훈</div>
-                    <div class="flex items-center space-x-3 text-gray-500">
-                        <span>2025-05-12</span>
-                        <div class="flex items-center">
-                            <i class="ri-eye-line mr-1 text-gray-400"></i>
-                            <span>36</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="ri-chat-1-line mr-1 text-gray-400"></i>
-                            <span>4</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="border border-gray-200 p-4 rounded bg-white">
-                <div class="mb-2">
-                    <a href="#" class="font-medium hover:text-primary"
-                    >여름 휴가 계획 공유해요! 제주도 vs 강원도 어디가 좋을까요?</a
-                    >
-                    <i class="ri-image-line text-gray-400 text-sm ml-1"></i>
-                </div>
-                <div class="flex justify-between text-sm">
-                    <div class="text-gray-600">최하은</div>
-                    <div class="flex items-center space-x-3 text-gray-500">
-                        <span>2025-05-11</span>
-                        <div class="flex items-center">
-                            <i class="ri-eye-line mr-1 text-gray-400"></i>
-                            <span>112</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="ri-chat-1-line mr-1 text-gray-400"></i>
-                            <span>21</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <%
+                    }
+                }
+            %>
         </div>
         <!-- 페이지네이션 -->
+        <%
+            if (startPage < 1) {
+                startPage = 1;
+                endPage = startPage + maxButtons - 1;
+            }
+            if (endPage < startPage) {
+                endPage = startPage;
+            }
+        %>
         <div class="flex justify-center mt-8">
             <nav class="flex items-center space-x-1">
+
                 <a
-                        href="#"
+                        href="?page=<%= (currentPage > 1) ? (currentPage - 1) : 1 %>"
                         class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-500"
                 >
                     <i class="ri-arrow-left-s-line"></i>
                 </a>
+                <%
+                    if (pageResult != null) {
+                        for (int i = startPage; i <= endPage; i++) {
+                            boolean isActive = (i == currentPage);
+                %>
                 <a
-                        href="#"
-                        class="pagination-btn active w-9 h-9 flex items-center justify-center rounded-full"
-                >1</a
+                        href="?page=<%= i %>"
+                        class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full <%= isActive ? "active" : "text-gray-500" %>"
+                ><%= i %></a
                 >
+                <%
+                        }
+                    }
+                %>
+
                 <a
-                        href="#"
-                        class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-700"
-                >2</a
-                >
-                <a
-                        href="#"
-                        class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-700"
-                >3</a
-                >
-                <a
-                        href="#"
-                        class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-700"
-                >4</a
-                >
-                <a
-                        href="#"
-                        class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-700"
-                >5</a
-                >
-                <span class="w-9 h-9 flex items-center justify-center text-gray-500"
-                >...</span
-                >
-                <a
-                        href="#"
-                        class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-700"
-                >10</a
-                >
-                <a
-                        href="#"
+                        href="?page=<%= (currentPage < endPage) ? (currentPage + 1) : endPage %>"
                         class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-500"
                 >
                     <i class="ri-arrow-right-s-line"></i>
