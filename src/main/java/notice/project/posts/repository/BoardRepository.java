@@ -38,4 +38,57 @@ public class BoardRepository extends BaseRepository {
         }
         return list;
     }
+
+    public List<BoardResponse> searchByKeyword(String keyword, String type, int page, int pageSize) throws SQLException {
+        int offset = (page - 1) * pageSize;
+        List<BoardResponse> list = new ArrayList<>();
+
+        String baseSql = "select p.*, u.userName, (SELECT COUNT(*) FROM comments c WHERE c.postId = p.id) AS comment_count, p.id as postId " +
+                "from Posts p, users u where p.userId=u.id ";
+
+        String whereSql = "";
+        if (keyword != null && !keyword.isEmpty()) {
+            switch (type) {
+                case "title":
+                    whereSql = " and p.title like ? ";
+                    break;
+                case "content":
+                    whereSql = " and p.content like ? ";
+                    break;
+                case "author":
+                    whereSql = " and u.userName like ? ";
+                    break;
+                default:
+                    whereSql = " and p.title like ? ";
+                    break;
+            }
+        }
+
+        String orderLimitSql = " order by p.createdAt desc limit ? offset ?";
+
+        String sql = baseSql + whereSql + orderLimitSql;
+
+        try (QueryResult query = (keyword != null && !keyword.isEmpty())
+                ? executeQuery(sql, "%" + keyword + "%", pageSize, offset)
+                : executeQuery(sql, pageSize, offset)) {
+
+            var rs = query.Set;
+            while (rs.next()) {
+                LocalDateTime createdAt = rs.getString("createdAt") != null
+                        ? LocalDateTime.parse(rs.getString("createdAt"))
+                        : null;
+                LocalDateTime updatedAt = rs.getString("updatedAt") != null
+                        ? LocalDateTime.parse(rs.getString("updatedAt"))
+                        : null;
+
+                list.add(new BoardResponse(
+                        rs.getInt("id"), rs.getString("userId"), createdAt, rs.getString("title"),
+                        rs.getString("content"), rs.getInt("viewCount"), rs.getInt("recommendCount"),
+                        updatedAt, rs.getString("userName"), rs.getInt("postId"), rs.getInt("comment_count")
+                ));
+            }
+        }
+
+        return list;
+    }
 }

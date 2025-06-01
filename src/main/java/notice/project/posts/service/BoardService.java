@@ -83,4 +83,47 @@ public class BoardService implements IBoardService {
 
         return new PageResponse<>(currentPagePosts, currentPage, startPage, endPage, totalButtons);
     }
+
+    @Override
+    @Transactional
+    public List<BoardResponse> searchPosts(String keyword, String type, int page, int pageSize) throws SQLException {
+        return repo.searchByKeyword(keyword, type, page, pageSize);
+    }
+
+    @Override
+    @Transactional
+    public PageResponse<BoardResponse> searchPostsWithPagination(String keyword, String type, int currentPage, int pageSize, int totalButtons) throws SQLException {
+        List<BoardResponse> currentPagePosts = searchPosts(keyword, type, currentPage, pageSize);
+
+        int extraPageCount = totalButtons - 1;
+        int extraOffset = currentPage * pageSize;
+        int extraLimit = pageSize * extraPageCount;
+        List<BoardResponse> extraPosts = repo.searchByKeyword(keyword, type, extraOffset, extraLimit);
+
+        int half = totalButtons / 2;
+        int startPage = currentPage - half;
+        int endPage = currentPage + half;
+
+        if (startPage < 1) {
+            endPage += 1 - startPage;
+            startPage = 1;
+        }
+
+        int rightButtonsCount = 0;
+        for (int i = 0; i < extraPageCount; i++) {
+            int fromIndex = i * pageSize;
+            int toIndex = Math.min(fromIndex + pageSize, extraPosts.size());
+            if (toIndex - fromIndex == pageSize) {
+                rightButtonsCount++;
+            } else {
+                break;
+            }
+        }
+
+        endPage = Math.min(endPage, currentPage + rightButtonsCount);
+        startPage = Math.max(1, endPage - totalButtons + 1);
+
+        return new PageResponse<>(currentPagePosts, currentPage, startPage, endPage, totalButtons);
+    }
+
 }

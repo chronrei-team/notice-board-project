@@ -8,6 +8,8 @@
     int startPage = pageResult.getStartPage();
     int endPage = pageResult.getEndPage();
     int maxButtons = (request.getAttribute("totalButtons") != null) ? (int) request.getAttribute("totalButtons") : 5;
+    String keyword = request.getParameter("keyword");
+    String type = request.getParameter("type");
 %>
 <!DOCTYPE html>
 <html>

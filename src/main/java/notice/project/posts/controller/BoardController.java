@@ -31,14 +31,32 @@ public class BoardController extends HttpServlet {
                 if (page < 1) page = 1;
             }
 
+            String keyword = request.getParameter("keyword");
+            String type = request.getParameter("type");
+
             IBoardService service = ServiceFactory.createProxy(
                     IBoardService.class,
                     BoardService.class
             );
 
-            PageResponse<BoardResponse> pageResult = service.getPostListWithPagination(page, PAGE_SIZE, TOTAL_BUTTONS);
+            PageResponse<BoardResponse> pageResult;
+
+            if (keyword != null && !keyword.isBlank()) {
+                // 검색 기능 수행
+                if (type == null || type.isBlank()) {
+                    type = "title"; // 기본값 설정
+                }
+                pageResult = service.searchPostsWithPagination(keyword, type, page, PAGE_SIZE, TOTAL_BUTTONS);
+                request.setAttribute("keyword", keyword);
+                request.setAttribute("type", type);
+            } else {
+                // 일반 목록 조회
+                pageResult = service.getPostListWithPagination(page, PAGE_SIZE, TOTAL_BUTTONS);
+            }
+
 
             request.setAttribute("pageResult", pageResult);
+            request.setAttribute("currentPage", page);
 
 
         } catch (SQLException e) {
