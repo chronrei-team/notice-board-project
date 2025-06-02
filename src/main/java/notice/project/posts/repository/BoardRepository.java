@@ -91,4 +91,43 @@ public class BoardRepository extends BaseRepository {
 
         return list;
     }
+
+    public int countByKeyword(String keyword, String type) throws SQLException {
+        int count = 0;
+
+        String baseSql = "SELECT COUNT(*) FROM Posts p, users u WHERE p.userId = u.id ";
+        String whereSql = "";
+
+        if (keyword != null && !keyword.isEmpty()) {
+            switch (type) {
+                case "title":
+                    whereSql = " AND p.title LIKE ? ";
+                    break;
+                case "content":
+                    whereSql = " AND p.content LIKE ? ";
+                    break;
+                case "author":
+                    whereSql = " AND u.userName LIKE ? ";
+                    break;
+                default:
+                    whereSql = " AND p.title LIKE ? ";
+                    break;
+            }
+        }
+
+        String sql = baseSql + whereSql;
+
+        try (QueryResult query = (keyword != null && !keyword.isEmpty())
+                ? executeQuery(sql, "%" + keyword + "%")
+                : executeQuery(sql)) {
+
+            var rs = query.Set;
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+        }
+
+        return count;
+    }
+
 }

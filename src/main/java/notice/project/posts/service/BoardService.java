@@ -19,30 +19,14 @@ public class BoardService implements IBoardService {
 
     @Override
     @Transactional
-    public List<BoardResponse> getPostList(int page, int pageSize) throws SQLException, UserNotFoundException {
-
-        return repo.findAll(page, pageSize);
-    }
-
-    @Override
-    @Transactional
-    public List<BoardResponse> getPostListForPagination(int currentPage, int pageSize, int maxPagesToCheck) throws SQLException {
-        int offset = (currentPage - 1) * pageSize;
-        int limit = pageSize * maxPagesToCheck;
-        return repo.findAllRaw(offset, limit);
-    }
-
-    @Override
-    @Transactional
-    public List<BoardResponse> getPostListExtra(int offset, int limit) throws SQLException, UserNotFoundException {
-        return repo.findAllRaw(offset, limit);
-    }
-
-    @Override
-    @Transactional
     public PageResponse<BoardResponse> getPostListWithPagination(int currentPage, int pageSize, int totalButtons) throws SQLException, UserNotFoundException {
         // 1. 기본 게시글 목록 조회 (현재 페이지)
-        List<BoardResponse> currentPagePosts = getPostList(currentPage, pageSize);
+        List<BoardResponse> currentPagePosts = repo.findAll(currentPage, pageSize);
+
+        if (currentPagePosts.isEmpty() && currentPage != 1) {
+            throw new IllegalArgumentException("존재하지 않는 페이지입니다.");
+            // 또는: return null; 혹은 별도 오류 응답 반환
+        }
 
         // 2. 최대 오른쪽 페이지 수
         int extraPageCount = totalButtons - 1; // 총 버튼 개수 - 현재 페이지 버튼
@@ -50,7 +34,7 @@ public class BoardService implements IBoardService {
         // 3. 오른쪽 추가 게시글 조회 (현재 페이지 다음 글들)
         int extraOffset = currentPage * pageSize;
         int extraLimit = pageSize * extraPageCount;
-        List<BoardResponse> extraPosts = getPostListExtra(extraOffset, extraLimit);
+        List<BoardResponse> extraPosts = repo.findAllRaw(extraOffset, extraLimit);
 
         int half = totalButtons / 2;
 
@@ -86,20 +70,26 @@ public class BoardService implements IBoardService {
 
     @Override
     @Transactional
-    public List<BoardResponse> searchPosts(String keyword, String type, int page, int pageSize) throws SQLException {
-        return repo.searchByKeyword(keyword, type, page, pageSize);
-    }
-
-    @Override
-    @Transactional
     public PageResponse<BoardResponse> searchPostsWithPagination(String keyword, String type, int currentPage, int pageSize, int totalButtons) throws SQLException {
-        List<BoardResponse> currentPagePosts = searchPosts(keyword, type, currentPage, pageSize);
+        // 1. 총 게시글 수 조회
+        int totalCount = repo.countByKeyword(keyword, type);
 
-        int extraPageCount = totalButtons - 1;
-        int extraOffset = currentPage * pageSize;
-        int extraLimit = pageSize * extraPageCount;
-        List<BoardResponse> extraPosts = repo.searchByKeyword(keyword, type, extraOffset, extraLimit);
+        // 2. 총 페이지 수 계산
+        int totalPages = (int) Math.ceil((double) totalCount / pageSize);
+        if (totalPages == 0) totalPages = 1; // 게시글이 없을 경우에도 페이지 1은 유지
 
+        // 3. 현재 페이지 보정
+        if (currentPage > totalPages) {
+            currentPage = totalPages;
+        } else if (currentPage < 1) {
+            currentPage = 1;
+        }
+
+        // 4. 현재 페이지 게시글 조회
+        int currentOffset = (currentPage - 1) * pageSize;
+        List<BoardResponse> currentPagePosts = repo.searchByKeyword(keyword, type, currentOffset, pageSize);
+
+        // 5. 페이지네이션 범위 계산 (totalButtons 개수 내에서)
         int half = totalButtons / 2;
         int startPage = currentPage - half;
         int endPage = currentPage + half;
@@ -109,19 +99,11 @@ public class BoardService implements IBoardService {
             startPage = 1;
         }
 
-        int rightButtonsCount = 0;
-        for (int i = 0; i < extraPageCount; i++) {
-            int fromIndex = i * pageSize;
-            int toIndex = Math.min(fromIndex + pageSize, extraPosts.size());
-            if (toIndex - fromIndex == pageSize) {
-                rightButtonsCount++;
-            } else {
-                break;
-            }
+        if (endPage > totalPages) {
+            startPage -= endPage - totalPages;
+            endPage = totalPages;
+            if (startPage < 1) startPage = 1;
         }
-
-        endPage = Math.min(endPage, currentPage + rightButtonsCount);
-        startPage = Math.max(1, endPage - totalButtons + 1);
 
         return new PageResponse<>(currentPagePosts, currentPage, startPage, endPage, totalButtons);
     }

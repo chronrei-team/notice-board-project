@@ -57,7 +57,7 @@
                     class="hidden md:flex items-center justify-center flex-1 max-w-md mx-4"
             >
                 <form method="get" action="${pageContext.request.contextPath}/" class="relative w-full flex items-center">
-                    <input type="hidden" name="type" id="searchTypeInput" value="title" />
+                    <input type="hidden" name="type" id="searchTypeInput" value="${param.type != null ? param.type : 'title'}" />
                     <div class="relative flex-1">
                         <div
                                 class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400"
@@ -67,6 +67,7 @@
                         <input
                                 type="text"
                                 name="keyword"
+                                value="${param.keyword}"
                                 placeholder="검색어를 입력하세요"
                                 class="custom-search w-full py-2 pl-10 pr-24 border border-gray-300 rounded-button text-sm focus:border-primary transition-colors"
                         />
@@ -224,6 +225,19 @@
         const selectedSearchType = document.getElementById("selectedSearchType");
         const searchTypeOptions = document.querySelectorAll(".search-type-option");
         const searchTypeInput = document.getElementById("searchTypeInput");
+
+        const searchTypeMap = {
+            title: "제목",
+            content: "내용",
+            author: "작성자"
+        };
+        const currentType = searchTypeInput.value;
+        if (searchTypeMap.hasOwnProperty(currentType)) {
+            selectedSearchType.textContent = searchTypeMap[currentType];
+        } else {
+            selectedSearchType.textContent = "제목";
+            searchTypeInput.value = "title";
+        }
 
         searchTypeButton.addEventListener("click", function (e) {
             e.stopPropagation();

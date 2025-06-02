@@ -59,6 +59,11 @@ public class BoardController extends HttpServlet {
             request.setAttribute("currentPage", page);
 
 
+        } catch (IllegalArgumentException e) {
+            // 👉 잘못된 페이지 접근 시 알림 후 첫 페이지로 리디렉션
+            request.getSession().setAttribute("alertMessage", "존재하지 않는 페이지입니다.");
+            response.sendRedirect(request.getContextPath() + "/?page=1");
+            return;
         } catch (SQLException e) {
             request.setAttribute("errorMessage", "데이터베이스 오류가 발생했습니다.");
         }

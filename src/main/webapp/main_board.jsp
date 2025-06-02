@@ -1,15 +1,17 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List, notice.project.posts.DTO.BoardResponse, notice.project.posts.DTO.PageResponse" %>
 <%
-    PageResponse<BoardResponse> pageResult = (PageResponse<BoardResponse>) request.getAttribute("pageResult");
+    PageResponse<BoardResponse> pageResult = (PageResponse<BoardResponse>)request.getAttribute("pageResult");
     List<BoardResponse> posts = pageResult != null ? pageResult.getData() : null;
     String errorMessage = (String) request.getAttribute("errorMessage");
-    int currentPage = pageResult.getCurrentPage();
-    int startPage = pageResult.getStartPage();
-    int endPage = pageResult.getEndPage();
+    int currentPage = pageResult != null ? pageResult.getCurrentPage() : 0;
+    int startPage = pageResult != null ? pageResult.getStartPage() : 0;
+    int endPage = pageResult != null ? pageResult.getEndPage() : 0;
     int maxButtons = (request.getAttribute("totalButtons") != null) ? (int) request.getAttribute("totalButtons") : 5;
     String keyword = request.getParameter("keyword");
     String type = request.getParameter("type");
+    String alertMessage = (String) session.getAttribute("alertMessage");
+    String queryString = "";
 %>
 <!DOCTYPE html>
 <html>
@@ -92,6 +94,12 @@
 <!-- 메인 컨텐츠 영역 -->
 <main class="flex-1 container mx-auto px-4 py-8">
     <div class="bg-white rounded shadow-sm p-6">
+        <% if (alertMessage != null) { %>
+        <script>
+            alert("<%= alertMessage.replace("\"", "\\\"") %>");
+        </script>
+        <% session.removeAttribute("alertMessage"); %>
+        <% } %>
         <!-- 게시판 제목 및 글쓰기 버튼 -->
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-gray-800">자유게시판</h1>
@@ -309,6 +317,13 @@
         </div>
         <!-- 페이지네이션 -->
         <%
+            if (type != null && !type.isEmpty()) {
+                queryString += "&type=" + java.net.URLEncoder.encode(type, "UTF-8");
+            }
+            if (keyword != null && !keyword.isEmpty()) {
+                queryString += "&keyword=" + java.net.URLEncoder.encode(keyword, "UTF-8");
+            }
+
             if (startPage < 1) {
                 startPage = 1;
                 endPage = startPage + maxButtons - 1;
@@ -321,7 +336,7 @@
             <nav class="flex items-center space-x-1">
 
                 <a
-                        href="?page=<%= (currentPage > 1) ? (currentPage - 1) : 1 %>"
+                        href="?page=<%= (currentPage > 1) ? (currentPage - 1) : 1 %><%= queryString %>"
                         class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-500"
                 >
                     <i class="ri-arrow-left-s-line"></i>
@@ -332,7 +347,7 @@
                             boolean isActive = (i == currentPage);
                 %>
                 <a
-                        href="?page=<%= i %>"
+                        href="?page=<%= i %><%= queryString %>"
                         class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full <%= isActive ? "active" : "text-gray-500" %>"
                 ><%= i %></a
                 >
@@ -342,7 +357,7 @@
                 %>
 
                 <a
-                        href="?page=<%= (currentPage < endPage) ? (currentPage + 1) : endPage %>"
+                        href="?page=<%= (currentPage < endPage) ? (currentPage + 1) : endPage %><%= queryString %>"
                         class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-500"
                 >
                     <i class="ri-arrow-right-s-line"></i>
