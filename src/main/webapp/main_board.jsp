@@ -315,37 +315,44 @@
                 endPage = startPage;
             }
         %>
-        <div class="flex justify-center mt-8">
-            <nav class="flex items-center space-x-1">
+        <div class="flex items-center mt-8">
+            <div class="flex-1 flex justify-center">
 
-                <a
-                        href="?page=<%= (currentPage > 1) ? (currentPage - 1) : 1 %>"
-                        class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-500"
-                >
-                    <i class="ri-arrow-left-s-line"></i>
-                </a>
-                <%
-                    if (pageResult != null) {
-                        for (int i = startPage; i <= endPage; i++) {
-                            boolean isActive = (i == currentPage);
-                %>
-                <a
-                        href="?page=<%= i %>"
-                        class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full <%= isActive ? "active" : "text-gray-500" %>"
-                ><%= i %></a
-                >
-                <%
+                <nav class="flex items-center space-x-1">
+
+                    <a
+                            href="?page=<%= (currentPage > 1) ? (currentPage - 1) : 1 %>"
+                            class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-500"
+                    >
+                        <i class="ri-arrow-left-s-line"></i>
+                    </a>
+                    <%
+                        if (pageResult != null) {
+                            for (int i = startPage; i <= endPage; i++) {
+                                boolean isActive = (i == currentPage);
+                    %>
+                    <a
+                            href="?page=<%= i %>"
+                            class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full <%= isActive ? "active" : "text-gray-500" %>"
+                    ><%= i %></a
+                    >
+                    <%
+                            }
                         }
-                    }
-                %>
+                    %>
 
-                <a
-                        href="?page=<%= (currentPage < endPage) ? (currentPage + 1) : endPage %>"
-                        class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-500"
-                >
-                    <i class="ri-arrow-right-s-line"></i>
-                </a>
-            </nav>
+                    <a
+                            href="?page=<%= (currentPage < endPage) ? (currentPage + 1) : endPage %>"
+                            class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-500"
+                    >
+                        <i class="ri-arrow-right-s-line"></i>
+                    </a>
+                </nav>
+            </div>
+            <a href="<%=request.getContextPath()%>/board/write"
+                    class="bg-primary text-white bg-blue-700 px-4 py-2 rounded-lg text-sm hover:bg-primary/90 whitespace-nowrap inline-block">
+                글쓰기
+            </a>
         </div>
     </div>
 </main>
