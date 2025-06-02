@@ -1,35 +1,13 @@
 <%@ page import="notice.project.my.DO.UserResponse" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%
-//    UserResponse userDO = (UserResponse)request.getAttribute("UserResponse"); // You'll need to set this in your servlet
-//    String userName = null;
-//    String newuserName = null;
-//    String currentPassword = null;
-//    String newPassword = null;
-//    String failMessage = null;
-//    String successMessage = null;
-//
-//    if (userDO != null) {
-//        userName = userDO.getUserName();
-//        newuserName = userDO.getNewUserName();
-//        currentPassword = userDO.getCurrentPassword();
-//        newPassword = userDO.getNewPassword();
-//        failMessage = userDO.getFailMessage();
-//        successMessage = userDO.getSuccessMessage();
-//    }
-%>
 <!DOCTYPE html>
 <html>
 <head>
     <title>정보 수정</title>
     <%-- Tailwind CSS 및 기타 필요한 CSS/JS 링크 --%>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <%@ include file="common/tailwind.jspf" %>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-            href="https://fonts.googleapis.com/css2?family=Pacifico&family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
-            rel="stylesheet"
-    />
     <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"

@@ -1,0 +1,29 @@
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    primary: "#4F46E5",
+                    secondary: "#8B5CF6",
+                },
+                borderRadius: {
+                    none: "0px",
+                    sm: "4px",
+                    DEFAULT: "8px",
+                    md: "12px",
+                    lg: "16px",
+                    xl: "20px",
+                    "2xl": "24px",
+                    "3xl": "32px",
+                    full: "9999px",
+                    button: "8px",
+                },
+            },
+        },
+    };
+</script>
+<link
+        href="https://fonts.googleapis.com/css2?family=Pacifico&family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+        rel="stylesheet"
+/>
