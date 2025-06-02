@@ -31,6 +31,8 @@ public class Posts {
     /** 추천수 */
     public Integer recommendCount = 0; // 기본값 설정
 
+    public PostCategory category;
+
     public Users user;
     public ArrayList<Comments> comments;
     public ArrayList<PostFiles> postFiles;
