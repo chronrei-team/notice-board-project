@@ -17,9 +17,6 @@ public class PostFiles {
     /** 파일 저장 위치/URL */
     public String url;
 
-    /** 파일 타입 (e.g., "IMAGE", "VIDEO", "DOCUMENT") */
-    public String fileType;
-
     /** 업로드 시간 */
     public LocalDateTime uploadedAt;
 
