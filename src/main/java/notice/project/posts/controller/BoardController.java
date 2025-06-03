@@ -56,6 +56,7 @@ public class BoardController extends HttpServlet {
 
 
             request.setAttribute("pageResult", pageResult);
+            request.setAttribute("posts", pageResult.getData());
             request.setAttribute("currentPage", page);
 
 

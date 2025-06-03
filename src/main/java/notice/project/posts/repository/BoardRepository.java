@@ -2,6 +2,7 @@ package notice.project.posts.repository;
 
 import notice.project.core.BaseRepository;
 import notice.project.core.QueryResult;
+import notice.project.entity.PostCategory;
 import notice.project.posts.DTO.BoardResponse;
 
 import java.sql.SQLException;
@@ -28,11 +29,22 @@ public class BoardRepository extends BaseRepository {
                 LocalDateTime updatedAt = rs.getString("updatedAt") != null
                         ? LocalDateTime.parse(rs.getString("updatedAt"))
                         : null;
+                PostCategory category = null;
+                String categoryStr = rs.getString("category");
+                if (categoryStr != null) {
+                    try {
+                        category = PostCategory.valueOf(categoryStr); // 문자열을 enum으로 변환
+                    } catch (IllegalArgumentException e) {
+                        // 예외 처리 (알 수 없는 enum 값): 로그 출력 or 기본값 사용
+                        category = PostCategory.Normal; // 예: 기본값 지정
+                    }
+                }
+
 
                 list.add(new BoardResponse(
                         rs.getInt("id"), rs.getString("userId"), createdAt, rs.getString("title"),
                         rs.getString("content"), rs.getInt("viewCount"), rs.getInt("recommendCount"),
-                        updatedAt, rs.getString("userName"), rs.getInt("postId"), rs.getInt("comment_count")
+                        updatedAt, rs.getString("userName"), rs.getInt("postId"), rs.getInt("comment_count"), category
                 ));
             }
         }
@@ -80,11 +92,21 @@ public class BoardRepository extends BaseRepository {
                 LocalDateTime updatedAt = rs.getString("updatedAt") != null
                         ? LocalDateTime.parse(rs.getString("updatedAt"))
                         : null;
+                PostCategory category = null;
+                String categoryStr = rs.getString("category");
+                if (categoryStr != null) {
+                    try {
+                        category = PostCategory.valueOf(categoryStr); // 문자열을 enum으로 변환
+                    } catch (IllegalArgumentException e) {
+                        // 예외 처리 (알 수 없는 enum 값): 로그 출력 or 기본값 사용
+                        category = PostCategory.Normal; // 예: 기본값 지정
+                    }
+                }
 
                 list.add(new BoardResponse(
                         rs.getInt("id"), rs.getString("userId"), createdAt, rs.getString("title"),
                         rs.getString("content"), rs.getInt("viewCount"), rs.getInt("recommendCount"),
-                        updatedAt, rs.getString("userName"), rs.getInt("postId"), rs.getInt("comment_count")
+                        updatedAt, rs.getString("userName"), rs.getInt("postId"), rs.getInt("comment_count"), category
                 ));
             }
         }

@@ -166,89 +166,88 @@
         </div>
         <!-- 게시글 테이블 (데스크톱) -->
         <div class="overflow-x-auto mb-6">
-            <%
-                if (posts == null) {
-            %>
-                <div style="background-color:#fee2e2; color:#b91c1c; padding: 12px; margin-bottom: 16px; border-radius: 4px; font-weight:bold;">
-                    오류: <%= errorMessage != null ? errorMessage : "알 수 없는 오류가 발생했습니다." %>
-                </div>
-            <%
-                }
-                else {
-            %>
-            <table class="board-table w-full min-w-full border-collapse">
-                <thead>
-                <tr class="bg-gray-50 text-left">
-                    <th class="py-3 px-4 text-sm font-medium text-gray-500 w-16">
-                        번호
-                    </th>
-                    <th class="py-3 px-4 text-sm font-medium text-gray-500">
-                        제목
-                    </th>
-                    <th class="py-3 px-4 text-sm font-medium text-gray-500 w-32">
-                        작성자
-                    </th>
-                    <th class="py-3 px-4 text-sm font-medium text-gray-500 w-32">
-                        작성일
-                    </th>
-                    <th
-                            class="py-3 px-4 text-sm font-medium text-gray-500 w-24 text-center"
-                    >
-                        조회수
-                    </th>
-                    <th
-                            class="py-3 px-4 text-sm font-medium text-gray-500 w-24 text-center"
-                    >
-                        추천수
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <!-- 공지사항 -->
-                <tr class="bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-center">
-                  <span
-                          class="inline-block bg-primary text-white px-2 py-0.5 rounded text-xs"
-                  >공지</span
-                  >
-                    </td>
-                    <td class="py-3 px-4">
-                        <a href="#" class="text-sm font-medium hover:text-primary"
-                        >커뮤니티 이용 규칙 안내 (필독)</a
-                        >
-                        <span class="ml-2 text-red-500 text-xs">NEW</span>
-                        <span class="ml-1 text-gray-500 text-xs">[23]</span>
-                    </td>
-                    <td class="py-3 px-4 text-sm text-gray-600">관리자</td>
-                    <td class="py-3 px-4 text-sm text-gray-500">2025-05-12</td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">
-                        1,245
-                    </td>
-                </tr>
-                <!-- 일반 게시글 -->
-                <%
-                    if (posts != null && !posts.isEmpty()) {
-                        for (BoardResponse post : posts) {
-
-                %>
-                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center"><%= post.getId() %></td>
-                    <td class="py-3 px-4">
-                        <a href="#" class="text-sm hover:text-primary"
-                        ><%= post.getTitle() %></a
-                        >
-                        <span class="ml-1 text-gray-500 text-xs">[<%= post.getCommentCount() %>]</span>
-                    </td>
-                    <td class="py-3 px-4 text-sm text-gray-600"><%= post.getUserName() %></td>
-                    <td class="py-3 px-4 text-sm text-gray-500"><%= post.getCreatedAtFormatted() %></td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center"><%= post.getViewCount() %></td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center"><%= post.getRecommendCount() %></td>
-                </tr>
-                <%      }
-                    } %>
-                </tbody>
-            </table>
-            <% } %>
+            <c:choose>
+                <c:when test="${empty posts}">
+                    <div style="background-color:#fee2e2; color:#b91c1c; padding: 12px; margin-bottom: 16px; border-radius: 4px; font-weight:bold;">
+                        오류: <%= errorMessage != null ? errorMessage : "알 수 없는 오류가 발생했습니다." %>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <table class="board-table w-full min-w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 text-left">
+                                <th class="py-3 px-4 text-sm font-medium text-gray-500 w-16">
+                                    번호
+                                </th>
+                                <th class="py-3 px-4 text-sm font-medium text-gray-500 w-24">
+                                    카테고리
+                                </th>
+                                <th class="py-3 px-4 text-sm font-medium text-gray-500">
+                                    제목
+                                </th>
+                                <th class="py-3 px-4 text-sm font-medium text-gray-500 w-32">
+                                    작성자
+                                </th>
+                                <th class="py-3 px-4 text-sm font-medium text-gray-500 w-32">
+                                    작성일
+                                </th>
+                                <th class="py-3 px-4 text-sm font-medium text-gray-500 w-24 text-center">
+                                    조회수
+                                </th>
+                                <th class="py-3 px-4 text-sm font-medium text-gray-500 w-24 text-center">
+                                    추천수
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 공지사항 -->
+                            <tr class="bg-gray-50/50">
+                                <td class="py-3 px-4 text-sm text-center">
+                                    <span class="inline-block bg-primary text-white px-2 py-0.5 rounded text-xs">
+                                        공지
+                                    </span>
+                                </td>
+                                <td class="py-3 px-4 text-sm text-center">공지</td>
+                                <td class="py-3 px-4">
+                                    <a href="#" class="text-sm font-medium hover:text-primary"
+                                    >커뮤니티 이용 규칙 안내 (필독)</a
+                                    >
+                                    <span class="ml-2 text-red-500 text-xs">NEW</span>
+                                    <span class="ml-1 text-gray-500 text-xs">[23]</span>
+                                </td>
+                                <td class="py-3 px-4 text-sm text-gray-600">관리자</td>
+                                <td class="py-3 px-4 text-sm text-gray-500">2025-05-12</td>
+                                <td class="py-3 px-4 text-sm text-gray-500 text-center">
+                                    1,245
+                                </td>
+                            </tr>
+                            <!-- 일반 게시글 -->
+                            <c:forEach var="post" items="${posts}">
+                                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
+                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${post.id}
+                                    </td>
+                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${post.postCategory.displayName}</td>
+                                    <td class="py-3 px-4">
+                                        <a href="#" class="text-sm hover:text-primary"
+                                        >${post.title}
+                                        </a
+                                        >
+                                        <span class="ml-1 text-gray-500 text-xs">[${post.commentCount}]</span>
+                                    </td>
+                                    <td class="py-3 px-4 text-sm text-gray-600">${post.userName}
+                                    </td>
+                                    <td class="py-3 px-4 text-sm text-gray-500">${post.createdAtFormatted}
+                                    </td>
+                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${post.viewCount}
+                                    </td>
+                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${post.recommendCount}
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </c:otherwise>
+            </c:choose>
         </div>
         <!-- 게시글 카드 (모바일) -->
         <div class="board-cards space-y-4 mb-6">

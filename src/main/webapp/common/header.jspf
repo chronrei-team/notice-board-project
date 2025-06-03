@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page import="notice.project.entity.Users" %><%--
+<%@ page import="notice.project.entity.Users" %>
+<%@ page import="java.net.URLEncoder" %><%--
   Created by IntelliJ IDEA.
   User: soo_mini
   Date: 25. 5. 29.
@@ -9,6 +10,10 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%
     Users token = (Users)request.getAttribute("token");
+    if (token != null && token.userName != null) {
+        String encodedUserName = URLEncoder.encode(token.userName, "UTF-8");
+        request.setAttribute("encodedUserName", encodedUserName);
+    }
 %>
 <header class="bg-white shadow-sm">
     <div class="container mx-auto px-4 py-4">
@@ -168,7 +173,7 @@
                                 프로필 설정
                             </a>
                             <a
-                                    href="#"
+                                    href="${pageContext.request.contextPath}?type=author&keyword=${encodedUserName}"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
                             >
                                 <div class="w-4 h-4 flex items-center justify-center mr-2">
