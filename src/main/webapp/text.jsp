@@ -5,13 +5,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>요즘 인기있는 OTT 추천 좀 해주세요. 넷플릭스 다 봤어요.</title>
-    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <%@ include file="common/tailwind.jspf" %>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-            href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap"
-            rel="stylesheet"
-    />
     <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
@@ -19,8 +16,8 @@
     <style>
         :where([class^="ri-"])::before { content: "\f3c2"; }
         body {
-            font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
-            background-color: #f8f9fa;
+            font-family: 'Noto Sans KR', sans-serif;
+            color: #333;
         }
         .comment-input:focus {
             outline: none;
@@ -29,97 +26,11 @@
             display: none;
         }
     </style>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: { primary: "#4f46e5", secondary: "#6366f1" },
-                    borderRadius: {
-                        none: "0px",
-                        sm: "4px",
-                        DEFAULT: "8px",
-                        md: "12px",
-                        lg: "16px",
-                        xl: "20px",
-                        "2xl": "24px",
-                        "3xl": "32px",
-                        full: "9999px",
-                        button: "8px",
-                    },
-                },
-            },
-        };
-    </script>
 </head>
 <body class="bg-gray-50 min-h-screen">
 <!-- 상단 네비게이션 바 -->
-<header class="bg-white shadow-sm py-4 sticky top-0 z-10">
-    <div class="container mx-auto px-4 flex justify-between items-center">
-        <a
-                href="https://readdy.ai/home/557a148f-5a49-413d-8b99-ea592936ab91/fad9ebf2-a518-4655-bb76-bc5dac337c03"
-                data-readdy="true"
-                class="text-xl font-['Pacifico'] text-primary"
-        >logo</a
-        >
-        <div class="flex items-center space-x-4">
-            <div class="relative">
-                <button
-                        class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
-                        id="profile-menu-button"
-                >
-                    <i class="ri-user-line text-gray-600"></i>
-                </button>
-                <div
-                        id="profile-dropdown"
-                        class="hidden absolute right-0 mt-2 w-48 bg-white rounded shadow-lg py-2 z-20"
-                >
-                    <div class="px-4 py-3 border-b border-gray-100">
-                        <p class="text-sm font-medium text-gray-900">김태호</p>
-                        <p class="text-sm text-gray-500">example@email.com</p>
-                    </div>
-                    <a
-                            href="#"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
-                    >
-                        <div class="w-4 h-4 flex items-center justify-center mr-2">
-                            <i class="ri-user-settings-line"></i>
-                        </div>
-                        프로필 설정
-                    </a>
-                    <a
-                            href="#"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
-                    >
-                        <div class="w-4 h-4 flex items-center justify-center mr-2">
-                            <i class="ri-file-list-line"></i>
-                        </div>
-                        내 게시글
-                    </a>
-                    <a
-                            href="#"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
-                    >
-                        <div class="w-4 h-4 flex items-center justify-center mr-2">
-                            <i class="ri-chat-1-line"></i>
-                        </div>
-                        내 댓글
-                    </a>
-                    <div class="border-t border-gray-100">
-                        <a
-                                href="#"
-                                class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-50 flex items-center"
-                        >
-                            <div class="w-4 h-4 flex items-center justify-center mr-2">
-                                <i class="ri-logout-box-line"></i>
-                            </div>
-                            로그아웃
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</header>
+<%@ include file="common/header.jspf" %>
+
 <main class="container mx-auto px-4 py-6 max-w-4xl">
     <!-- 목록으로 돌아가기 링크 -->
     <div class="mb-4">

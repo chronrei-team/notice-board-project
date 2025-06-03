@@ -7,13 +7,9 @@
 <html>
 <head>
   <title>회원가입</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <%@ include file="common/tailwind.jspf" %>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-          href="https://fonts.googleapis.com/css2?family=Pacifico&family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
-          rel="stylesheet"
-  />
   <link
           rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
@@ -92,14 +88,14 @@
         if (registerDO != null) {
           if (registerDO.getFailMessage() != null) {
       %>
-            <p class="text-red-500"><%=registerDO.getFailMessage()%></p>
+            <p class="mb-4 p-3 rounded-md bg-red-100 text-red-700"><%=registerDO.getFailMessage()%></p>
       <%
           }
       %>
       <%
           if (registerDO.getSuccessMessage() != null) {
       %>
-            <p class="text-green-500"><%=registerDO.getSuccessMessage()%></p>
+            <p class="mb-4 p-3 rounded-md bg-green-100 text-green-700"><%=registerDO.getSuccessMessage()%></p>
       <%
           }
         }

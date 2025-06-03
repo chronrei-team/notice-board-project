@@ -17,13 +17,10 @@
 <html>
 <head>
     <title>메인 페이지</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <%@ include file="common/tailwind.jspf" %>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-            href="https://fonts.googleapis.com/css2?family=Pacifico&family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
-            rel="stylesheet"
-    />
     <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
@@ -103,20 +100,21 @@
         <!-- 게시판 제목 및 글쓰기 버튼 -->
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-gray-800">자유게시판</h1>
-            <button
+            <a
+                    href="<%=request.getContextPath()%>/board/write"
                     class="bg-primary text-white px-4 py-2 !rounded-button flex items-center whitespace-nowrap hover:bg-primary/90"
             >
                 <div class="w-5 h-5 flex items-center justify-center mr-1">
                     <i class="ri-pencil-line"></i>
                 </div>
                 글쓰기
-            </button>
+            </a>
         </div>
         <!-- 카테고리 탭 -->
         <div class="flex overflow-x-auto mb-6 pb-2">
             <div class="bg-gray-100 p-1 rounded-full flex space-x-1">
                 <button
-                        class="px-4 py-2 !rounded-full bg-primary text-gray-700 font-bold whitespace-nowrap"
+                        class="px-4 py-2 !rounded-full bg-primary text-white whitespace-nowrap"
                 >
                     전체
                 </button>
@@ -332,37 +330,40 @@
                 endPage = startPage;
             }
         %>
-        <div class="flex justify-center mt-8">
-            <nav class="flex items-center space-x-1">
+        <div class="flex items-center mt-8">
+            <div class="flex-1 flex justify-center">
 
-                <a
-                        href="?page=<%= (currentPage > 1) ? (currentPage - 1) : 1 %><%= queryString %>"
-                        class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-500"
-                >
-                    <i class="ri-arrow-left-s-line"></i>
-                </a>
-                <%
-                    if (pageResult != null) {
-                        for (int i = startPage; i <= endPage; i++) {
-                            boolean isActive = (i == currentPage);
-                %>
-                <a
-                        href="?page=<%= i %><%= queryString %>"
-                        class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full <%= isActive ? "active" : "text-gray-500" %>"
-                ><%= i %></a
-                >
-                <%
+                <nav class="flex items-center space-x-1">
+
+                    <a
+                            href="?page=<%= (currentPage > 1) ? (currentPage - 1) : 1 %><%= queryString %>"
+                            class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-500"
+                    >
+                        <i class="ri-arrow-left-s-line"></i>
+                    </a>
+                    <%
+                        if (pageResult != null) {
+                            for (int i = startPage; i <= endPage; i++) {
+                                boolean isActive = (i == currentPage);
+                    %>
+                    <a
+                            href="?page=<%= i %><%= queryString %>"
+                            class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full <%= isActive ? "active" : "text-gray-500" %>"
+                    ><%= i %></a
+                    >
+                    <%
+                            }
                         }
-                    }
-                %>
+                    %>
 
-                <a
-                        href="?page=<%= (currentPage < endPage) ? (currentPage + 1) : endPage %><%= queryString %>"
-                        class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-500"
-                >
-                    <i class="ri-arrow-right-s-line"></i>
-                </a>
-            </nav>
+                    <a
+                            href="?page=<%= (currentPage < endPage) ? (currentPage + 1) : endPage %><%= queryString %>"
+                            class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-500"
+                    >
+                        <i class="ri-arrow-right-s-line"></i>
+                    </a>
+                </nav>
+            </div>
         </div>
     </div>
 </main>

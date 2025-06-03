@@ -8,13 +8,9 @@
 <head>
     <title>로그인 페이지</title>
     <%-- Tailwind CSS 및 기타 필요한 CSS/JS 링크 --%>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <%@ include file="common/tailwind.jspf" %>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-            href="https://fonts.googleapis.com/css2?family=Pacifico&family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
-            rel="stylesheet"
-    />
     <link
             rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css"
@@ -80,7 +76,7 @@
             <%
                 if (loginDO != null) {
             %>
-                    <p class="text-red-500"><%=loginDO.getMessage()%></p>
+                    <p class="mb-4 p-3 rounded-md bg-red-100 text-red-700"><%=loginDO.getMessage()%></p>
             <%
                 }
             %>
