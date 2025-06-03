@@ -64,6 +64,20 @@ public abstract class BaseRepository {
         }
     }
 
+    protected int executeCommandReturnKey(String sql, Object... params) throws SQLException {
+        int pk = -1;
+        try (var pstmt = conn.prepareStatement(sql)) {
+            setParameters(pstmt, params);
+            pstmt.executeUpdate();
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    pk = rs.getInt(1);
+                }
+            }
+        }
+        return pk;
+    }
+
     protected QueryResult executeQuery(String sql, Object... params) throws SQLException {
         PreparedStatement pstmt = null;
         ResultSet rs = null;

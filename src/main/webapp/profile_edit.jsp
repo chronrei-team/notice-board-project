@@ -115,7 +115,7 @@
 
             <div>
                 <button type="submit"
-                        class="w-full bg-primary bg-blue-700 text-white py-3 px-4 rounded-lg hover:bg-primary/90 font-semibold text-sm transition-colors">
+                        class="w-full bg-primary text-white py-3 px-4 rounded-lg hover:bg-primary/90 font-semibold text-sm transition-colors">
                     정보 수정
                 </button>
             </div>

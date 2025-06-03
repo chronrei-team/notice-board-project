@@ -2,6 +2,7 @@ package notice.project.posts.repository;
 
 import notice.project.core.BaseRepository;
 import notice.project.core.QueryResult;
+import notice.project.entity.Posts;
 import notice.project.posts.DTO.BoardResponse;
 
 import java.sql.SQLException;
@@ -37,5 +38,20 @@ public class BoardRepository extends BaseRepository {
             }
         }
         return list;
+    }
+
+    public int upload(Posts post) throws SQLException {
+        int pk = executeCommandReturnKey("INSERT INTO posts(userId, title, content, createdAt, category) " +
+                "VALUES(?, ?, ?, ?, ?)",
+                post.userId, post.title, post.content, post.createdAt, post.category);
+
+        for (var postFile : post.postFiles) {
+            postFile.postId = pk;
+            executeCommand("INSERT INTO post_files(postId, name, url, uploadedAt) " +
+                    "VALUES(?, ?, ?, ?)",
+                    postFile.postId, postFile.name, postFile.url, postFile.uploadedAt);
+        }
+
+        return pk;
     }
 }
