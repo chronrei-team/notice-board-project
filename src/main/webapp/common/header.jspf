@@ -63,6 +63,8 @@
             >
                 <form method="get" action="${pageContext.request.contextPath}/" class="relative w-full flex items-center">
                     <input type="hidden" name="type" id="searchTypeInput" value="${param.type != null ? param.type : 'title'}" />
+                    <input type="hidden" name="category" value="${param.category != null ? param.category : ''}" />
+
                     <div class="relative flex-1">
                         <div
                                 class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400"
@@ -302,5 +304,34 @@
                 mobileNav.querySelector("ul").classList.remove("space-y-4");
             }
         });
+
+        // ★ 여기서 검색 폼 제출 시 category 유지 및 page 초기화 코드 추가 ★
+        const searchForm = document.querySelector('form[method="get"]');
+        if (searchForm) {
+            searchForm.addEventListener('submit', function(event) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const category = urlParams.get('category');
+
+                if (category) {
+                    let categoryInput = searchForm.querySelector('input[name="category"]');
+                    if (!categoryInput) {
+                        categoryInput = document.createElement('input');
+                        categoryInput.type = 'hidden';
+                        categoryInput.name = 'category';
+                        searchForm.appendChild(categoryInput);
+                    }
+                    categoryInput.value = category;
+                }
+
+                let pageInput = searchForm.querySelector('input[name="page"]');
+                if (!pageInput) {
+                    pageInput = document.createElement('input');
+                    pageInput.type = 'hidden';
+                    pageInput.name = 'page';
+                    searchForm.appendChild(pageInput);
+                }
+                pageInput.value = '1';
+            });
+        }
     });
 </script>

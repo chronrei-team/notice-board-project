@@ -18,6 +18,8 @@ public class BoardResponse {
     private final Integer postId;
     private final Integer commentCount;
     private final PostCategory postCategory;
+    private String highlightedTitle;
+    private String highlightedUserName;
 
     public BoardResponse(Integer id, String userId, LocalDateTime createdAt, String title, String content, Integer viewCount,
                          Integer recommendCount, LocalDateTime updatedAt, String userName, Integer postId, Integer commentCount, PostCategory postCategory) {
@@ -77,5 +79,21 @@ public class BoardResponse {
         if (createdAt == null) return "";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return createdAt.format(formatter);
+    }
+
+    public String getHighlightedTitle() {
+        return highlightedTitle;
+    }
+
+    public void setHighlightedTitle(String highlightedTitle) {
+        this.highlightedTitle = highlightedTitle;
+    }
+
+    public String getHighlightedUserName() {
+        return highlightedUserName;
+    }
+
+    public void setHighlightedUserName(String highlightedUserName) {
+        this.highlightedUserName = highlightedUserName;
     }
 }
