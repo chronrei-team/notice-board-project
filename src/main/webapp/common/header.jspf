@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page import="notice.project.entity.Users" %><%--
+<%@ page import="notice.project.entity.Users" %>
+<%@ page import="java.net.URLEncoder" %><%--
   Created by IntelliJ IDEA.
   User: soo_mini
   Date: 25. 5. 29.
@@ -9,6 +10,10 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%
     Users token = (Users)request.getAttribute("token");
+    if (token != null && token.userName != null) {
+        String encodedUserName = URLEncoder.encode(token.userName, "UTF-8");
+        request.setAttribute("encodedUserName", encodedUserName);
+    }
 %>
 <header class="bg-white shadow-sm">
     <div class="container mx-auto px-4 py-4">
@@ -57,7 +62,9 @@
                     class="hidden md:flex items-center justify-center flex-1 max-w-md mx-4"
             >
                 <form method="get" action="${pageContext.request.contextPath}/" class="relative w-full flex items-center">
-                    <input type="hidden" name="type" id="searchTypeInput" value="title" />
+                    <input type="hidden" name="type" id="searchTypeInput" value="${param.type != null ? param.type : 'title'}" />
+                    <input type="hidden" name="category" value="${param.category != null ? param.category : ''}" />
+
                     <div class="relative flex-1">
                         <div
                                 class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400"
@@ -67,6 +74,7 @@
                         <input
                                 type="text"
                                 name="keyword"
+                                value="${param.keyword}"
                                 placeholder="검색어를 입력하세요"
                                 class="custom-search w-full py-2 pl-10 pr-24 border border-gray-300 rounded-button text-sm focus:border-primary transition-colors"
                         />
@@ -167,7 +175,7 @@
                                 프로필 설정
                             </a>
                             <a
-                                    href="#"
+                                    href="${pageContext.request.contextPath}?type=author&keyword=${encodedUserName}"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
                             >
                                 <div class="w-4 h-4 flex items-center justify-center mr-2">
@@ -224,6 +232,19 @@
         const selectedSearchType = document.getElementById("selectedSearchType");
         const searchTypeOptions = document.querySelectorAll(".search-type-option");
         const searchTypeInput = document.getElementById("searchTypeInput");
+
+        const searchTypeMap = {
+            title: "제목",
+            content: "내용",
+            author: "작성자"
+        };
+        const currentType = searchTypeInput.value;
+        if (searchTypeMap.hasOwnProperty(currentType)) {
+            selectedSearchType.textContent = searchTypeMap[currentType];
+        } else {
+            selectedSearchType.textContent = "제목";
+            searchTypeInput.value = "title";
+        }
 
         searchTypeButton.addEventListener("click", function (e) {
             e.stopPropagation();
@@ -283,5 +304,34 @@
                 mobileNav.querySelector("ul").classList.remove("space-y-4");
             }
         });
+
+        // ★ 여기서 검색 폼 제출 시 category 유지 및 page 초기화 코드 추가 ★
+        const searchForm = document.querySelector('form[method="get"]');
+        if (searchForm) {
+            searchForm.addEventListener('submit', function(event) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const category = urlParams.get('category');
+
+                if (category) {
+                    let categoryInput = searchForm.querySelector('input[name="category"]');
+                    if (!categoryInput) {
+                        categoryInput = document.createElement('input');
+                        categoryInput.type = 'hidden';
+                        categoryInput.name = 'category';
+                        searchForm.appendChild(categoryInput);
+                    }
+                    categoryInput.value = category;
+                }
+
+                let pageInput = searchForm.querySelector('input[name="page"]');
+                if (!pageInput) {
+                    pageInput = document.createElement('input');
+                    pageInput.type = 'hidden';
+                    pageInput.name = 'page';
+                    searchForm.appendChild(pageInput);
+                }
+                pageInput.value = '1';
+            });
+        }
     });
 </script>

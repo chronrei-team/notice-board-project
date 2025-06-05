@@ -1,14 +1,23 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List, notice.project.posts.DTO.BoardResponse, notice.project.posts.DTO.PageResponse" %>
 <%
-    PageResponse<BoardResponse> pageResult = (PageResponse<BoardResponse>) request.getAttribute("pageResult");
+    PageResponse<BoardResponse> pageResult = (PageResponse<BoardResponse>)request.getAttribute("pageResult");
     List<BoardResponse> posts = pageResult != null ? pageResult.getData() : null;
     String errorMessage = (String) request.getAttribute("errorMessage");
-    int currentPage = pageResult.getCurrentPage();
-    int startPage = pageResult.getStartPage();
-    int endPage = pageResult.getEndPage();
+    int currentPage = pageResult != null ? pageResult.getCurrentPage() : 0;
+    int startPage = pageResult != null ? pageResult.getStartPage() : 0;
+    int endPage = pageResult != null ? pageResult.getEndPage() : 0;
     int maxButtons = (request.getAttribute("totalButtons") != null) ? (int) request.getAttribute("totalButtons") : 5;
+    String keyword = request.getParameter("keyword");
+    String type = request.getParameter("type");
+    String category = request.getParameter("category");
+    String alertMessage = (String) session.getAttribute("alertMessage");
+    String queryString = "";
 %>
+<!--
+추가 및 수정 사항
+검색 시 단어 and, or 선택하게 하기
+-->
 <!DOCTYPE html>
 <html>
 <head>
@@ -87,9 +96,15 @@
 <!-- 메인 컨텐츠 영역 -->
 <main class="flex-1 container mx-auto px-4 py-8">
     <div class="bg-white rounded shadow-sm p-6">
+        <% if (alertMessage != null) { %>
+        <script>
+            alert("<%= alertMessage.replace("\"", "\\\"") %>");
+        </script>
+        <% session.removeAttribute("alertMessage"); %>
+        <% } %>
         <!-- 게시판 제목 및 글쓰기 버튼 -->
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">자유게시판</h1>
+            <h1 class="text-2xl font-bold text-gray-800">전체 게시판</h1>
             <a
                     href="<%=request.getContextPath()%>/board/write"
                     class="bg-primary text-white px-4 py-2 !rounded-button flex items-center whitespace-nowrap hover:bg-primary/90"
@@ -104,27 +119,42 @@
         <div class="flex overflow-x-auto mb-6 pb-2">
             <div class="bg-gray-100 p-1 rounded-full flex space-x-1">
                 <button
-                        class="px-4 py-2 !rounded-full bg-primary text-white whitespace-nowrap"
+                        class="px-4 py-2 !rounded-full bg-primary text-white whitespace-nowrap
+                        <%= (category == null || category.isEmpty()) ? "bg-primary text-white" : "text-gray-700" %>"
+                        data-category=""
+                        onclick="filterByCategory(this)"
                 >
                     전체
                 </button>
                 <button
-                        class="px-4 py-2 !rounded-full text-gray-700 hover:bg-gray-200 whitespace-nowrap"
+                        class="px-4 py-2 !rounded-full text-gray-700 whitespace-nowrap
+                        <%= "Normal".equals(category) ? "bg-primary text-white" : "text-gray-700" %>"
+                        data-category="Normal"
+                        onclick="filterByCategory(this)"
                 >
-                    인기글
+                    자유
                 </button>
                 <button
-                        class="px-4 py-2 !rounded-full text-gray-700 hover:bg-gray-200 whitespace-nowrap"
+                        class="px-4 py-2 !rounded-full text-gray-700 whitespace-nowrap
+                        <%= "Notice".equals(category) ? "bg-primary text-white" : "text-gray-700" %>"
+                        data-category="Notice"
+                        onclick="filterByCategory(this)"
                 >
                     공지사항
                 </button>
                 <button
-                        class="px-4 py-2 !rounded-full text-gray-700 hover:bg-gray-200 whitespace-nowrap"
+                        class="px-4 py-2 !rounded-full text-gray-700 whitespace-nowrap
+                        <%= "Qna".equals(category) ? "bg-primary text-white" : "text-gray-700" %>"
+                        data-category="Qna"
+                        onclick="filterByCategory(this)"
                 >
                     질문/답변
                 </button>
                 <button
-                        class="px-4 py-2 !rounded-full text-gray-700 hover:bg-gray-200 whitespace-nowrap"
+                        class="px-4 py-2 !rounded-full text-gray-700 whitespace-nowrap
+                        <%= "Information".equals(category) ? "bg-primary text-white" : "text-gray-700" %>"
+                        data-category="Information"
+                        onclick="filterByCategory(this)"
                 >
                     정보공유
                 </button>
@@ -132,14 +162,6 @@
         </div>
         <!-- 필터 및 정렬 옵션 -->
         <div class="flex flex-wrap justify-between items-center mb-4">
-            <div class="flex items-center space-x-2 mb-2 sm:mb-0">
-                <div class="flex items-center">
-                    <input type="checkbox" id="notice-only" class="custom-checkbox" />
-                    <label for="notice-only" class="ml-2 text-sm text-gray-700"
-                    >공지만 보기</label
-                    >
-                </div>
-            </div>
             <div class="flex items-center">
                 <span class="text-sm text-gray-600 mr-2">정렬:</span>
                 <div class="relative">
@@ -156,89 +178,108 @@
         </div>
         <!-- 게시글 테이블 (데스크톱) -->
         <div class="overflow-x-auto mb-6">
-            <%
-                if (posts == null) {
-            %>
-                <div style="background-color:#fee2e2; color:#b91c1c; padding: 12px; margin-bottom: 16px; border-radius: 4px; font-weight:bold;">
-                    오류: <%= errorMessage != null ? errorMessage : "알 수 없는 오류가 발생했습니다." %>
-                </div>
-            <%
-                }
-                else {
-            %>
-            <table class="board-table w-full min-w-full border-collapse">
-                <thead>
-                <tr class="bg-gray-50 text-left">
-                    <th class="py-3 px-4 text-sm font-medium text-gray-500 w-16">
-                        번호
-                    </th>
-                    <th class="py-3 px-4 text-sm font-medium text-gray-500">
-                        제목
-                    </th>
-                    <th class="py-3 px-4 text-sm font-medium text-gray-500 w-32">
-                        작성자
-                    </th>
-                    <th class="py-3 px-4 text-sm font-medium text-gray-500 w-32">
-                        작성일
-                    </th>
-                    <th
-                            class="py-3 px-4 text-sm font-medium text-gray-500 w-24 text-center"
-                    >
-                        조회수
-                    </th>
-                    <th
-                            class="py-3 px-4 text-sm font-medium text-gray-500 w-24 text-center"
-                    >
-                        추천수
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <!-- 공지사항 -->
-                <tr class="bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-center">
-                  <span
-                          class="inline-block bg-primary text-white px-2 py-0.5 rounded text-xs"
-                  >공지</span
-                  >
-                    </td>
-                    <td class="py-3 px-4">
-                        <a href="#" class="text-sm font-medium hover:text-primary"
-                        >커뮤니티 이용 규칙 안내 (필독)</a
-                        >
-                        <span class="ml-2 text-red-500 text-xs">NEW</span>
-                        <span class="ml-1 text-gray-500 text-xs">[23]</span>
-                    </td>
-                    <td class="py-3 px-4 text-sm text-gray-600">관리자</td>
-                    <td class="py-3 px-4 text-sm text-gray-500">2025-05-12</td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center">
-                        1,245
-                    </td>
-                </tr>
-                <!-- 일반 게시글 -->
-                <%
-                    if (posts != null && !posts.isEmpty()) {
-                        for (BoardResponse post : posts) {
-
-                %>
-                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center"><%= post.getId() %></td>
-                    <td class="py-3 px-4">
-                        <a href="#" class="text-sm hover:text-primary"
-                        ><%= post.getTitle() %></a
-                        >
-                        <span class="ml-1 text-gray-500 text-xs">[<%= post.getCommentCount() %>]</span>
-                    </td>
-                    <td class="py-3 px-4 text-sm text-gray-600"><%= post.getUserName() %></td>
-                    <td class="py-3 px-4 text-sm text-gray-500"><%= post.getCreatedAtFormatted() %></td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center"><%= post.getViewCount() %></td>
-                    <td class="py-3 px-4 text-sm text-gray-500 text-center"><%= post.getRecommendCount() %></td>
-                </tr>
-                <%      }
-                    } %>
-                </tbody>
-            </table>
-            <% } %>
+            <c:choose>
+                <c:when test="${postStatus eq 'error'}">
+                    <div style="background-color:#fee2e2; color:#b91c1c; padding: 12px; margin-bottom: 16px; border-radius: 4px; font-weight:bold;">
+                        오류: <%= errorMessage != null ? errorMessage : "알 수 없는 오류가 발생했습니다." %>
+                    </div>
+                </c:when>
+                <c:when test="${postStatus eq 'empty'}">
+                    <div style="background-color:#fee2e2; color:#b91c1c; padding: 12px; margin-bottom: 16px; border-radius: 4px; font-weight:bold;">
+                        게시글이 없습니다.
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <table class="board-table w-full min-w-full border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 text-left">
+                                <th class="py-3 px-4 text-sm font-medium text-gray-500 w-16">
+                                    번호
+                                </th>
+                                <th class="py-3 px-4 text-sm font-medium text-gray-500 w-24">
+                                    카테고리
+                                </th>
+                                <th class="py-3 px-4 text-sm font-medium text-gray-500">
+                                    제목
+                                </th>
+                                <th class="py-3 px-4 text-sm font-medium text-gray-500 w-32">
+                                    작성자
+                                </th>
+                                <th class="py-3 px-4 text-sm font-medium text-gray-500 w-32">
+                                    작성일
+                                </th>
+                                <th class="py-3 px-4 text-sm font-medium text-gray-500 w-24 text-center">
+                                    조회수
+                                </th>
+                                <th class="py-3 px-4 text-sm font-medium text-gray-500 w-24 text-center">
+                                    추천수
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- 공지사항 -->
+                            <c:forEach var="notice" items="${notices}">
+                                <tr class="bg-gray-50/50">
+                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">
+                                            ${notice.id}
+                                    </td>
+                                    <td class="py-3 px-4 text-sm text-center font-bold">공지</td>
+                                    <td class="py-3 px-4 font-bold">
+                                        <a href="#" class="text-sm font-bold hover:text-primary"
+                                        >${notice.title}</a
+                                        >
+                                        <span class="ml-1 text-gray-500 text-xs">[${notice.commentCount}]</span>
+                                    </td>
+                                    <td class="py-3 px-4 text-sm text-gray-600 font-bold">${notice.userName}</td>
+                                    <td class="py-3 px-4 text-sm text-gray-500">${notice.createdAtFormatted}</td>
+                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">
+                                            ${notice.viewCount}
+                                    </td>
+                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${notice.recommendCount}
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            <!-- 일반 게시글 -->
+                            <c:forEach var="post" items="${posts}">
+                                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
+                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${post.id}
+                                    </td>
+                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${post.postCategory.displayName}</td>
+                                    <td class="py-3 px-4">
+                                        <a href="#" class="text-sm hover:text-primary">
+                                            <c:choose>
+                                                <c:when test="${not empty keyword}">
+                                                    <c:out value="${post.highlightedTitle}" escapeXml="false" />
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <c:out value="${post.title}" />
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </a>
+                                        <span class="ml-1 text-gray-500 text-xs">[${post.commentCount}]</span>
+                                    </td>
+                                    <td class="py-3 px-4 text-sm text-gray-600">
+                                        <c:choose>
+                                            <c:when test="${not empty keyword}">
+                                                <c:out value="${post.highlightedUserName}" escapeXml="false" />
+                                            </c:when>
+                                            <c:otherwise>
+                                                <c:out value="${post.userName}" />
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td class="py-3 px-4 text-sm text-gray-500">${post.createdAtFormatted}
+                                    </td>
+                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${post.viewCount}
+                                    </td>
+                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${post.recommendCount}
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </c:otherwise>
+            </c:choose>
         </div>
         <!-- 게시글 카드 (모바일) -->
         <div class="board-cards space-y-4 mb-6">
@@ -305,6 +346,16 @@
         </div>
         <!-- 페이지네이션 -->
         <%
+            if (type != null && !type.isEmpty()) {
+                queryString += "&type=" + java.net.URLEncoder.encode(type, "UTF-8");
+            }
+            if (keyword != null && !keyword.isEmpty()) {
+                queryString += "&keyword=" + java.net.URLEncoder.encode(keyword, "UTF-8");
+            }
+            if (category != null && !category.isEmpty()) {
+                queryString += "&category=" + java.net.URLEncoder.encode(category, "UTF-8");
+            }
+
             if (startPage < 1) {
                 startPage = 1;
                 endPage = startPage + maxButtons - 1;
@@ -319,7 +370,7 @@
                 <nav class="flex items-center space-x-1">
 
                     <a
-                            href="?page=<%= (currentPage > 1) ? (currentPage - 1) : 1 %>"
+                            href="?page=<%= (currentPage > 1) ? (currentPage - 5) : 1 %><%= queryString %>"
                             class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-500"
                     >
                         <i class="ri-arrow-left-s-line"></i>
@@ -330,7 +381,7 @@
                                 boolean isActive = (i == currentPage);
                     %>
                     <a
-                            href="?page=<%= i %>"
+                            href="?page=<%= i %><%= queryString %>"
                             class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full <%= isActive ? "active" : "text-gray-500" %>"
                     ><%= i %></a
                     >
@@ -340,7 +391,7 @@
                     %>
 
                     <a
-                            href="?page=<%= (currentPage < endPage) ? (currentPage + 1) : endPage %>"
+                            href="?page=<%= (currentPage < endPage) ? (currentPage + 5) : endPage %><%= queryString %>"
                             class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-500"
                     >
                         <i class="ri-arrow-right-s-line"></i>
@@ -376,6 +427,42 @@
                 mobileNav.querySelector("ul").classList.remove("flex-col");
                 mobileNav.querySelector("ul").classList.add("space-x-8");
                 mobileNav.querySelector("ul").classList.remove("space-y-4");
+            }
+        });
+    });
+
+    function filterByCategory(button) {
+        const category = button.getAttribute('data-category');
+
+        // 선택된 버튼 스타일 갱신
+        document.querySelectorAll('[data-category]').forEach(btn => {
+            btn.classList.remove('bg-primary', 'text-white');
+            btn.classList.add('text-gray-700');
+        });
+        button.classList.add('bg-primary', 'text-white');
+        button.classList.remove('text-gray-700');
+
+        // 카테고리를 URL 파라미터로 붙여 페이지 이동
+        const url = new URL(window.location.href);
+        url.searchParams.set("page", "1"); // 카테고리 변경 시 페이지 1로 초기화
+        if (category) {
+            url.searchParams.set("category", category);
+        } else {
+            url.searchParams.delete("category");
+        }
+        window.location.href = url.toString();
+    }
+
+    // 페이지 로드시 선택된 카테고리에 해당하는 버튼 강조 유지
+    window.addEventListener('DOMContentLoaded', () => {
+        const currentCategory = new URL(window.location.href).searchParams.get("category") || "";
+        document.querySelectorAll('[data-category]').forEach(btn => {
+            if (btn.getAttribute("data-category") === currentCategory) {
+                btn.classList.add('bg-primary', 'text-white');
+                btn.classList.remove('text-gray-700');
+            } else {
+                btn.classList.remove('bg-primary', 'text-white');
+                btn.classList.add('text-gray-700');
             }
         });
     });

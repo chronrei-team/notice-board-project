@@ -1,5 +1,7 @@
 package notice.project.posts.DTO;
 
+import notice.project.entity.PostCategory;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -15,8 +17,12 @@ public class BoardResponse {
     private final String userName;
     private final Integer postId;
     private final Integer commentCount;
+    private final PostCategory postCategory;
+    private String highlightedTitle;
+    private String highlightedUserName;
 
-    public BoardResponse(Integer id, String userId, LocalDateTime createdAt, String title, String content, Integer viewCount, Integer recommendCount, LocalDateTime updatedAt, String userName, Integer postId, Integer commentCount) {
+    public BoardResponse(Integer id, String userId, LocalDateTime createdAt, String title, String content, Integer viewCount,
+                         Integer recommendCount, LocalDateTime updatedAt, String userName, Integer postId, Integer commentCount, PostCategory postCategory) {
         this.id = id;
         this.userId = userId;
         this.createdAt = createdAt;
@@ -28,11 +34,10 @@ public class BoardResponse {
         this.userName = userName;
         this.postId = postId;
         this.commentCount = commentCount;
+        this.postCategory = postCategory;
     }
 
-    public Integer getId() {
-        return id;
-    }
+    public Integer getId() { return id; }
 
     public String getUserId() {
         return userId;
@@ -66,13 +71,29 @@ public class BoardResponse {
 
     public Integer getCommentCount() { return commentCount; }
 
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+
+    public PostCategory getPostCategory() { return postCategory; }
 
     public String getCreatedAtFormatted() {
         if (createdAt == null) return "";
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return createdAt.format(formatter);
+    }
+
+    public String getHighlightedTitle() {
+        return highlightedTitle;
+    }
+
+    public void setHighlightedTitle(String highlightedTitle) {
+        this.highlightedTitle = highlightedTitle;
+    }
+
+    public String getHighlightedUserName() {
+        return highlightedUserName;
+    }
+
+    public void setHighlightedUserName(String highlightedUserName) {
+        this.highlightedUserName = highlightedUserName;
     }
 }
