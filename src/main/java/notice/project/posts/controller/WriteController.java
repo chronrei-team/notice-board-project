@@ -61,10 +61,6 @@ public class WriteController extends AuthBaseServlet {
         String category = request.getParameter("category");
         String content = request.getParameter("content"); // TOAST UI Editor 내용
 
-        System.out.println("Title: " + title);
-        System.out.println("Category: " + category);
-        System.out.println("Content (Markdown/HTML): " + content);
-
         ArrayList<Part> files = new ArrayList<>();
         files.add(request.getPart("file1"));
         files.add(request.getPart("file2"));

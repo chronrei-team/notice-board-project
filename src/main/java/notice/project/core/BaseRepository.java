@@ -7,11 +7,6 @@ public abstract class BaseRepository {
 
     public void setConnection(Connection connection) {
         this.conn = connection;
-        if (conn != null) {
-            System.out.println("ExampleRepositoryImpl received connection: " + connection);
-        } else {
-            System.out.println("ExampleRepositoryImpl connection cleared.");
-        }
     }
 
     private static void setParameters(PreparedStatement pstmt, Object... params) throws SQLException {

@@ -60,6 +60,7 @@ public class UploadService implements IUploadService {
         // 파일 데이터 받기 및 저장
         List<String> uploadedFileNames = new ArrayList<>(); // 업로드된 파일의 (서버 저장) 이름 목록
         List<String> originalFileNames = new ArrayList<>(); // 원본 파일 이름 목록
+        List<Long> fileSize = new ArrayList<>();
 
         // 서버에 파일 저장할 경로 설정
         String uploadPath = rootPath + File.separator + uploadDirPath;
@@ -85,6 +86,7 @@ public class UploadService implements IUploadService {
                         Files.copy(input, Paths.get(uploadPath, serverFileName), StandardCopyOption.REPLACE_EXISTING);
                         uploadedFileNames.add(serverFileName); // 서버 저장 파일 이름 추가
                         originalFileNames.add(originalFileName); // 원본 파일 이름 추가
+                        fileSize.add(file.getSize()); // 파일 용량 추가
                         System.out.println("Uploaded file: " + originalFileName + " as " + serverFileName);
                     } catch (IOException e) {
                         System.err.println("File upload failed for " + originalFileName + ": " + e.getMessage());
@@ -106,6 +108,7 @@ public class UploadService implements IUploadService {
             postFile.uploadedAt = LocalDateTime.now();
             postFile.name = originalFileNames.get(i);
             postFile.url = uploadDirPath + "/" + uploadedFileNames.get(i);
+            postFile.size = fileSize.get(i);
 
             post.postFiles.add(postFile);
         }

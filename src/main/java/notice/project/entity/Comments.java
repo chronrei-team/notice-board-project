@@ -2,8 +2,6 @@ package notice.project.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Objects;
-import java.util.UUID; // User ID 타입
 
 public class Comments {
 
@@ -27,8 +25,12 @@ public class Comments {
 
     /** 작성 시간 */
     public LocalDateTime createdAt;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
 
     public Users writer;
+    public Comments referenceComment;
     public Posts post;
     public ArrayList<Comments> subComments;
     public ArrayList<CommentImages> images;

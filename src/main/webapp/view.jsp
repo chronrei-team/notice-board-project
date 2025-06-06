@@ -1,11 +1,12 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> <%-- fn:escapeXml 사용을 위해 --%>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %> <%-- fn:escapeXml 사용을 위해 --%>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>요즘 인기있는 OTT 추천 좀 해주세요. 넷플릭스 다 봤어요.</title>
+    <title>${fn:escapeXml(ViewResponse.title)}</title>
     <%@ include file="common/tailwind.jspf" %>
     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
     <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
@@ -110,8 +111,8 @@
 <main class="container mx-auto px-4 py-6 max-w-4xl">
     <!-- 목록으로 돌아가기 링크 -->
     <div class="mb-4">
-        <a
-                href="https://readdy.ai/home/557a148f-5a49-413d-8b99-ea592936ab91/fad9ebf2-a518-4655-bb76-bc5dac337c03"
+        <button
+                onclick="window.history.back();"
                 data-readdy="true"
                 class="inline-flex items-center text-gray-600 hover:text-primary transition-colors"
         >
@@ -119,27 +120,29 @@
                 <i class="ri-arrow-left-line"></i>
             </div>
             <span>목록으로 돌아가기</span>
-        </a>
+        </button>
     </div>
     <!-- 게시글 본문 카드 -->
     <div class="bg-white rounded shadow-sm p-6 mb-6">
         <!-- 게시글 헤더 -->
         <div class="flex justify-between items-start mb-6">
             <h1 class="text-2xl font-bold text-gray-900 mb-4">
-                요즘 인기있는 OTT 추천 좀 해주세요. 넷플릭스 다 봤어요.
+                ${fn:escapeXml(ViewResponse.title)}
             </h1>
-            <div class="flex space-x-2">
-                <button class="text-gray-500 hover:text-primary transition-colors">
-                    <div class="w-6 h-6 flex items-center justify-center">
-                        <i class="ri-edit-line"></i>
-                    </div>
-                </button>
-                <button class="text-gray-500 hover:text-red-500 transition-colors">
-                    <div class="w-6 h-6 flex items-center justify-center">
-                        <i class="ri-delete-bin-line"></i>
-                    </div>
-                </button>
-            </div>
+            <c:if test="${ViewResponse.canEdit}">
+                <div class="flex space-x-2">
+                    <button class="text-gray-500 hover:text-primary transition-colors">
+                        <div class="w-6 h-6 flex items-center justify-center">
+                            <i class="ri-edit-line"></i>
+                        </div>
+                    </button>
+                    <button class="text-gray-500 hover:text-red-500 transition-colors">
+                        <div class="w-6 h-6 flex items-center justify-center">
+                            <i class="ri-delete-bin-line"></i>
+                        </div>
+                    </button>
+                </div>
+            </c:if>
         </div>
         <!-- 작성자 정보 및 메타데이터 -->
         <div class="flex items-center mb-6">
@@ -149,21 +152,21 @@
                 <i class="ri-user-line text-gray-500"></i>
             </div>
             <div>
-                <div class="font-medium text-gray-900">김태호</div>
+                <div class="font-medium text-gray-900">${ViewResponse.authorName}</div>
                 <div class="flex items-center text-sm text-gray-500 space-x-3">
-                    <span>2025-05-24 13:55:11</span>
+                    <span><fmt:formatDate value="${ViewResponse.writtenAt}" pattern="yyyy-MM-dd HH:mm:ss" /></span>
                     <span class="flex items-center">
                 <div class="w-4 h-4 flex items-center justify-center mr-1">
                   <i class="ri-eye-line"></i>
                 </div>
-                조회 238
+                조회 ${ViewResponse.viewCount}
               </span>
                 </div>
             </div>
         </div>
         <!-- 게시글 본문 -->
         <!-- 게시글 본문 카드 -->
-        <div class="bg-white rounded shadow-sm mb-6">
+        <div class="bg-white mb-6">
             <%-- ... 게시글 헤더, 작성자 정보 등은 그대로 유지 ... --%>
 
             <!-- 게시글 본문 (이 부분을 수정) -->
@@ -173,65 +176,48 @@
                      디자인 일관성을 위해 필요에 따라 조정하거나 제거할 수 있습니다. --%>
             </div>
             <%-- 서버로부터 전달받은 마크다운 데이터를 저장할 숨겨진 textarea --%>
-            <%-- 중요: 서버에서 'postContentMarkdown'라는 이름으로 마크다운 문자열을 request attribute에 담아 전달한다고 가정합니다. --%>
-            <%--       JSTL을 사용하기 위해 JSP 상단에 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 와
-                        <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> 가 선언되어 있어야 합니다. --%>
-            <textarea id="markdown-data" style="display:none;">${fn:escapeXml(postContentMarkdown)}</textarea>
+            <textarea id="markdown-data" style="display:none;">${fn:escapeXml(ViewResponse.content)}</textarea>
 
             <!-- 첨부파일 다운로드 섹션 -->
-            <div class="mt-8 border-t border-gray-100 pt-6">
-                <h4 class="text-sm font-medium text-gray-900 mb-3">첨부파일</h4>
-                <div class="space-y-2">
-                    <a
-                            href="#"
-                            class="flex items-center p-3 bg-gray-50 rounded hover:bg-gray-100 transition-colors group"
-                    >
-                        <div
-                                class="w-10 h-10 flex items-center justify-center bg-gray-200 rounded mr-3"
-                        >
-                            <i class="ri-file-excel-2-line text-green-600 text-xl"></i>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-900">
-                                OTT_서비스_비교표.xlsx
-                            </p>
-                            <p class="text-xs text-gray-500">2.4MB</p>
-                        </div>
-                        <div
-                                class="w-8 h-8 flex items-center justify-center text-gray-400 group-hover:text-primary"
-                        >
-                            <i class="ri-download-line"></i>
-                        </div>
-                    </a>
-                    <a
-                            href="#"
-                            class="flex items-center p-3 bg-gray-50 rounded hover:bg-gray-100 transition-colors group"
-                    >
-                        <div
-                                class="w-10 h-10 flex items-center justify-center bg-gray-200 rounded mr-3"
-                        >
-                            <i class="ri-file-pdf-line text-red-600 text-xl"></i>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-900">
-                                OTT_콘텐츠_추천_가이드.pdf
-                            </p>
-                            <p class="text-xs text-gray-500">1.8MB</p>
-                        </div>
-                        <div
-                                class="w-8 h-8 flex items-center justify-center text-gray-400 group-hover:text-primary"
-                        >
-                            <i class="ri-download-line"></i>
-                        </div>
-                    </a>
+            <c:if test="${not empty ViewResponse.files}">
+                <div class="mt-8 border-t border-gray-100 pt-6">
+                    <h4 class="text-sm font-medium text-gray-900 mb-3">첨부파일</h4>
+                    <div class="space-y-2">
+                        <c:forEach items="${ViewResponse.files}" var="file" >
+                            <a
+                                    href="${pageContext.request.contextPath}/${file.url}"
+                                    class="flex items-center p-3 bg-gray-50 rounded hover:bg-gray-100 transition-colors group"
+                                    download="${fn:escapeXml(file.name)}"
+                            >
+                                <div
+                                        class="w-10 h-10 flex items-center justify-center bg-gray-200 rounded mr-3"
+                                >
+                                    <i class="ri-file-excel-2-line text-green-600 text-xl"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="text-sm font-medium text-gray-900">
+                                        ${fn:escapeXml(file.name)}
+                                    </p>
+                                    <p class="text-xs text-gray-500">
+                                        ${file.size}
+                                    </p>
+                                </div>
+                                <div
+                                        class="w-8 h-8 flex items-center justify-center text-gray-400 group-hover:text-primary"
+                                >
+                                    <i class="ri-download-line"></i>
+                                </div>
+                            </a>
+                        </c:forEach>
+                    </div>
                 </div>
-            </div>
+            </c:if>
         </div>
     </div>
     <!-- 댓글 섹션 -->
     <div class="bg-white rounded shadow-sm p-6">
         <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-medium text-gray-900">댓글 5개</h3>
+            <h3 class="text-lg font-medium text-gray-900">댓글 ${ViewResponse.comments.size()}개</h3>
             <div class="flex items-center space-x-2">
                 <select
                         id="comment-sort"
@@ -244,8 +230,10 @@
             </div>
         </div>
         <!-- 댓글 목록 -->
+        <c:if test="${not empty ViewResponse.comments}">
         <div class="space-y-6 mb-8">
-            <!-- 댓글 1 -->
+            <!-- 본 댓글 -->
+            <c:forEach items="${ViewResponse.comments}" var="comment" varStatus="status">
             <div class="comment">
                 <div class="flex items-start gap-3">
                     <div
@@ -255,167 +243,66 @@
                     </div>
                     <div class="flex-1">
                         <div class="flex items-center mb-1">
-                            <span class="font-medium text-gray-900 mr-2">박지민</span>
-                            <span class="text-sm text-gray-500">2025-05-24 14:23</span>
+                            <span class="font-medium text-gray-900 mr-2">${comment.authorName}</span>
+                            <span class="text-sm text-gray-500">
+                                <fmt:formatDate value="${comment.writtenAt}" pattern="yyyy-MM-dd HH:mm:ss" />
+                            </span>
                         </div>
                         <p class="text-gray-800 mb-2">
-                            저는 요즘 디즈니플러스 보고 있는데 정말 좋아요! 마블 시리즈
-                            팬이라면 꼭 봐야할 것 같아요. '로키'랑 '완다비전' 강추합니다!
+                            ${fn:escapeXml(comment.content)}
                         </p>
                         <button
                                 class="text-sm text-primary hover:text-primary/80 reply-toggle"
-                                data-comment-id="1"
+                                data-comment-id="${comment.id}"
+                                data-comment-user-name="${comment.authorName}"
+                                data-comment-user-id="${comment.authorId}"
                         >
                             답글달기
                         </button>
-                        <!-- 답글 작성 폼 -->
-                        <div
-                                class="reply-form mt-3 pl-4 border-l-2 border-gray-200"
-                                id="reply-form-1"
-                        >
-                            <div class="flex items-start gap-3">
-                                <div
-                                        class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 flex items-center justify-center"
-                                >
-                                    <i class="ri-user-line text-gray-500"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="text-sm text-gray-500 mb-2">
-                                        박지민님에게 답글 작성중
-                                    </div>
-                                    <div class="flex flex-col gap-2">
-                                        <input
-                                                type="text"
-                                                class="comment-input w-full border border-gray-200 rounded-button py-2 px-3 text-gray-800"
-                                                placeholder="답글을 입력하세요..."
-                                        />
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center gap-2">
-                                                <label class="relative cursor-pointer">
-                                                    <input
-                                                            type="file"
-                                                            class="hidden"
-                                                            accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx"
-                                                    />
-                                                    <div
-                                                            class="flex items-center gap-1 text-sm text-gray-600 hover:text-primary"
-                                                    >
-                                                        <i class="ri-attachment-2"></i>
-                                                        <span>파일첨부</span>
-                                                    </div>
-                                                </label>
-                                                <span
-                                                        class="selected-file text-sm text-gray-500"
-                                                ></span>
-                                            </div>
-                                            <div class="flex gap-2">
-                                                <button class="text-sm text-gray-500 cancel-reply">
-                                                    취소
-                                                </button>
-                                                <button
-                                                        class="bg-primary text-white px-4 py-2 rounded-button whitespace-nowrap"
-                                                >
-                                                    등록
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- 대댓글 -->
-                        <div class="mt-4 pl-4 border-l-2 border-gray-200">
-                            <div class="flex items-start gap-3 mb-4">
-                                <div
-                                        class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 flex items-center justify-center"
-                                >
-                                    <i class="ri-user-line text-gray-500"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="flex items-center mb-1">
-                        <span class="font-medium text-gray-900 mr-2"
-                        >김태호</span
-                        >
-                                        <span class="text-sm text-gray-500"
-                                        >2025-05-24 15:10</span
-                                        >
-                                    </div>
-                                    <p class="text-gray-800 mb-2">
-                                        저도 '로키' 정말 재밌게 봤어요! 시즌2도 기대됩니다.
-                                    </p>
-                                    <button
-                                            class="text-sm text-primary hover:text-primary/80 reply-toggle"
-                                            data-comment-id="1-1"
+
+                        <c:forEach items="${comment.children}" var="child">
+                            <!-- 대댓글 -->
+                            <div class="mt-4 pl-4 border-l-2 border-gray-200">
+                                <div class="flex items-start gap-3 mb-4">
+                                    <div
+                                            class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 flex items-center justify-center"
                                     >
-                                        답글달기
-                                    </button>
-                                    <!-- 답글 작성 폼 -->
-                                    <div class="reply-form mt-3" id="reply-form-1-1">
-                                        <div class="flex items-start gap-3">
-                                            <div
-                                                    class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 flex items-center justify-center"
-                                            >
-                                                <i class="ri-user-line text-gray-500"></i>
-                                            </div>
-                                            <div class="flex-1">
-                                                <div class="text-sm text-gray-500 mb-2">
-                                                    김태호님에게 답글 작성중
-                                                </div>
-                                                <div class="flex">
-                                                    <input
-                                                            type="text"
-                                                            class="comment-input flex-1 border border-gray-200 rounded-l-button py-2 px-3 text-gray-800"
-                                                            placeholder="답글을 입력하세요..."
-                                                    />
-                                                    <button
-                                                            class="bg-primary text-white px-4 py-2 rounded-r-button whitespace-nowrap"
-                                                    >
-                                                        등록
-                                                    </button>
-                                                </div>
-                                                <button
-                                                        class="text-sm text-gray-500 mt-2 cancel-reply"
-                                                >
-                                                    취소
-                                                </button>
-                                            </div>
+                                        <i class="ri-user-line text-gray-500"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center mb-1">
+                                            <span class="font-medium text-gray-900 mr-2">${child.authorName}</span>
+                                            <span class="text-sm text-gray-500">
+                                                <fmt:formatDate value="${child.writtenAt}" pattern="yyyy-MM-dd HH:mm:ss" />
+                                            </span>
                                         </div>
+                                        <p class="text-gray-800 mb-2">
+                                            <c:if test="${not empty child.referenceUserName}">
+                                                <span class="text-blue-400">
+                                                    @${child.referenceUserName}
+                                                </span>
+                                            </c:if>
+                                            ${fn:escapeXml(child.content)}
+                                        </p>
+                                        <button
+                                                class="text-sm text-primary hover:text-primary/80 reply-toggle"
+                                                data-comment-id="${comment.id}"
+                                                data-comment-user-name="${child.authorName}"
+                                        >
+                                            답글달기
+                                        </button>
+
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- 댓글 2 -->
-            <div class="comment">
-                <div class="flex items-start gap-3">
-                    <div
-                            class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 flex items-center justify-center"
-                    >
-                        <i class="ri-user-line text-gray-500"></i>
-                    </div>
-                    <div class="flex-1">
-                        <div class="flex items-center mb-1">
-                            <span class="font-medium text-gray-900 mr-2">이수진</span>
-                            <span class="text-sm text-gray-500">2025-05-24 16:45</span>
-                        </div>
-                        <p class="text-gray-800 mb-2">
-                            애플TV+ 정말 좋아요! '테드 래소'는 제가 본 드라마 중에
-                            최고예요. 웃음과 감동이 있어서 힐링됩니다. '세베란스'도
-                            미스터리한 분위기가 매력적이에요.
-                        </p>
-                        <button
-                                class="text-sm text-primary hover:text-primary/80 reply-toggle"
-                                data-comment-id="2"
-                        >
-                            답글달기
-                        </button>
+                        </c:forEach>
                         <!-- 답글 작성 폼 -->
-                        <div
-                                class="reply-form mt-3 pl-4 border-l-2 border-gray-200"
-                                id="reply-form-2"
-                        >
+                        <form action="${pageContext.request.contextPath}/write-comment" method="post"
+                              class="reply-form mt-3" id="reply-form-${comment.id}">
+                            <input type="hidden" name="postId" value="${ViewResponse.postId}">
+                            <input type="hidden" name="parentId" value="${comment.id}">
+                            <input type="hidden" name="refUserId" value="">
+
                             <div class="flex items-start gap-3">
                                 <div
                                         class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 flex items-center justify-center"
@@ -423,153 +310,39 @@
                                     <i class="ri-user-line text-gray-500"></i>
                                 </div>
                                 <div class="flex-1">
-                                    <div class="text-sm text-gray-500 mb-2">
-                                        이수진님에게 답글 작성중
+                                    <div id="reply-form-ref-message-${comment.id}" class="text-sm text-gray-500 mb-2">
                                     </div>
                                     <div class="flex">
                                         <input
+                                                required
+                                                name="content"
                                                 type="text"
                                                 class="comment-input flex-1 border border-gray-200 rounded-l-button py-2 px-3 text-gray-800"
                                                 placeholder="답글을 입력하세요..."
                                         />
-                                        <button
+                                        <button type="submit"
                                                 class="bg-primary text-white px-4 py-2 rounded-r-button whitespace-nowrap"
                                         >
                                             등록
                                         </button>
                                     </div>
-                                    <button class="text-sm text-gray-500 mt-2 cancel-reply">
+                                    <button type="reset"
+                                            class="text-sm text-gray-500 mt-2 cancel-reply"
+                                    >
                                         취소
                                     </button>
                                 </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
-            <!-- 댓글 3 -->
-            <div class="comment">
-                <div class="flex items-start gap-3">
-                    <div
-                            class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 flex items-center justify-center"
-                    >
-                        <i class="ri-user-line text-gray-500"></i>
-                    </div>
-                    <div class="flex-1">
-                        <div class="flex items-center mb-1">
-                            <span class="font-medium text-gray-900 mr-2">최준호</span>
-                            <span class="text-sm text-gray-500">2025-05-25 09:12</span>
-                        </div>
-                        <p class="text-gray-800 mb-2">
-                            웨이브도 괜찮아요. 한국 드라마와 예능을 주로 보신다면
-                            추천합니다. 특히 JTBC, TVN 프로그램이 많아서 좋더라고요. 다만
-                            해외 콘텐츠는 좀 부족한 편이에요.
-                        </p>
-                        <button
-                                class="text-sm text-primary hover:text-primary/80 reply-toggle"
-                                data-comment-id="3"
-                        >
-                            답글달기
-                        </button>
-                        <!-- 답글 작성 폼 -->
-                        <div
-                                class="reply-form mt-3 pl-4 border-l-2 border-gray-200"
-                                id="reply-form-3"
-                        >
-                            <div class="flex items-start gap-3">
-                                <div
-                                        class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 flex items-center justify-center"
-                                >
-                                    <i class="ri-user-line text-gray-500"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="text-sm text-gray-500 mb-2">
-                                        최준호님에게 답글 작성중
-                                    </div>
-                                    <div class="flex">
-                                        <input
-                                                type="text"
-                                                class="comment-input flex-1 border border-gray-200 rounded-l-button py-2 px-3 text-gray-800"
-                                                placeholder="답글을 입력하세요..."
-                                        />
-                                        <button
-                                                class="bg-primary text-white px-4 py-2 rounded-r-button whitespace-nowrap"
-                                        >
-                                            등록
-                                        </button>
-                                    </div>
-                                    <button class="text-sm text-gray-500 mt-2 cancel-reply">
-                                        취소
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- 댓글 4 -->
-            <div class="comment">
-                <div class="flex items-start gap-3">
-                    <div
-                            class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 flex items-center justify-center"
-                    >
-                        <i class="ri-user-line text-gray-500"></i>
-                    </div>
-                    <div class="flex-1">
-                        <div class="flex items-center mb-1">
-                            <span class="font-medium text-gray-900 mr-2">정민수</span>
-                            <span class="text-sm text-gray-500">2025-05-25 10:30</span>
-                        </div>
-                        <p class="text-gray-800 mb-2">
-                            티빙도 요즘 오리지널 콘텐츠에 투자를 많이 하고 있어요. '유미의
-                            세포들' 같은 작품이 인기가 많더라고요. 그리고 미국 HBO
-                            콘텐츠도 많이 들어와서 볼거리가 많습니다.
-                        </p>
-                        <button
-                                class="text-sm text-primary hover:text-primary/80 reply-toggle"
-                                data-comment-id="4"
-                        >
-                            답글달기
-                        </button>
-                        <!-- 답글 작성 폼 -->
-                        <div
-                                class="reply-form mt-3 pl-4 border-l-2 border-gray-200"
-                                id="reply-form-4"
-                        >
-                            <div class="flex items-start gap-3">
-                                <div
-                                        class="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 flex items-center justify-center"
-                                >
-                                    <i class="ri-user-line text-gray-500"></i>
-                                </div>
-                                <div class="flex-1">
-                                    <div class="text-sm text-gray-500 mb-2">
-                                        정민수님에게 답글 작성중
-                                    </div>
-                                    <div class="flex">
-                                        <input
-                                                type="text"
-                                                class="comment-input flex-1 border border-gray-200 rounded-l-button py-2 px-3 text-gray-800"
-                                                placeholder="답글을 입력하세요..."
-                                        />
-                                        <button
-                                                class="bg-primary text-white px-4 py-2 rounded-r-button whitespace-nowrap"
-                                        >
-                                            등록
-                                        </button>
-                                    </div>
-                                    <button class="text-sm text-gray-500 mt-2 cancel-reply">
-                                        취소
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </c:forEach>
         </div>
+        </c:if>
         <!-- 댓글 작성 폼 -->
-        <div class="flex items-start gap-3">
+        <form action="${pageContext.request.contextPath}/write-comment" method="post" class="flex items-start gap-3">
+            <input type="hidden" name="postId" value="${ViewResponse.postId}">
             <div
                     class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 flex items-center justify-center"
             >
@@ -578,6 +351,8 @@
             <div class="flex-1">
                 <div class="flex flex-col gap-2">
                     <input
+                            required
+                            name="content"
                             type="text"
                             class="comment-input w-full border border-gray-200 rounded-button py-2 px-3 text-gray-800"
                             placeholder="댓글을 입력하세요..."
@@ -601,6 +376,7 @@
                             <span id="selected-file" class="text-sm text-gray-500"></span>
                         </div>
                         <button
+                                type="submit"
                                 class="bg-primary text-white px-4 py-2 rounded-button whitespace-nowrap"
                         >
                             등록
@@ -608,37 +384,16 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
-    <!-- 이전글/다음글 네비게이션 -->
     <div class="mt-6 flex flex-col sm:flex-row justify-between gap-3">
-        <div class="flex space-x-3">
-            <a
-                    href="#"
-                    class="inline-flex items-center text-gray-600 hover:text-primary transition-colors"
-            >
-                <div class="w-5 h-5 flex items-center justify-center mr-1">
-                    <i class="ri-arrow-left-line"></i>
-                </div>
-                <span>이전글</span>
-            </a>
-            <a
-                    href="#"
-                    class="inline-flex items-center text-gray-600 hover:text-primary transition-colors"
-            >
-                <span>다음글</span>
-                <div class="w-5 h-5 flex items-center justify-center ml-1">
-                    <i class="ri-arrow-right-line"></i>
-                </div>
-            </a>
-        </div>
-        <a
-                href="https://readdy.ai/home/557a148f-5a49-413d-8b99-ea592936ab91/fad9ebf2-a518-4655-bb76-bc5dac337c03"
+        <button
+                onclick="window.history.back();"
                 data-readdy="true"
                 class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-button text-center whitespace-nowrap transition-colors"
         >
             목록으로 돌아가기
-        </a>
+        </button>
     </div>
 </main>
 <script id="comment-reply-script">
@@ -690,7 +445,7 @@
                     const file = this.files[0];
                     const fileName = file.name;
                     const fileSize = (file.size / 1024 / 1024).toFixed(2);
-                    selectedFileSpan.textContent = `${fileName} (${fileSize}MB)`;
+                    selectedFileSpan.textContent = fileName + ` (` + fileSize + `MB)`;
                 } else {
                     selectedFileSpan.textContent = "";
                 }
@@ -704,7 +459,7 @@
                 const file = this.files[0];
                 const fileName = file.name;
                 const fileSize = (file.size / 1024 / 1024).toFixed(2); // MB로 변환
-                selectedFileSpan.textContent = `${fileName} (${fileSize}MB)`;
+                selectedFileSpan.textContent = fileName + ` (` + fileSize + `MB)`;
             } else {
                 selectedFileSpan.textContent = "";
             }
@@ -738,17 +493,27 @@
         const replyToggleButtons = document.querySelectorAll(".reply-toggle");
         replyToggleButtons.forEach((button) => {
             button.addEventListener("click", function () {
-                const commentId = this.getAttribute("data-comment-id");
-                const replyForm = document.getElementById(`reply-form-${commentId}`);
+                const commentId = this.dataset.commentId;
+                const commentRefName = this.dataset.commentUserName;
+                const replyForm = document.getElementById(`reply-form-` + commentId);
                 // 다른 답글 폼 모두 닫기
                 document.querySelectorAll(".reply-form").forEach((form) => {
                     if (form !== replyForm) {
                         form.style.display = "none";
                     }
                 });
-                // 현재 답글 폼 토글
-                replyForm.style.display =
-                    replyForm.style.display === "block" ? "none" : "block";
+
+                if (replyForm.style.display !== "block" || replyForm.dataset.refName === commentRefName ) {
+                    // 현재 답글 폼 토글
+                    replyForm.style.display =
+                        replyForm.style.display === "block" ? "none" : "block";
+                }
+
+                const replyFromNotice = replyForm.querySelector("#reply-form-ref-message-" + commentId);
+                replyFromNotice.innerHTML = commentRefName + "님에게 답글 작성중"
+
+                replyForm.dataset.refName = commentRefName;
+                replyForm.elements.refUserId.value = commentRefName;
             });
         });
         // 취소 버튼 클릭 이벤트

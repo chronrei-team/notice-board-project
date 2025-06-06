@@ -1,0 +1,1 @@
+alter table post_files add COLUMN size INTEGER NOT NULL DEFAULT 0

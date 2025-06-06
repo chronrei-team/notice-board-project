@@ -17,6 +17,9 @@ public class PostFiles {
     /** 파일 저장 위치/URL */
     public String url;
 
+    /** 파일 용량 */
+    public long size;
+
     /** 업로드 시간 */
     public LocalDateTime uploadedAt;
 

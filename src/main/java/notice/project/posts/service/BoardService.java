@@ -1,13 +1,20 @@
 package notice.project.posts.service;
 
+import notice.project.auth.DTO.Token;
 import notice.project.core.Transactional;
-import notice.project.posts.DTO.BoardResponse;
-import notice.project.posts.DTO.PageResponse;
+import notice.project.entity.Comments;
+import notice.project.entity.UserRole;
+import notice.project.posts.DTO.*;
 import notice.project.posts.repository.BoardRepository;
 import notice.project.exceptions.UserNotFoundException;
 
 import java.sql.SQLException;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BoardService implements IBoardService {
     private final BoardRepository repo;
@@ -110,4 +117,59 @@ public class BoardService implements IBoardService {
         return new PageResponse<>(fixedNotices, currentPagePosts, currentPage, startPage, endPage, totalButtons);
     }
 
+    @Override
+    @Transactional
+    public ViewResponse getPostDetail(int postId, Token token) throws SQLException {
+        var posts = repo.findPost(postId);
+        posts.comments = posts.comments.stream()
+                .sorted(Comparator.comparing(Comments::getCreatedAt).reversed())
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        var comments = new HashMap<Integer, Comment>();
+        for (Comments comm : posts.comments) {
+            if (comm.parentCommentId == 0) {
+                comments.put(comm.id, new Comment(
+                        comm.id, comm.writer.id, comm.writer.userName, comm.content, comm.createdAt, null, new ArrayList<>()
+                ));
+            }
+        }
+        for (Comments comm : posts.comments) {
+            if (comm.parentCommentId != 0) {
+                comments.get(comm.parentCommentId)
+                        .getChildren()
+                        .add(new Comment(
+                                comm.id, comm.writer.id, comm.writer.userName, comm.content,
+                                comm.createdAt, comm.referenceComment.writer.userName, null
+                ));
+            }
+        }
+
+        return new ViewResponse(
+                postId,
+                posts.title,
+                posts.user.userName,
+                posts.createdAt,
+                posts.viewCount,
+                posts.content,
+                token != null && (token.getRole() == UserRole.Admin || token.getUserName().equals(posts.user.userName)),
+                posts.postFiles.stream().map(f -> new File(f.name, f.url, getFormattedSize(f.size))).toList(),
+                comments.values().stream().toList()
+        );
+    }
+
+    private String getFormattedSize(long size) {
+        if (size <= 0) {
+            return "0B";
+        }
+
+        // 단위를 나타내는 문자열 배열
+        final String[] units = new String[] { "B", "KB", "MB", "GB", "TB" };
+
+        // 1024로 몇 번 나눌 수 있는지 계산 (log 연산)
+        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+
+        // 해당 단위로 파일 크기를 계산하고, 소수점 첫째 자리까지 포맷팅
+        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups))
+                + units[digitGroups];
+    }
 }

@@ -1,0 +1,1 @@
+alter table post_files drop COLUMN fileType

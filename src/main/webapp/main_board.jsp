@@ -219,7 +219,7 @@
                         <tbody>
                             <!-- 공지사항 -->
                             <c:forEach var="notice" items="${notices}">
-                                <tr class="bg-gray-50/50">
+                                <tr class="bg-gray-50/50" onclick="window.location.href='${pageContext.request.contextPath}/board/view?postId=${notice.id}'">
                                     <td class="py-3 px-4 text-sm text-gray-500 font-medium text-center">
                                             ${notice.id}
                                     </td>
@@ -241,7 +241,9 @@
                             </c:forEach>
                             <!-- 일반 게시글 -->
                             <c:forEach var="post" items="${posts}">
-                                <tr class="border-t border-gray-200 hover:bg-gray-50/50">
+                                <tr class="border-t border-gray-200 hover:bg-gray-50/50"
+                                    onclick="window.location.href='${pageContext.request.contextPath}/board/view?postId=${post.id}'">
+
                                     <td class="py-3 px-4 text-sm text-gray-500 text-center">${post.id}
                                     </td>
                                     <td class="py-3 px-4 text-sm text-gray-500 text-center">${post.postCategory.displayName}</td>
