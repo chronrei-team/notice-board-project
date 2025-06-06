@@ -16,7 +16,6 @@ public class LogoutController extends AuthBaseServlet {
     @Authorization
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getSession().invalidate();
-        request.setAttribute("token", null);
         response.sendRedirect(request.getContextPath() + "/");
     }
 }

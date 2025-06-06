@@ -1,8 +1,5 @@
 <%@ page import="notice.project.auth.DTO.LoginResponse" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%
-    LoginResponse loginDO = (LoginResponse)request.getAttribute("LoginResponse");
-%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -58,7 +55,7 @@
                 <input type="text" id="regNickname" name="userName" required
                        class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-button text-sm"
                        placeholder="닉네임을 입력하세요"
-                       value="<%=(loginDO != null && loginDO.getUserName() != null) ? loginDO.getUserName() : ""%>">
+                       value="${param.userName}">
             </div>
 
             <div class="input-group">
@@ -66,20 +63,16 @@
                 <input type="password" id="regPassword" name="password" required
                        class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-button text-sm pr-10"
                        placeholder="비밀번호를 입력하세요"
-                       value="<%=(loginDO != null && loginDO.getPassword() != null) ? loginDO.getPassword() : ""%>">
+                       value="${param.password}">
                 <span class="password-toggle" onclick="togglePasswordVisibility('regPassword', this)">
                     <i class="ri-eye-off-line"></i>
                 </span>
                 <!-- <p class="text-xs text-red-500 mt-1">비밀번호는 8~16자의 영문 대소문자, 숫자, 특수문자를 사용해야 합니다.</p> -->
             </div>
 
-            <%
-                if (loginDO != null) {
-            %>
-                    <p class="mb-4 p-3 rounded-md bg-red-100 text-red-700"><%=loginDO.getMessage()%></p>
-            <%
-                }
-            %>
+            <c:if test="${!empty LoginResponse}">
+                <p class="mb-4 p-3 rounded-md bg-red-100 text-red-700">${LoginResponse.message}</p>
+            </c:if>
 
             <div>
                 <button type="submit"

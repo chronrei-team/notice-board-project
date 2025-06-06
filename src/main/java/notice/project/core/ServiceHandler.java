@@ -43,12 +43,10 @@ public class ServiceHandler implements InvocationHandler {
 
                 constructorArgs[i] = repoInstance;
                 this.serviceOwnedRepositories.put(repoClass, repoInstance); // 관리 목록에 추가
-                System.out.println("Prepared repository instance for " + repoClass.getSimpleName() + ": " + repoInstance.getClass().getSimpleName());
             }
 
             // 3. 준비된 리포지토리 인스턴스들로 targetService 인스턴스 생성
             this.targetServiceInstance = constructorToUse.newInstance(constructorArgs);
-            System.out.println(targetServiceClass.getSimpleName() + " instance created via constructor injection.");
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to initialize ServiceHandler for " + targetServiceClass.getName(), e);
@@ -88,7 +86,6 @@ public class ServiceHandler implements InvocationHandler {
             config.enforceForeignKeys(true);
             conn = DriverManager.getConnection(dbUrl, config.toProperties());
             conn.setAutoCommit(false);
-            System.out.println("트랜잭션 시작 (생성자 주입 방식): " + actualMethod.getName());
 
             // 1. 서비스가 소유한 리포지토리 인스턴스들에 Connection 주입
             for (Object repoInstance : this.serviceOwnedRepositories.values()) {
@@ -96,14 +93,11 @@ public class ServiceHandler implements InvocationHandler {
                 Method setConnectionMethod = repoInstance.getClass().getMethod("setConnection", Connection.class);
                 setConnectionMethod.invoke(repoInstance, conn);
             }
-            System.out.println("All service-owned repositories have received the connection.");
 
             // 2. 실제 타겟 서비스 메서드 호출
-            System.out.println("Invoking actual method: " + actualMethod.getName() + " on " + targetServiceInstance.getClass().getSimpleName() + " with args: " + Arrays.toString(args));
             result = actualMethod.invoke(targetServiceInstance, args);
 
             conn.commit();
-            System.out.println("트랜잭션 커밋: " + actualMethod.getName());
 
         } catch (Exception e) {
             if (conn != null) {
@@ -130,7 +124,6 @@ public class ServiceHandler implements InvocationHandler {
                 try {
                     if (!conn.getAutoCommit()) conn.setAutoCommit(true);
                     conn.close();
-                    System.out.println("DB 연결 닫힘: " + actualMethod.getName());
                 } catch (SQLException ex) {
                     System.err.println("DB 연결 닫기 실패: " + ex.getMessage());
                 }

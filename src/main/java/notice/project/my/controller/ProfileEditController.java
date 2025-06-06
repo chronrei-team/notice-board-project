@@ -4,6 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import notice.project.auth.DTO.Token;
 import notice.project.auth.service.AuthService;
 import notice.project.auth.service.IAuthService;
 import notice.project.core.AuthBaseServlet;
@@ -33,32 +34,22 @@ public class ProfileEditController extends AuthBaseServlet {
     @Override
     @Authorization
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        var token = (Users) request.getSession(false).getAttribute("token");
-        request.setAttribute("UserResponse", new UserResponse(token.userName, null,
-                null, null, null, null));
         request.getRequestDispatcher("/profile_edit.jsp").forward(request, response);
     }
 
     @Override
     @Authorization
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        var token = (Users) request.getSession(false).getAttribute("token");
-        var userName = token.userName;
+        var token = (Token) request.getSession(false).getAttribute("token");
+        var userName = token.getUserName();
         UserResponse userDO = null;
 
         try {
             var user = myService.profileUpdate(userName, request.getParameter("userName"),
                     request.getParameter("currentPassword"), request.getParameter("newPassword"));
-            userDO = new UserResponse(
-                    request.getParameter("userName"),
-                    null,
-                    null,
-                    null,
-                    null,
-                    "유저 정보가 수정되었습니다.");
+            userDO = new UserResponse(null, "유저 정보가 수정되었습니다.");
 
-            request.getSession(false).setAttribute("token", user);
-            request.setAttribute("token", user);
+            request.getSession(false).setAttribute("token", new Token(user.userName, user.role));
 
         } catch (Exception | InvalidUserNameException | UserNotFoundException
                  | AlreadyRegistedException | InvalidPasswordException e) {
@@ -77,13 +68,7 @@ public class ProfileEditController extends AuthBaseServlet {
                 failMessage = "비밀번호가 일치하지 않습니다.";
             }
 
-            userDO = new UserResponse(
-                    userName,
-                    request.getParameter("userName"),
-                    request.getParameter("currentPassword"),
-                    request.getParameter("newPassword"),
-                    failMessage,
-                    null);
+            userDO = new UserResponse(failMessage, null);
         }
 
         request.setAttribute("UserResponse", userDO);

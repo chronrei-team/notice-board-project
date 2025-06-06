@@ -1,8 +1,5 @@
 <%@ page import="notice.project.auth.DTO.RegisterResponse" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%
-  RegisterResponse registerDO = (RegisterResponse)request.getAttribute("RegisterResponse");
-%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -50,14 +47,14 @@
 <main class="flex-1 container mx-auto px-4 py-8 flex items-center justify-center">
   <div class="bg-white rounded-lg shadow-md p-8 w-full max-w-lg">
     <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">회원가입</h1>
-    <form id="registrationForm" action="<%=request.getContextPath()%>/auth/register" method="post" class="space-y-6">
+    <form id="registrationForm" action="${pageContext.request.contextPath}/auth/register" method="post" class="space-y-6">
 
       <div>
         <label for="regNickname" class="block text-sm font-medium text-gray-700 mb-1">닉네임</label>
         <input type="text" id="regNickname" name="userName" required
                class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-button text-sm"
                placeholder="닉네임을 입력하세요"
-               value="<%=(registerDO != null && registerDO.getUserName() != null) ? registerDO.getUserName() : ""%>">
+               value="${param.userName}">
       </div>
       
       <div class="input-group">
@@ -65,11 +62,10 @@
         <input type="password" id="regPassword" name="password" required
                class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-button text-sm pr-10"
                placeholder="비밀번호를 입력하세요"
-               value="<%=(registerDO != null && registerDO.getPassword() != null) ? registerDO.getPassword() : ""%>">
+               value="${param.password}">
         <span class="password-toggle" onclick="togglePasswordVisibility('regPassword', this)">
                     <i class="ri-eye-off-line"></i>
                 </span>
-        <!-- <p class="text-xs text-red-500 mt-1">비밀번호는 8~16자의 영문 대소문자, 숫자, 특수문자를 사용해야 합니다.</p> -->
       </div>
 
       <div class="input-group">
@@ -77,29 +73,18 @@
         <input type="password" id="regPasswordConfirm" name="passwordConfirm" required
                class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-button text-sm pr-10"
                placeholder="비밀번호를 다시 입력하세요"
-               value="<%=(registerDO != null && registerDO.getPassword() != null) ? registerDO.getPassword() : ""%>">
+               value="${param.password}">
         <span class="password-toggle" onclick="togglePasswordVisibility('regPasswordConfirm', this)">
                      <i class="ri-eye-off-line"></i>
                 </span>
-        <!-- <p class="text-xs text-red-500 mt-1">비밀번호가 일치하지 않습니다.</p> -->
       </div>
-      
-      <%
-        if (registerDO != null) {
-          if (registerDO.getFailMessage() != null) {
-      %>
-            <p class="mb-4 p-3 rounded-md bg-red-100 text-red-700"><%=registerDO.getFailMessage()%></p>
-      <%
-          }
-      %>
-      <%
-          if (registerDO.getSuccessMessage() != null) {
-      %>
-            <p class="mb-4 p-3 rounded-md bg-green-100 text-green-700"><%=registerDO.getSuccessMessage()%></p>
-      <%
-          }
-        }
-      %>
+
+      <c:if test="${!empty RegisterResponse and !empty RegisterResponse.failMessage}">
+            <p class="mb-4 p-3 rounded-md bg-red-100 text-red-700">${RegisterResponse.failMessage}</p>
+      </c:if>
+      <c:if test="${!empty RegisterResponse and !empty RegisterResponse.successMessage}">
+        <p class="mb-4 p-3 rounded-md bg-green-100 text-green-700">${RegisterResponse.successMessage}</p>
+      </c:if>
 
       <div>
         <button type="submit"
@@ -111,20 +96,11 @@
 
     <div class="text-center mt-8 text-sm text-gray-600">
       이미 계정이 있으신가요?
-      <a href="<%=request.getContextPath()%>/auth/login"
+      <a href="${pageContext.request.contextPath}/auth/login"
          class="text-primary hover:text-primary/90 font-medium">로그인</a>
     </div>
   </div>
 </main>
-
-<!-- 푸터 영역 (주석 해제하여 사용 가능) -->
-<%--<footer class="bg-gray-800 text-white py-6 mt-auto">--%>
-<%--    <div class="container mx-auto px-4">--%>
-<%--        <div class="text-center text-gray-400 text-sm">--%>
-<%--            © 2025 커뮤니티 주식회사. All rights reserved.--%>
-<%--        </div>--%>
-<%--    </div>--%>
-<%--</footer>--%>
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {

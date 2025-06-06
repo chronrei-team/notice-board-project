@@ -54,13 +54,13 @@
     <div class="bg-white rounded-lg shadow-md p-8 w-full max-w-lg">
         <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">정보 수정</h1>
 
-        <form id="userEditForm" action="<%=request.getContextPath()%>/my/update" method="post" class="space-y-6">
+        <form id="userEditForm" action="${pageContext.request.contextPath}/my/update" method="post" class="space-y-6">
             <div>
                 <label for="userName" class="block text-sm font-medium text-gray-700 mb-1">닉네임</label>
                 <input type="text" id="userName" name="userName" required
                        class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-button text-sm"
-                       placeholder="새 닉네임을 입력하세요 ${UserResponse.userName != null ? ('현재: ' += UserResponse.userName) : ''} "
-                       value="${UserResponse.newUserName}">
+                       placeholder="새 닉네임을 입력하세요 현재: ${token.userName}"
+                       value="${param.userName}">
             </div>
 
             <div class="form-section-divider">
@@ -73,7 +73,7 @@
                 <input type="password" id="currentPassword" name="currentPassword" required
                        class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-button text-sm pr-10"
                        placeholder="현재 비밀번호 (닉네임 변경 시 또는 비밀번호 변경 시 필수)"
-                       value="${UserResponse.currentPassword}">
+                       value="${param.currentPassword}">
                 <span class="password-toggle" onclick="togglePasswordVisibility('currentPassword', this)">
                     <i class="ri-eye-off-line"></i>
                 </span>
@@ -84,7 +84,7 @@
                 <input type="password" id="newPassword" name="newPassword"
                        class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-button text-sm pr-10"
                        placeholder="새 비밀번호 입력"
-                       value="${UserResponse.newPassword}">
+                       value="${param.newPassword}">
                 <span class="password-toggle" onclick="togglePasswordVisibility('newPassword', this)">
                     <i class="ri-eye-off-line"></i>
                 </span>
@@ -95,19 +95,19 @@
                 <input type="password" id="confirmNewPassword" name="confirmNewPassword"
                        class="form-input w-full px-4 py-2.5 border border-gray-300 rounded-button text-sm pr-10"
                        placeholder="새 비밀번호 다시 입력"
-                       value="${UserResponse.newPassword}">
+                       value="${param.confirmNewPassword}">
                 <span class="password-toggle" onclick="togglePasswordVisibility('confirmNewPassword', this)">
                     <i class="ri-eye-off-line"></i>
                 </span>
                 <p id="passwordMatchError" class="text-xs text-red-500 mt-1" style="display: none;">새 비밀번호가 일치하지 않습니다.</p>
             </div>
 
-            <c:if test="${UserResponse.failMessage != null}">
+            <c:if test="${!empty UserResponse and !empty UserResponse.failMessage}">
                 <div class="mb-4 p-3 rounded-md bg-red-100 text-red-700">
                         ${UserResponse.failMessage}
                 </div>
             </c:if>
-            <c:if test="${UserResponse.successMessage != null}">
+            <c:if test="${!empty UserResponse and !empty UserResponse.successMessage}">
                 <div class="mb-4 p-3 rounded-md bg-green-100 text-green-700">
                         ${UserResponse.successMessage}
                 </div>
@@ -183,10 +183,6 @@
     function confirmWithdrawal() {
         const confirmation = confirm("정말로 회원 탈퇴를 진행하시겠습니까? 이 작업은 되돌릴 수 없습니다.");
         if (confirmation) {
-            // Option 1: Simple redirect (if no extra data like password needed for withdrawal)
-            // window.location.href = "<%=request.getContextPath()%>/user/withdraw";
-
-            // Option 2: Prompt for current password then submit a form (more secure)
             const password = prompt("회원 탈퇴를 위해 현재 비밀번호를 입력해주세요:");
             if (password !== null && password !== "") {
                 document.getElementById('confirmWithdrawPasswordInput').value = password;

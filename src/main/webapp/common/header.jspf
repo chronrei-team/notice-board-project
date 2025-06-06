@@ -1,20 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ page import="notice.project.entity.Users" %>
-<%@ page import="java.net.URLEncoder" %><%--
-  Created by IntelliJ IDEA.
-  User: soo_mini
-  Date: 25. 5. 29.
-  Time: 오후 8:36
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<%
-    Users token = (Users)request.getAttribute("token");
-    if (token != null && token.userName != null) {
-        String encodedUserName = URLEncoder.encode(token.userName, "UTF-8");
-        request.setAttribute("encodedUserName", encodedUserName);
-    }
-%>
 <header class="bg-white shadow-sm">
     <div class="container mx-auto px-4 py-4">
         <div class="relative flex items-center justify-between">
@@ -99,16 +84,16 @@
                 </div>
             </div>
             <!-- 로그인/회원가입 버튼 -->
-            <c:if test="${token == null}">
+            <c:if test="${empty token}">
                 <div class="flex items-center space-x-3">
                     <a
-                            href="<%=request.getContextPath()%>/auth/login"
+                            href="${pageContext.request.contextPath}/auth/login"
                             class="text-gray-700 hover:text-primary whitespace-nowrap text-sm"
                     >
                         로그인
                     </a>
                     <a
-                            href="<%=request.getContextPath()%>/auth/register"
+                            href="${pageContext.request.contextPath}/auth/register"
                             class="bg-primary text-white bg-blue-700 px-4 py-2 rounded-lg text-sm hover:bg-primary/90 whitespace-nowrap inline-block"
                     >회원가입</a
                     >
@@ -120,7 +105,7 @@
                     </button>
                 </div>
             </c:if>
-            <c:if test="${token != null}">
+            <c:if test="${!empty token}">
                 <div class="flex items-center space-x-4">
                     <div class="relative">
                         <button
@@ -134,10 +119,10 @@
                                 class="hidden absolute right-0 mt-2 w-48 bg-white rounded shadow-lg py-2 z-20"
                         >
                             <div class="px-4 py-3 border-b border-gray-100">
-                                <p class="text-sm font-medium text-gray-900"><%=token.userName%></p>
+                                <p class="text-sm font-medium text-gray-900">${token.userName}</p>
                             </div>
                             <a
-                                    href="<%=request.getContextPath()%>/my/update"
+                                    href="${pageContext.request.contextPath}/my/update"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
                             >
                                 <div class="w-4 h-4 flex items-center justify-center mr-2">
@@ -146,7 +131,7 @@
                                 프로필 설정
                             </a>
                             <a
-                                    href="${pageContext.request.contextPath}?type=author&keyword=${encodedUserName}"
+                                    href="${pageContext.request.contextPath}?type=author&keyword=${token.userName}"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
                             >
                                 <div class="w-4 h-4 flex items-center justify-center mr-2">
@@ -165,7 +150,7 @@
                             </a>
                             <div class="border-t border-gray-100">
                                 <a
-                                        href="<%=request.getContextPath()%>/auth/logout"
+                                        href="${pageContext.request.contextPath}/auth/logout"
                                         class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-50 flex items-center"
                                 >
                                     <div class="w-4 h-4 flex items-center justify-center mr-2">

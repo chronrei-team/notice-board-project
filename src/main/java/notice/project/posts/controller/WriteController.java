@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
+import notice.project.auth.DTO.Token;
 import notice.project.core.AuthBaseServlet;
 import notice.project.core.Authorization;
 import notice.project.core.ServiceFactory;
@@ -44,7 +45,7 @@ public class WriteController extends AuthBaseServlet {
     @Authorization
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        var role = ((Users)request.getSession(false).getAttribute("token")).role;
+        var role = ((Token)request.getSession(false).getAttribute("token")).getRole();
         if (role == UserRole.Admin) request.setAttribute("admin", true);
         request.getRequestDispatcher("/write.jsp").forward(request, response);
     }
