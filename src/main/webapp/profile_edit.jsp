@@ -130,6 +130,9 @@
                 회원 탈퇴
             </button>
             <p class="text-xs text-gray-500 mt-2 text-center">회원 탈퇴 시 모든 정보가 삭제되며 복구할 수 없습니다.</p>
+            <form id="withdrawForm" action="<%=request.getContextPath()%>/my/withdraw" method="post" style="display: none;">
+                <input type="hidden" id="confirmWithdrawPasswordInput" name="password">
+            </form>
         </div>
     </div>
 </main>

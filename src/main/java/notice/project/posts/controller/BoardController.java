@@ -55,6 +55,7 @@ public class BoardController extends HttpServlet {
                 }
                 request.setAttribute("keyword", keyword);
                 request.setAttribute("type", type);
+                request.setAttribute("op", op);
             } else {
                 // 일반 목록 조회
                 pageResult = service.getPostListWithPagination(categoryParam, page, PAGE_SIZE, TOTAL_BUTTONS);

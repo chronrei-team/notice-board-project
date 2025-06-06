@@ -47,4 +47,18 @@ public class MyService implements IMyService {
 
         return user;
     }
+
+    @Override
+    @Transactional
+    public void withdrawUser(String userName, String password) throws UserNotFoundException, InvalidPasswordException, SQLException, NoSuchAlgorithmException, InvalidKeySpecException {
+        // 1. 사용자 조회
+        var user = userRepository.findBy(userName);
+        if (user == null) throw new UserNotFoundException();
+
+        // 2. 비밀번호 검증
+        if (!user.verifyPassword(password)) throw new InvalidPasswordException();
+
+        // 3. 회원 탈퇴 처리
+        userRepository.delete(user.id);
+    }
 }

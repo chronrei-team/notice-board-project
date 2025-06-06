@@ -67,4 +67,9 @@ public class UserRepository extends BaseRepository {
                 user.role.name(),
                 user.id);
     }
+
+    public void delete(String userId) throws SQLException {
+        executeCommand("DELETE FROM Users WHERE id = ?", userId);
+    }
+
 }

@@ -217,18 +217,6 @@
         </div>
     </div>
 </header>
-
-
-
-
-
-
-
-
-
-
-
-<!-- and or 드롭다운 넣기 -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const searchTypeButton = document.getElementById("searchTypeButton");

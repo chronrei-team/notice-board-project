@@ -11,7 +11,9 @@
     String keyword = request.getParameter("keyword");
     String type = request.getParameter("type");
     String category = request.getParameter("category");
+    String op = request.getParameter("op");
     String alertMessage = (String) session.getAttribute("alertMessage");
+    String message = request.getParameter("message");
     String queryString = "";
 %>
 <!--
@@ -101,6 +103,11 @@
             alert("<%= alertMessage.replace("\"", "\\\"") %>");
         </script>
         <% session.removeAttribute("alertMessage"); %>
+        <% } %>
+        <% if ("withdraw_success".equals(message)) { %>
+        <script>
+            alert("회원탈퇴가 되었습니다.");
+        </script>
         <% } %>
         <!-- 게시판 제목 및 글쓰기 버튼 -->
         <div class="flex justify-between items-center mb-6">
@@ -338,6 +345,9 @@
             }
             if (category != null && !category.isEmpty()) {
                 queryString += "&category=" + java.net.URLEncoder.encode(category, "UTF-8");
+            }
+            if (op != null && !op.isEmpty()) {
+                queryString += "&op=" + java.net.URLEncoder.encode(op, "UTF-8");
             }
 
             if (startPage < 1) {
