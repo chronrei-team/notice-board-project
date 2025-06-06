@@ -17,120 +17,107 @@
 %>
 <header class="bg-white shadow-sm">
     <div class="container mx-auto px-4 py-4">
-        <div class="flex items-center justify-between">
+        <div class="relative flex items-center justify-between">
             <!-- 로고 -->
             <div class="flex items-center">
-                <a href="#" class="flex items-center">
+                <a
+                   href="<%=request.getContextPath()%>/"
+                   class="text-gray-700 hover:text-primary font-medium"
+                >
                     <span class="text-2xl font-['Pacifico'] text-primary">logo</span>
                 </a>
-                <!-- 네비게이션 메뉴 -->
-                <nav class="hidden md:flex ml-10">
-                    <ul class="flex space-x-8">
-                        <li>
-                            <a
-                                    href="<%=request.getContextPath()%>/"
-                                    class="text-gray-700 hover:text-primary font-medium"
-                            >홈</a
-                            >
-                        </li>
-                        <li>
-                            <a
-                                    href="#"
-                                    class="text-gray-700 hover:text-primary font-medium"
-                            >게시판</a
-                            >
-                        </li>
-                        <li>
-                            <a
-                                    href="#"
-                                    class="text-gray-700 hover:text-primary font-medium"
-                            >갤러리</a
-                            >
-                        </li>
-                        <li>
-                            <a
-                                    href="#"
-                                    class="text-gray-700 hover:text-primary font-medium"
-                            >공지사항</a
-                            >
-                        </li>
-                    </ul>
-                </nav>
             </div>
             <!-- 검색창 -->
-            <div class="hidden md:flex items-center justify-center flex-1 max-w-2xl mx-4">
-                <form method="get" action="${pageContext.request.contextPath}/" class="relative w-full flex items-center">
-                    <input type="hidden" name="type" id="searchTypeInput" value="${param.type != null ? param.type : 'title'}" />
-                    <input type="hidden" name="category" value="${param.category != null ? param.category : ''}" />
-                    <input type="hidden" name="op" id="searchOpInput" value="${param.op != null ? param.op : 'and'}" />
+            <div class="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-xl px-4">
 
-                    <div class="relative flex-1">
-                        <!-- AND/OR 버튼 -->
-                        <div class="absolute left-2 top-1/2 transform -translate-y-1/2 z-10">
-                            <button
-                                    type="button"
-                                    id="searchOpButton"
-                                    class="flex items-center justify-center px-2 py-1 text-sm text-gray-600 hover:text-primary bg-white"
-                            >
-                                <span id="selectedSearchOp">${param.op == 'or' ? 'OR' : 'AND'}</span>
-                                <i class="ri-arrow-down-s-line ml-1"></i>
-                            </button>
+                <div class="inset-y-0 left-0 pl-3 flex items-center">
+                    <form method="get" action="${pageContext.request.contextPath}/" class="relative w-full flex items-center">
+                        <input type="hidden" name="type" id="searchTypeInput" value="${param.type != null ? param.type : 'title'}" />
+                        <input type="hidden" name="category" value="${param.category != null ? param.category : ''}" />
+                        <input type="hidden" name="op" id="searchOpInput" value="${param.op != null ? param.op : 'and'}" />
+
+                        <div class="relative flex-1">
+                            <!-- AND/OR 버튼 -->
+                            <div class="absolute left-2 top-1/2 transform -translate-y-1/2 z-10">
+                                <button
+                                        type="button"
+                                        id="searchOpButton"
+                                        class="flex items-center justify-center px-2 py-1 text-sm text-gray-600 hover:text-primary bg-white"
+                                >
+                                    <span id="selectedSearchOp">${param.op == 'or' ? 'OR' : 'AND'}</span>
+                                    <i class="ri-arrow-down-s-line ml-1"></i>
+                                </button>
+                                <div
+                                        id="searchOpDropdown"
+                                        class="hidden absolute left-0 top-full mt-1 w-20 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+                                >
+                                    <div class="py-1">
+                                        <button type="button" class="search-op-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary" data-value="and">AND</button>
+                                        <button type="button" class="search-op-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary" data-value="or">OR</button>
+                                    </div>
+                                </div>
+                            </div>
                             <div
-                                    id="searchOpDropdown"
-                                    class="hidden absolute left-0 top-full mt-1 w-20 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+                                    class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400"
                             >
-                                <div class="py-1">
-                                    <button type="button" class="search-op-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary" data-value="and">AND</button>
-                                    <button type="button" class="search-op-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary" data-value="or">OR</button>
+                                <i class="ri-search-line"></i>
+                            </div>
+                            <input
+                                    type="text"
+                                    name="keyword"
+                                    value="${param.keyword}"
+                                    placeholder="검색어를 입력하세요"
+                                    class="custom-search w-full py-2 pl-10 pr-24 border border-gray-300 rounded-button text-sm focus:border-primary transition-colors"
+                            />
+                            <div
+                                    class="absolute right-2 top-1/2 transform -translate-y-1/2"
+                            >
+                                <button
+                                        type="button"
+                                        id="searchTypeButton"
+                                        class="flex items-center justify-center px-3 py-1 text-sm text-gray-600 hover:text-primary"
+                                >
+                                    <span id="selectedSearchType">제목</span>
+                                    <i class="ri-arrow-down-s-line ml-1"></i>
+                                </button>
+                                <div
+                                        id="searchTypeDropdown"
+                                        class="hidden absolute right-0 top-full mt-1 w-24 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+                                >
+                                    <div class="py-1">
+                                        <button
+                                                type="button"
+                                                class="search-type-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary"
+                                                data-value="title"
+                                        >
+                                            제목
+                                        </button>
+                                        <button
+                                                type="button"
+                                                class="search-type-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary"
+                                                data-value="content"
+                                        >
+                                            내용
+                                        </button>
+                                        <button
+                                                type="button"
+                                                class="search-type-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary"
+                                                data-value="author"
+                                        >
+                                            작성자
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- 검색 아이콘 -->
-                        <div class="absolute left-20 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400 pointer-events-none">
-                            <i class="ri-search-line"></i>
-                        </div>
-
-                        <!-- 검색어 입력 필드 -->
-                        <input
-                                type="text"
-                                name="keyword"
-                                value="${param.keyword}"
-                                placeholder="검색어를 입력하세요"
-                                class="custom-search w-full py-2 pl-28 pr-24 border border-gray-300 rounded-button text-sm focus:border-primary transition-colors"
-                        />
-
-                        <!-- 검색 타입 버튼 -->
-                        <div class="absolute right-2 top-1/2 transform -translate-y-1/2">
-                            <button
-                                    type="button"
-                                    id="searchTypeButton"
-                                    class="flex items-center justify-center px-3 py-1 text-sm text-gray-600 hover:text-primary"
-                            >
-                                <span id="selectedSearchType">제목</span>
-                                <i class="ri-arrow-down-s-line ml-1"></i>
-                            </button>
-                            <div
-                                    id="searchTypeDropdown"
-                                    class="hidden absolute right-0 top-full mt-1 w-24 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
-                            >
-                                <div class="py-1">
-                                    <button type="button" class="search-type-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary" data-value="title">제목</button>
-                                    <button type="button" class="search-type-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary" data-value="content">내용</button>
-                                    <button type="button" class="search-type-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary" data-value="author">작성자</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 검색 버튼 -->
-                    <button
-                            type="submit"
-                            class="ml-2 bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-primary/90 whitespace-nowrap"
-                    >
-                        검색
-                    </button>
-                </form>
+                        <button
+                                type="submit"
+                                class="ml-2 bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-primary/90 whitespace-nowrap"
+                        >
+                            검색
+                        </button>
+                    </form>
+                </div>
             </div>
             <!-- 로그인/회원가입 버튼 -->
             <c:if test="${token == null}">

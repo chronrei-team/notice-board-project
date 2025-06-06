@@ -220,17 +220,17 @@
                             <!-- 공지사항 -->
                             <c:forEach var="notice" items="${notices}">
                                 <tr class="bg-gray-50/50">
-                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">
+                                    <td class="py-3 px-4 text-sm text-gray-500 font-medium text-center">
                                             ${notice.id}
                                     </td>
-                                    <td class="py-3 px-4 text-sm text-center font-bold">공지</td>
-                                    <td class="py-3 px-4 font-bold">
-                                        <a href="#" class="text-sm font-bold hover:text-primary"
+                                    <td class="py-3 px-4 text-sm text-center font-medium">공지</td>
+                                    <td class="py-3 px-4">
+                                        <a href="#" class="text-sm font-medium hover:text-primary"
                                         >${notice.title}</a
                                         >
                                         <span class="ml-1 text-gray-500 text-xs">[${notice.commentCount}]</span>
                                     </td>
-                                    <td class="py-3 px-4 text-sm text-gray-600 font-bold">${notice.userName}</td>
+                                    <td class="py-3 px-4 text-sm text-gray-600">${notice.userName}</td>
                                     <td class="py-3 px-4 text-sm text-gray-500">${notice.createdAtFormatted}</td>
                                     <td class="py-3 px-4 text-sm text-gray-500 text-center">
                                             ${notice.viewCount}
