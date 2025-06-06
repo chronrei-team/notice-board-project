@@ -58,29 +58,50 @@
                 </nav>
             </div>
             <!-- 검색창 -->
-            <div
-                    class="hidden md:flex items-center justify-center flex-1 max-w-md mx-4"
-            >
+            <div class="hidden md:flex items-center justify-center flex-1 max-w-2xl mx-4">
                 <form method="get" action="${pageContext.request.contextPath}/" class="relative w-full flex items-center">
                     <input type="hidden" name="type" id="searchTypeInput" value="${param.type != null ? param.type : 'title'}" />
                     <input type="hidden" name="category" value="${param.category != null ? param.category : ''}" />
+                    <input type="hidden" name="op" id="searchOpInput" value="${param.op != null ? param.op : 'and'}" />
 
                     <div class="relative flex-1">
-                        <div
-                                class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400"
-                        >
+                        <!-- AND/OR 버튼 -->
+                        <div class="absolute left-2 top-1/2 transform -translate-y-1/2 z-10">
+                            <button
+                                    type="button"
+                                    id="searchOpButton"
+                                    class="flex items-center justify-center px-2 py-1 text-sm text-gray-600 hover:text-primary bg-white"
+                            >
+                                <span id="selectedSearchOp">${param.op == 'or' ? 'OR' : 'AND'}</span>
+                                <i class="ri-arrow-down-s-line ml-1"></i>
+                            </button>
+                            <div
+                                    id="searchOpDropdown"
+                                    class="hidden absolute left-0 top-full mt-1 w-20 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+                            >
+                                <div class="py-1">
+                                    <button type="button" class="search-op-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary" data-value="and">AND</button>
+                                    <button type="button" class="search-op-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary" data-value="or">OR</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 검색 아이콘 -->
+                        <div class="absolute left-20 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400 pointer-events-none">
                             <i class="ri-search-line"></i>
                         </div>
+
+                        <!-- 검색어 입력 필드 -->
                         <input
                                 type="text"
                                 name="keyword"
                                 value="${param.keyword}"
                                 placeholder="검색어를 입력하세요"
-                                class="custom-search w-full py-2 pl-10 pr-24 border border-gray-300 rounded-button text-sm focus:border-primary transition-colors"
+                                class="custom-search w-full py-2 pl-28 pr-24 border border-gray-300 rounded-button text-sm focus:border-primary transition-colors"
                         />
-                        <div
-                                class="absolute right-2 top-1/2 transform -translate-y-1/2"
-                        >
+
+                        <!-- 검색 타입 버튼 -->
+                        <div class="absolute right-2 top-1/2 transform -translate-y-1/2">
                             <button
                                     type="button"
                                     id="searchTypeButton"
@@ -94,31 +115,15 @@
                                     class="hidden absolute right-0 top-full mt-1 w-24 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
                             >
                                 <div class="py-1">
-                                    <button
-                                            type="button"
-                                            class="search-type-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary"
-                                            data-value="title"
-                                    >
-                                        제목
-                                    </button>
-                                    <button
-                                            type="button"
-                                            class="search-type-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary"
-                                            data-value="content"
-                                    >
-                                        내용
-                                    </button>
-                                    <button
-                                            type="button"
-                                            class="search-type-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary"
-                                            data-value="author"
-                                    >
-                                        작성자
-                                    </button>
+                                    <button type="button" class="search-type-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary" data-value="title">제목</button>
+                                    <button type="button" class="search-type-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary" data-value="content">내용</button>
+                                    <button type="button" class="search-type-option w-full px-4 py-2 text-left text-sm hover:bg-gray-50 hover:text-primary" data-value="author">작성자</button>
                                 </div>
                             </div>
                         </div>
                     </div>
+
+                    <!-- 검색 버튼 -->
                     <button
                             type="submit"
                             class="ml-2 bg-primary bg-blue-700 text-white px-4 py-2 rounded-lg text-sm hover:bg-primary/90 whitespace-nowrap"
@@ -225,6 +230,18 @@
         </div>
     </div>
 </header>
+
+
+
+
+
+
+
+
+
+
+
+<!-- and or 드롭다운 넣기 -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const searchTypeButton = document.getElementById("searchTypeButton");
