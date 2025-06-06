@@ -1,6 +1,7 @@
 package notice.project.posts.service;
 
 import jakarta.servlet.http.Part;
+import notice.project.auth.DTO.Token;
 import notice.project.core.Transactional;
 import notice.project.entity.*;
 import notice.project.exceptions.UnauthorizedException;
@@ -50,10 +51,10 @@ public class UploadService implements IUploadService {
 
     @Override
     @Transactional
-    public int uploadPost(Users user, String title, PostCategory category, String content,
+    public int uploadPost(Token user, String title, PostCategory category, String content,
                           List<Part> files, String rootPath, String uploadDirPath) throws UnauthorizedException, SQLException {
 
-        if (user.role != UserRole.Admin && category == PostCategory.Notice) {
+        if (user.getRole() != UserRole.Admin && category == PostCategory.Notice) {
             throw new UnauthorizedException();
         }
 
@@ -99,7 +100,7 @@ public class UploadService implements IUploadService {
         post.title = title;
         post.category = category;
         post.content = content;
-        post.userId = user.id;
+        post.userId = user.getId();
         post.createdAt = LocalDateTime.now();
         post.postFiles = new ArrayList<>();
 

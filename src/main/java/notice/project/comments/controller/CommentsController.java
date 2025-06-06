@@ -8,12 +8,8 @@ import notice.project.comments.DTO.CommentsResponse;
 import notice.project.comments.service.CommentsService;
 import notice.project.comments.service.ICommentsService;
 import notice.project.core.ServiceFactory;
-import notice.project.example.service.ExampleService;
-import notice.project.example.service.IExampleService;
-import notice.project.exceptions.UserNotFoundException;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 
 @WebServlet("/write-comment")

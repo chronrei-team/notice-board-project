@@ -54,7 +54,6 @@ public class WriteController extends AuthBaseServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8"); // 한글 깨짐 방지
-        var upload = getServletContext().getInitParameter("upload_dir");
 
         // 1. 텍스트 데이터 받기
         String title = request.getParameter("title"); // 일반 텍스트 필드는 getParameter로도 가능
@@ -72,8 +71,10 @@ public class WriteController extends AuthBaseServlet {
             }
 
             var uploadDir = getServletContext().getInitParameter("upload_dir");
-            uploadService.uploadPost((Users)request.getSession(false).getAttribute("token"),
+            var postId = uploadService.uploadPost((Token)request.getSession(false).getAttribute("token"),
                     title, PostCategory.valueOf(category), content, files, getServletContext().getRealPath(""), uploadDir);
+
+            response.sendRedirect(request.getContextPath() + "/board/view?postId=" + postId);
         }
         catch (Exception e) {
             response.sendRedirect(request.getContextPath() + "/");

@@ -41,7 +41,7 @@ public class LoginController extends HttpServlet {
         try {
             var user = authService.verifyLogin(userName, password);
             var session = request.getSession();
-            session.setAttribute("token", new Token(user.userName, user.role));
+            session.setAttribute("token", new Token(user.id, user.userName, user.role));
 
             response.sendRedirect(request.getContextPath() + "/");
         } catch (UserNotFoundException e) {

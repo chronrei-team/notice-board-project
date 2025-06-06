@@ -49,7 +49,7 @@ public class ProfileEditController extends AuthBaseServlet {
                     request.getParameter("currentPassword"), request.getParameter("newPassword"));
             userDO = new UserResponse(null, "유저 정보가 수정되었습니다.");
 
-            request.getSession(false).setAttribute("token", new Token(user.userName, user.role));
+            request.getSession(false).setAttribute("token", new Token(user.id, user.userName, user.role));
 
         } catch (Exception | InvalidUserNameException | UserNotFoundException
                  | AlreadyRegistedException | InvalidPasswordException e) {
