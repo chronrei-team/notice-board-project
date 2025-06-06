@@ -255,6 +255,41 @@
             content: "내용",
             author: "작성자"
         };
+
+        const searchOpButton = document.getElementById("searchOpButton");
+        const searchOpDropdown = document.getElementById("searchOpDropdown");
+        const selectedSearchOp = document.getElementById("selectedSearchOp");
+        const searchOpInput = document.getElementById("searchOpInput");
+        const searchOpOptions = document.querySelectorAll(".search-op-option");
+
+        // 초기 표시 텍스트 설정
+        const opMap = { and: "AND", or: "OR" };
+        const currentOp = searchOpInput.value;
+        selectedSearchOp.textContent = opMap[currentOp] || "AND";
+
+        // 버튼 클릭 시 드롭다운 열기/닫기
+        searchOpButton.addEventListener("click", function (e) {
+            e.stopPropagation();
+            searchOpDropdown.classList.toggle("hidden");
+        });
+
+        // 옵션 클릭 시 텍스트 및 값 설정
+        searchOpOptions.forEach((option) => {
+            option.addEventListener("click", function () {
+                const selectedValue = this.dataset.value;
+                selectedSearchOp.textContent = selectedValue.toUpperCase();
+                searchOpInput.value = selectedValue;
+                searchOpDropdown.classList.add("hidden");
+            });
+        });
+
+        // 외부 클릭 시 드롭다운 닫기
+        document.addEventListener("click", function (e) {
+            if (!searchOpButton.contains(e.target)) {
+                searchOpDropdown.classList.add("hidden");
+            }
+        });
+
         const currentType = searchTypeInput.value;
         if (searchTypeMap.hasOwnProperty(currentType)) {
             selectedSearchType.textContent = searchTypeMap[currentType];
