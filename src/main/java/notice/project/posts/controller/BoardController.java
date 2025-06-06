@@ -48,7 +48,7 @@ public class BoardController extends HttpServlet {
                 if (type == null || type.isBlank()) {
                     type = "title"; // 기본값 설정
                 }
-                pageResult = service.searchPostsWithPagination(keyword, type, categoryParam, op, page, PAGE_SIZE, TOTAL_BUTTONS);
+                pageResult = service.searchPostsWithPagination(keyword, type, op, categoryParam, page, PAGE_SIZE, TOTAL_BUTTONS);
                 for (BoardResponse post : pageResult.getData()) {
                     post.setHighlightedTitle(HighlightUtil.highlight(post.getTitle(), keyword));
                     post.setHighlightedUserName(HighlightUtil.highlight(post.getUserName(), keyword));

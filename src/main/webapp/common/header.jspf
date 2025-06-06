@@ -58,7 +58,7 @@
                                 </div>
                             </div>
                             <div
-                                    class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400"
+                                    class="absolute left-20 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400 pointer-events-none"
                             >
                                 <i class="ri-search-line"></i>
                             </div>
@@ -67,7 +67,7 @@
                                     name="keyword"
                                     value="${param.keyword}"
                                     placeholder="검색어를 입력하세요"
-                                    class="custom-search w-full py-2 pl-10 pr-24 border border-gray-300 rounded-button text-sm focus:border-primary transition-colors"
+                                    class="custom-search w-full py-2 pl-28 pr-24 border border-gray-300 rounded-button text-sm focus:border-primary transition-colors"
                             />
                             <div
                                     class="absolute right-2 top-1/2 transform -translate-y-1/2"

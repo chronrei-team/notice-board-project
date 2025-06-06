@@ -160,22 +160,6 @@
                 </button>
             </div>
         </div>
-        <!-- 필터 및 정렬 옵션 -->
-        <div class="flex flex-wrap justify-between items-center mb-4">
-            <div class="flex items-center">
-                <span class="text-sm text-gray-600 mr-2">정렬:</span>
-                <div class="relative">
-                    <button
-                            class="flex items-center text-sm text-gray-700 border border-gray-300 rounded-button px-3 py-1.5 !rounded-button"
-                    >
-                        <span>최신순</span>
-                        <div class="w-4 h-4 flex items-center justify-center ml-2">
-                            <i class="ri-arrow-down-s-line"></i>
-                        </div>
-                    </button>
-                </div>
-            </div>
-        </div>
         <!-- 게시글 테이블 (데스크톱) -->
         <div class="overflow-x-auto mb-6">
             <c:choose>

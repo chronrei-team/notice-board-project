@@ -81,6 +81,11 @@ public class BoardRepository extends BaseRepository {
         int offset = (page - 1) * pageSize;
         List<BoardResponse> list = new ArrayList<>();
 
+        if (op == null || (!op.equalsIgnoreCase("AND") && !op.equalsIgnoreCase("OR"))) {
+            op = "AND";
+        }
+        op = op.toUpperCase();
+
         String baseSql = "select p.*, u.userName, (SELECT COUNT(*) FROM comments c WHERE c.postId = p.id) AS comment_count, p.id as postId " +
                 "from Posts p, users u where p.userId = u.id ";
 
@@ -118,7 +123,7 @@ public class BoardRepository extends BaseRepository {
             } else {
                 whereSql.append(" AND (");
                 for (int i = 0; i < words.length; i++) {
-                    if (i > 0) whereSql.append(" ").append(op.toUpperCase()).append(" ");
+                    if (i > 0) whereSql.append(" ").append(op).append(" ");
                     whereSql.append(field).append(" LIKE ?");
                     paramList.add("%" + words[i] + "%");
                 }
@@ -165,6 +170,11 @@ public class BoardRepository extends BaseRepository {
     public List<BoardResponse> searchByKeywordRaw(String keyword, String type, String op, String category, int offset, int limit) throws SQLException {
         List<BoardResponse> list = new ArrayList<>();
 
+        if (op == null || (!op.equalsIgnoreCase("AND") && !op.equalsIgnoreCase("OR"))) {
+            op = "AND";
+        }
+        op = op.toUpperCase();
+
         String baseSql = "select p.*, u.userName, (SELECT COUNT(*) FROM comments c WHERE c.postId = p.id) AS comment_count, p.id as postId " +
                 "from Posts p, users u where p.userId = u.id ";
 
@@ -201,7 +211,7 @@ public class BoardRepository extends BaseRepository {
             } else {
                 whereSql.append(" AND (");
                 for (int i = 0; i < words.length; i++) {
-                    if (i > 0) whereSql.append(" ").append(op.toUpperCase()).append(" ");
+                    if (i > 0) whereSql.append(" ").append(op).append(" ");
                     whereSql.append(field).append(" LIKE ?");
                     paramList.add("%" + words[i] + "%");
                 }
