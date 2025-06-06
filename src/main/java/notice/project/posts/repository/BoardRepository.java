@@ -2,6 +2,7 @@ package notice.project.posts.repository;
 
 import notice.project.core.BaseRepository;
 import notice.project.core.QueryResult;
+import notice.project.entity.Posts;
 import notice.project.entity.PostCategory;
 import notice.project.posts.DTO.BoardResponse;
 
@@ -60,6 +61,20 @@ public class BoardRepository extends BaseRepository {
         return list;
     }
 
+    public int upload(Posts post) throws SQLException {
+        int pk = executeCommandReturnKey("INSERT INTO posts(userId, title, content, createdAt, category) " +
+                "VALUES(?, ?, ?, ?, ?)",
+                post.userId, post.title, post.content, post.createdAt, post.category);
+
+        for (var postFile : post.postFiles) {
+            postFile.postId = pk;
+            executeCommand("INSERT INTO post_files(postId, name, url, uploadedAt) " +
+                    "VALUES(?, ?, ?, ?)",
+                    postFile.postId, postFile.name, postFile.url, postFile.uploadedAt);
+        }
+
+        return pk;
+    }
     public List<BoardResponse> searchByKeyword(String keyword, String type, String category, int page, int pageSize) throws SQLException {
         if (page < 1) page = 1;
         int offset = (page - 1) * pageSize;
@@ -232,9 +247,9 @@ public class BoardRepository extends BaseRepository {
 
     public List<BoardResponse> findFixedNotices() throws SQLException {
         List<BoardResponse> list = new ArrayList<>();
+        // 'Notice' 하드코딩을 카테코리로 변경해야함.
         String sql = "select p.*, u.userName, (SELECT COUNT(*) FROM comments c WHERE c.postId = p.id) AS comment_count, p.id as postId " +
                 " from Posts p, users u where p.userId=u.id AND p.category = 'Notice' ORDER BY p.createdAt DESC, p.id DESC LIMIT 3";
-
         try (QueryResult query = executeQuery(sql)) {
             var rs = query.Set;
             while (rs.next()) {
