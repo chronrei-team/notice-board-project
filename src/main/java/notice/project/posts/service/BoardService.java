@@ -72,11 +72,11 @@ public class BoardService implements IBoardService {
 
     @Override
     @Transactional
-    public PageResponse<BoardResponse> searchPostsWithPagination(String keyword, String type, String category, int currentPage, int pageSize, int totalButtons) throws SQLException {
+    public PageResponse<BoardResponse> searchPostsWithPagination(String keyword, String type, String op, String category, int currentPage, int pageSize, int totalButtons) throws SQLException {
         List<BoardResponse> fixedNotices = repo.findFixedNotices();
 
         // 1. 현재 페이지 게시글 조회
-        List<BoardResponse> currentPagePosts = repo.searchByKeyword(keyword, type, category, currentPage, pageSize);
+        List<BoardResponse> currentPagePosts = repo.searchByKeyword(keyword, type, op, category, currentPage, pageSize);
 
         // 2. 최대 오른쪽 페이지 수
         int extraPageCount = totalButtons - 1; // 총 버튼 개수 - 현재 페이지 버튼
@@ -84,7 +84,7 @@ public class BoardService implements IBoardService {
         // 3. 오른쪽 추가 게시글 조회 (현재 페이지 다음 글들)
         int extraOffset = currentPage * pageSize;
         int extraLimit = pageSize * extraPageCount;
-        List<BoardResponse> extraPosts = repo.searchByKeywordRaw(keyword, type, category, extraOffset, extraLimit);
+        List<BoardResponse> extraPosts = repo.searchByKeywordRaw(keyword, type, op, category, extraOffset, extraLimit);
 
         int half = totalButtons / 2;
 

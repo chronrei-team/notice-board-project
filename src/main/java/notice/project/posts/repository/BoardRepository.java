@@ -74,13 +74,19 @@ public class BoardRepository extends BaseRepository {
 
         return pk;
     }
-    public List<BoardResponse> searchByKeyword(String keyword, String type, String category, int page, int pageSize) throws SQLException {
+
+    public List<BoardResponse> searchByKeyword(String keyword, String type, String op, String category, int page, int pageSize) throws SQLException {
         if (page < 1) page = 1;
         int offset = (page - 1) * pageSize;
         List<BoardResponse> list = new ArrayList<>();
 
+        if (op == null || (!op.equalsIgnoreCase("AND") && !op.equalsIgnoreCase("OR"))) {
+            op = "AND";
+        }
+        op = op.toUpperCase();
+
         String baseSql = "select p.*, u.userName, (SELECT COUNT(*) FROM comments c WHERE c.postId = p.id) AS comment_count, p.id as postId " +
-                " from Posts p, users u where p.userId=u.id ";
+                "from Posts p, users u where p.userId = u.id ";
 
         StringBuilder whereSql = new StringBuilder();
         List<Object> paramList = new ArrayList<>();
@@ -113,19 +119,18 @@ public class BoardRepository extends BaseRepository {
                 // 작성자 검색은 완전 일치
                 whereSql.append(" AND ").append(field).append(" = ? ");
                 paramList.add(keyword.trim());
-            }
-            else {
-                whereSql.append(" and (");
+            } else {
+                whereSql.append(" AND (");
                 for (int i = 0; i < words.length; i++) {
-                    if (i > 0) whereSql.append(" and ");
-                    whereSql.append(field).append(" like ?");
+                    if (i > 0) whereSql.append(" ").append(op).append(" ");
+                    whereSql.append(field).append(" LIKE ?");
                     paramList.add("%" + words[i] + "%");
                 }
                 whereSql.append(") ");
             }
         }
 
-        String orderLimitSql = " order by p.createdAt desc, p.id DESC limit ? offset ?";
+        String orderLimitSql = " ORDER BY p.createdAt DESC, p.id DESC LIMIT ? OFFSET ?";
         paramList.add(pageSize);
         paramList.add(offset);
 
@@ -161,8 +166,13 @@ public class BoardRepository extends BaseRepository {
         return list;
     }
 
-    public List<BoardResponse> searchByKeywordRaw(String keyword, String type, String category, int offset, int limit) throws SQLException {
+    public List<BoardResponse> searchByKeywordRaw(String keyword, String type, String op, String category, int offset, int limit) throws SQLException {
         List<BoardResponse> list = new ArrayList<>();
+
+        if (op == null || (!op.equalsIgnoreCase("AND") && !op.equalsIgnoreCase("OR"))) {
+            op = "AND";
+        }
+        op = op.toUpperCase();
 
         String baseSql = "select p.*, u.userName, (SELECT COUNT(*) FROM comments c WHERE c.postId = p.id) AS comment_count, p.id as postId " +
                 "from Posts p, users u where p.userId = u.id ";
@@ -200,7 +210,7 @@ public class BoardRepository extends BaseRepository {
             } else {
                 whereSql.append(" AND (");
                 for (int i = 0; i < words.length; i++) {
-                    if (i > 0) whereSql.append(" AND ");
+                    if (i > 0) whereSql.append(" ").append(op).append(" ");
                     whereSql.append(field).append(" LIKE ?");
                     paramList.add("%" + words[i] + "%");
                 }
@@ -246,7 +256,6 @@ public class BoardRepository extends BaseRepository {
 
     public List<BoardResponse> findFixedNotices() throws SQLException {
         List<BoardResponse> list = new ArrayList<>();
-        // 'Notice' 하드코딩을 카테코리로 변경해야함.
         String sql = "select p.*, u.userName, (SELECT COUNT(*) FROM comments c WHERE c.postId = p.id) AS comment_count, p.id as postId " +
                 " from Posts p, users u where p.userId=u.id AND p.category = 'Notice' ORDER BY p.createdAt DESC, p.id DESC LIMIT 3";
         try (QueryResult query = executeQuery(sql)) {

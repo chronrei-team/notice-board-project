@@ -12,4 +12,5 @@ import java.sql.SQLException;
 
 public interface IMyService {
     Users profileUpdate(String originalUserName, String newUserName, String originalPassword, String newPassword) throws InvalidUserNameException, SQLException, UserNotFoundException, NoSuchAlgorithmException, InvalidKeySpecException, AlreadyRegistedException, InvalidPasswordException;
+    void withdrawUser(String userName, String password) throws InvalidPasswordException, UserNotFoundException, SQLException, NoSuchAlgorithmException, InvalidKeySpecException;
 }

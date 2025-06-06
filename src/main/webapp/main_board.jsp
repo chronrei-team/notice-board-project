@@ -11,7 +11,9 @@
     String keyword = request.getParameter("keyword");
     String type = request.getParameter("type");
     String category = request.getParameter("category");
+    String op = request.getParameter("op");
     String alertMessage = (String) session.getAttribute("alertMessage");
+    String message = request.getParameter("message");
     String queryString = "";
 %>
 <!--
@@ -102,6 +104,11 @@
         </script>
         <% session.removeAttribute("alertMessage"); %>
         <% } %>
+        <% if ("withdraw_success".equals(message)) { %>
+        <script>
+            alert("회원탈퇴가 되었습니다.");
+        </script>
+        <% } %>
         <!-- 게시판 제목 및 글쓰기 버튼 -->
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-gray-800">전체 게시판</h1>
@@ -158,22 +165,6 @@
                 >
                     정보공유
                 </button>
-            </div>
-        </div>
-        <!-- 필터 및 정렬 옵션 -->
-        <div class="flex flex-wrap justify-between items-center mb-4">
-            <div class="flex items-center">
-                <span class="text-sm text-gray-600 mr-2">정렬:</span>
-                <div class="relative">
-                    <button
-                            class="flex items-center text-sm text-gray-700 border border-gray-300 rounded-button px-3 py-1.5 !rounded-button"
-                    >
-                        <span>최신순</span>
-                        <div class="w-4 h-4 flex items-center justify-center ml-2">
-                            <i class="ri-arrow-down-s-line"></i>
-                        </div>
-                    </button>
-                </div>
             </div>
         </div>
         <!-- 게시글 테이블 (데스크톱) -->
@@ -356,6 +347,9 @@
             }
             if (category != null && !category.isEmpty()) {
                 queryString += "&category=" + java.net.URLEncoder.encode(category, "UTF-8");
+            }
+            if (op != null && !op.isEmpty()) {
+                queryString += "&op=" + java.net.URLEncoder.encode(op, "UTF-8");
             }
 
             if (startPage < 1) {

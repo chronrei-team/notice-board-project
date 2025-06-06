@@ -34,6 +34,7 @@ public class BoardController extends HttpServlet {
 
             String keyword = request.getParameter("keyword");
             String type = request.getParameter("type");
+            String op = request.getParameter("op");
 
             IBoardService service = ServiceFactory.createProxy(
                     IBoardService.class,
@@ -47,13 +48,14 @@ public class BoardController extends HttpServlet {
                 if (type == null || type.isBlank()) {
                     type = "title"; // 기본값 설정
                 }
-                pageResult = service.searchPostsWithPagination(keyword, type, categoryParam, page, PAGE_SIZE, TOTAL_BUTTONS);
+                pageResult = service.searchPostsWithPagination(keyword, type, op, categoryParam, page, PAGE_SIZE, TOTAL_BUTTONS);
                 for (BoardResponse post : pageResult.getData()) {
                     post.setHighlightedTitle(HighlightUtil.highlight(post.getTitle(), keyword));
                     post.setHighlightedUserName(HighlightUtil.highlight(post.getUserName(), keyword));
                 }
                 request.setAttribute("keyword", keyword);
                 request.setAttribute("type", type);
+                request.setAttribute("op", op);
             } else {
                 // 일반 목록 조회
                 pageResult = service.getPostListWithPagination(categoryParam, page, PAGE_SIZE, TOTAL_BUTTONS);
