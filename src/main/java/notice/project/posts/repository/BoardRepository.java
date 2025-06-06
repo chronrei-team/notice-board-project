@@ -334,9 +334,8 @@ public class BoardRepository extends BaseRepository {
                 "c.content AS c_content, c.createdAt AS c_writtenAt, " +
                 "cu.userName AS c_writer_name, " +
                 "(SELECT ru.userName " +
-                "   FROM comments rc " +
-                "   JOIN users ru ON rc.userId = ru.id " +
-                "   WHERE rc.id = c.parentCommentId) AS rc_writer_name " +
+                "   FROM users ru " +
+                "   WHERE ru.id = c.referenceCommentUserId) AS rc_writer_name " +
                 "FROM comments c " +
                 "JOIN users cu ON cu.id = c.userId " +
                 "WHERE c.postId = ?", postId)) {

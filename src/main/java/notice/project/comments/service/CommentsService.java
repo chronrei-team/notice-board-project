@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 public class CommentsService implements ICommentsService {
     private final CommentsRepository commentsRepository;
 
-    public CommentsService() {
-        this.commentsRepository = new CommentsRepository();
+    public CommentsService(CommentsRepository commentsRepository) {
+        this.commentsRepository = commentsRepository;
     }
 
     @Override

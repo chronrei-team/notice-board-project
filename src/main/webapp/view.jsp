@@ -288,6 +288,7 @@
                                                 class="text-sm text-primary hover:text-primary/80 reply-toggle"
                                                 data-comment-id="${comment.id}"
                                                 data-comment-user-name="${child.authorName}"
+                                                data-comment-user-id="${child.authorId}"
                                         >
                                             답글달기
                                         </button>
@@ -513,7 +514,7 @@
                 replyFromNotice.innerHTML = commentRefName + "님에게 답글 작성중"
 
                 replyForm.dataset.refName = commentRefName;
-                replyForm.elements.refUserId.value = commentRefName;
+                replyForm.refUserId.value = this.dataset.commentUserId;
             });
         });
         // 취소 버튼 클릭 이벤트

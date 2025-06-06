@@ -1,21 +1,33 @@
 package notice.project.comments.controller;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import notice.project.auth.DTO.Token;
 import notice.project.comments.DTO.CommentsResponse;
 import notice.project.comments.service.CommentsService;
 import notice.project.comments.service.ICommentsService;
+import notice.project.core.AuthBaseServlet;
+import notice.project.core.Authorization;
 import notice.project.core.ServiceFactory;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
 @WebServlet("/write-comment")
-public class CommentsController extends HttpServlet {
+public class CommentsController extends AuthBaseServlet {
+    private ICommentsService commentsService;
 
     @Override
+    public void init() throws ServletException {
+        super.init();
+        commentsService = ServiceFactory.createProxy(ICommentsService.class, CommentsService.class);
+    }
+
+    @Override
+    @Authorization
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
 
@@ -28,24 +40,12 @@ public class CommentsController extends HttpServlet {
             int postId = Integer.parseInt(request.getParameter("postId"));
             Integer parentId = (parentIdStr != null && !parentIdStr.isEmpty()) ? Integer.parseInt(parentIdStr) : null;
 
+            var userId = ((Token)request.getSession(false).getAttribute("token")).getId();
 
-            String userId = (String) request.getAttribute("userId");
-            if (userId == null) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "로그인이 필요합니다.");
-                return;
-            }
+            // 이거 어디에 쓰는거지?
+            CommentsResponse resp = commentsService.upload(postId, parentId, refUserId, userId, content);
 
-            var service = ServiceFactory.createProxy(
-                    ICommentsService.class,
-                    CommentsService.class
-            );
-
-            CommentsResponse resp = service.upload(postId, parentId, refUserId, userId, content);
-
-            request.getSession().setAttribute("message", "댓글이 입력되었습니다.");
-
-            // 상세 페이지로 리다이렉트 (나중에 페이지 구현되면 URL 수정)
-            response.sendRedirect("/post-detail?postId=" + postId);
+            response.sendRedirect(request.getContextPath() + "/board/view?postId=" + postId);
         }
         catch (IOException e) {
             // 예외 처리

@@ -121,15 +121,12 @@ public class BoardService implements IBoardService {
     @Transactional
     public ViewResponse getPostDetail(int postId, Token token) throws SQLException {
         var posts = repo.findPost(postId);
-        posts.comments = posts.comments.stream()
-                .sorted(Comparator.comparing(Comments::getCreatedAt).reversed())
-                .collect(Collectors.toCollection(ArrayList::new));
 
         var comments = new HashMap<Integer, Comment>();
         for (Comments comm : posts.comments) {
             if (comm.parentCommentId == 0) {
                 comments.put(comm.id, new Comment(
-                        comm.id, comm.writer.id, comm.writer.userName, comm.content, comm.createdAt, null, new ArrayList<>()
+                        comm.id, comm.userId, comm.writer.userName, comm.content, comm.createdAt, null, new ArrayList<>()
                 ));
             }
         }
@@ -138,7 +135,7 @@ public class BoardService implements IBoardService {
                 comments.get(comm.parentCommentId)
                         .getChildren()
                         .add(new Comment(
-                                comm.id, comm.writer.id, comm.writer.userName, comm.content,
+                                comm.id, comm.userId, comm.writer.userName, comm.content,
                                 comm.createdAt, comm.referenceComment.writer.userName, null
                 ));
             }
@@ -153,7 +150,7 @@ public class BoardService implements IBoardService {
                 posts.content,
                 token != null && (token.getRole() == UserRole.Admin || token.getUserName().equals(posts.user.userName)),
                 posts.postFiles.stream().map(f -> new File(f.name, f.url, getFormattedSize(f.size))).toList(),
-                comments.values().stream().toList()
+                comments.values().stream().sorted(Comparator.comparing(Comment::getWrittenAt).reversed()).toList()
         );
     }
 
