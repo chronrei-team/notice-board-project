@@ -93,6 +93,7 @@ public class Posts {
             }
         }
 
+        if (postFiles == null) postFiles = new ArrayList<>();
         for (int i = 0; i < uploadedFileNames.size(); i++) {
             var postFile = new PostFiles();
             postFile.uploadedAt = LocalDateTime.now();
