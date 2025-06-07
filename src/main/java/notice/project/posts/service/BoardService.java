@@ -159,7 +159,7 @@ public class BoardService implements IBoardService {
                                 ? f.name.toLowerCase().substring(f.name.lastIndexOf('.') + 1)
                                 : null
                         )).toList(),
-                comments.values().stream().sorted(Comparator.comparing(Comment::getWrittenAt).reversed()).toList()
+                comments.values().stream().sorted(Comparator.comparing(Comment::getWrittenAt)).toList()
         );
     }
 
