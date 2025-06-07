@@ -67,9 +67,9 @@ public class BoardRepository extends BaseRepository {
 
         for (var postFile : post.postFiles) {
             postFile.postId = pk;
-            executeCommand("INSERT INTO post_files(postId, name, url, uploadedAt) " +
-                    "VALUES(?, ?, ?, ?)",
-                    postFile.postId, postFile.name, postFile.url, postFile.uploadedAt);
+            executeCommand("INSERT INTO post_files(postId, name, url, uploadedAt, size) " +
+                    "VALUES(?, ?, ?, ?, ?)",
+                    postFile.postId, postFile.name, postFile.url, postFile.uploadedAt, postFile.size);
         }
 
         return pk;
