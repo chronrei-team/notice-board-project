@@ -361,4 +361,8 @@ public class BoardRepository extends BaseRepository {
 
         return post;
     }
+
+    public void updateViewCount(Posts post) throws SQLException {
+        executeCommand("UPDATE posts SET viewCount = ? WHERE id = ?", post.viewCount, post.id);
+    }
 }

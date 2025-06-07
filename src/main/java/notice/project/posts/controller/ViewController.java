@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import notice.project.auth.DTO.Token;
 import notice.project.core.ServiceFactory;
+import notice.project.exceptions.PostNotFountException;
 import notice.project.posts.service.BoardService;
 import notice.project.posts.service.IBoardService;
 
@@ -33,14 +34,12 @@ public class ViewController extends HttpServlet {
                 throw new Exception();
             }
 
-            // TODO: 조회수를 1 증가시켜야함.
-
             var viewResponse = boardService.getPostDetail(Integer.parseInt(postId), token);
 
             request.setAttribute("ViewResponse", viewResponse);
             request.getRequestDispatcher("/view.jsp").forward(request, response);
         }
-        catch (Exception e) {
+        catch (Exception | PostNotFountException e) {
             response.sendRedirect(request.getHeader("referer"));
         }
     }

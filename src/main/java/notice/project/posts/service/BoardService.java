@@ -4,6 +4,7 @@ import notice.project.auth.DTO.Token;
 import notice.project.core.Transactional;
 import notice.project.entity.Comments;
 import notice.project.entity.UserRole;
+import notice.project.exceptions.PostNotFountException;
 import notice.project.posts.DTO.*;
 import notice.project.posts.repository.BoardRepository;
 import notice.project.exceptions.UserNotFoundException;
@@ -119,8 +120,9 @@ public class BoardService implements IBoardService {
 
     @Override
     @Transactional
-    public ViewResponse getPostDetail(int postId, Token token) throws SQLException {
+    public ViewResponse getPostDetail(int postId, Token token) throws SQLException, PostNotFountException {
         var posts = repo.findPost(postId);
+        if (posts == null) throw new PostNotFountException();
 
         var comments = new HashMap<Integer, Comment>();
         for (Comments comm : posts.comments) {
@@ -140,6 +142,9 @@ public class BoardService implements IBoardService {
                 ));
             }
         }
+
+        posts.viewCount++;
+        repo.updateViewCount(posts);
 
         return new ViewResponse(
                 postId,
