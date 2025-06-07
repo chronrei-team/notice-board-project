@@ -1,11 +1,5 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<c:if test="${not empty ErrMessage}">
-<script>
-    alert('${ErrMessage}');
-</script>
-<c:remove var="ErrMessage" scope="session"/>
-</c:if>
 <header class="bg-white shadow-sm">
     <div class="container mx-auto px-4 py-4">
         <div class="relative flex items-center justify-between">

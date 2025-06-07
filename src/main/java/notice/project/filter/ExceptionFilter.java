@@ -3,7 +3,6 @@ package notice.project.filter;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
@@ -20,14 +19,10 @@ public class ExceptionFilter implements Filter {
             HttpServletRequest request = (HttpServletRequest) servletRequest;
             HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-            request.getSession().setAttribute("ErrMessage", e.getMessage() == null ? e.toString() : e.getMessage());
-            String referer = request.getHeader("referer");
-            if (referer == null || referer.trim().isEmpty()) {
-                response.sendRedirect(request.getContextPath() + "/");
-                return;
-            }
-
-            response.sendRedirect(referer);
+            response.setContentType("text/html; charset=UTF-8");
+            response.getWriter().write("<script>alert('"
+                    + (e.getMessage() == null ? e.toString() : e.getMessage())
+                    + "');history.back();</script>");
         }
 
     }
