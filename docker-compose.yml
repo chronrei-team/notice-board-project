@@ -1,0 +1,10 @@
+services:
+  wp-project: # 서비스 이름 (원하는 대로 지정 가능)
+    image: jsm150/wp-project:1.0
+    ports:
+      - "8090:8080" # "호스트_포트:컨테이너_포트(8080 고정)"
+    environment:
+      - database=/app/database/database.db # 마운트한 데이터베이스경로
+    volumes:
+      - C:\Users\soo_mini\OneDrive\대학\3학년1학기\웹프로그래밍\과제\팀플\release_database:/app/database # 예시: 로컬의 디렉토리를 컨테이너의 /app/database로 마운트
+    restart: unless-stopped # 컨테이너가 예기치 않게 종료되면 자동으로 재시작
