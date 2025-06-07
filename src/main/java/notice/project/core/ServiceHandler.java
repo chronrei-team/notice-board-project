@@ -62,7 +62,7 @@ public class ServiceHandler implements InvocationHandler {
 
 
     @Override
-    public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    public Object invoke(Object proxy, Method method, Object[] args) throws Exception {
         Method actualMethod;
         try {
             // 실제 실행될 메서드는 targetServiceInstance의 구현 클래스에 있는 메서드
@@ -104,9 +104,9 @@ public class ServiceHandler implements InvocationHandler {
                 try { conn.rollback(); System.err.println("트랜잭션 롤백됨: " + actualMethod.getName()); }
                 catch (SQLException ex) { System.err.println("롤백 실패: " + ex.getMessage()); }
             }
-            Throwable cause = e;
+            Exception cause = e;
             if (e instanceof java.lang.reflect.InvocationTargetException) {
-                cause = ((java.lang.reflect.InvocationTargetException) e).getTargetException();
+                cause = (Exception) ((java.lang.reflect.InvocationTargetException) e).getTargetException();
             }
             throw cause;
         } finally {

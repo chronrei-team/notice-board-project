@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import notice.project.auth.DTO.Token;
 import notice.project.core.ServiceFactory;
-import notice.project.exceptions.PostNotFountException;
 import notice.project.posts.service.BoardService;
 import notice.project.posts.service.IBoardService;
 
@@ -39,8 +38,8 @@ public class ViewController extends HttpServlet {
             request.setAttribute("ViewResponse", viewResponse);
             request.getRequestDispatcher("/view.jsp").forward(request, response);
         }
-        catch (Exception | PostNotFountException e) {
-            response.sendRedirect(request.getHeader("referer"));
+        catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 }

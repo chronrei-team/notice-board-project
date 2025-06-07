@@ -1,7 +1,5 @@
 package notice.project.entity;
 
-import notice.project.exceptions.InvalidUserNameException;
-
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.security.NoSuchAlgorithmException;
@@ -54,12 +52,12 @@ public class Users {
     private static final int KEY_LENGTH = 256;   // 결과 해시의 비트 길이
     private static final int SALT_LENGTH = 16;   // 솔트 바이트 길이 (128 bits)
 
-    public void initUserName(String userName) throws InvalidUserNameException {
-        if (userName == null) throw new InvalidUserNameException();
+    public void initUserName(String userName) {
+        if (userName == null) throw new RuntimeException("닉네임이 없습니다.");
 
         Pattern pattern = Pattern.compile(REGEX_HAS_WHITESPACE_OR_SPECIAL_CHAR);
         Matcher matcher = pattern.matcher(userName);
-        if (matcher.matches()) throw new InvalidUserNameException();
+        if (matcher.matches()) throw new RuntimeException("닉네임은 특수문자 및 공백을 포함할 수 없습니다.");
         this.userName = userName;
     }
 

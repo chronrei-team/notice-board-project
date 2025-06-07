@@ -52,7 +52,7 @@ public class UploadService implements IUploadService {
     @Override
     @Transactional
     public int uploadPost(Token user, String title, PostCategory category, String content,
-                          List<Part> files, String rootPath, String uploadDirPath) throws UnauthorizedException, SQLException {
+                          List<Part> files, String rootPath, String uploadDirPath) throws SQLException {
 
         if (user.getRole() != UserRole.Admin && category == PostCategory.Notice) {
             throw new UnauthorizedException();

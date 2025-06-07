@@ -10,7 +10,6 @@ import notice.project.posts.DTO.BoardResponse;
 import notice.project.posts.DTO.PageResponse;
 import notice.project.posts.service.BoardService;
 import notice.project.posts.service.IBoardService;
-import notice.project.exceptions.UserNotFoundException;
 import notice.project.utils.HighlightUtil;
 
 import java.io.IOException;
@@ -76,11 +75,9 @@ public class BoardController extends HttpServlet {
 
 
         } catch (SQLException e) {
-            request.setAttribute("errorMessage", "데이터베이스 오류가 발생했습니다.");
+            throw new RuntimeException(e.getMessage());
         }
-        catch (UserNotFoundException e) {
-            request.setAttribute("errorMessage", "사용자를 찾을 수 없습니다.");
-        }
+
         request.getRequestDispatcher("/main_board.jsp").forward(request, response);
     }
 }

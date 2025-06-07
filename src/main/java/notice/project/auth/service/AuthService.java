@@ -5,21 +5,10 @@ import notice.project.core.Transactional;
 import notice.project.entity.UserRole;
 import notice.project.entity.UserStatus;
 import notice.project.entity.Users;
-import notice.project.exceptions.AlreadyRegistedException;
-import notice.project.exceptions.InvalidPasswordException;
-import notice.project.exceptions.InvalidUserNameException;
-import notice.project.exceptions.UserNotFoundException;
-
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.KeySpec;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.UUID;
 
 public class AuthService implements IAuthService {
@@ -31,14 +20,14 @@ public class AuthService implements IAuthService {
 
     @Override
     @Transactional
-    public Users verifyLogin(String userName, String password) throws SQLException, UserNotFoundException, InvalidPasswordException {
+    public Users verifyLogin(String userName, String password) throws SQLException {
         var user = userRepository.findBy(userName);
-        if (user == null) throw new UserNotFoundException();
+        if (user == null) throw new RuntimeException("유저가 존재하지 않습니다.");
         try {
             if (!user.verifyPassword(password))
-                throw new InvalidPasswordException();
+                throw new RuntimeException("비밀번호가 일치하지 않습니다.");
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            throw new InvalidPasswordException();
+            throw new RuntimeException();
         }
 
         user.lastLoginAt = LocalDateTime.now();
@@ -49,9 +38,9 @@ public class AuthService implements IAuthService {
 
     @Override
     @Transactional
-    public void register(String userName, String password) throws SQLException, AlreadyRegistedException, InvalidUserNameException {
+    public void register(String userName, String password) throws SQLException {
         var user = userRepository.findBy(userName);
-        if (user != null) throw new AlreadyRegistedException();
+        if (user != null) throw new RuntimeException("이미 사용중인 닉네임 입니다.");
         try {
             user = new Users();
             user.id = UUID.randomUUID().toString();

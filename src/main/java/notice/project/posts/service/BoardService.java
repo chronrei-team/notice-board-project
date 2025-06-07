@@ -4,10 +4,8 @@ import notice.project.auth.DTO.Token;
 import notice.project.core.Transactional;
 import notice.project.entity.Comments;
 import notice.project.entity.UserRole;
-import notice.project.exceptions.PostNotFountException;
 import notice.project.posts.DTO.*;
 import notice.project.posts.repository.BoardRepository;
-import notice.project.exceptions.UserNotFoundException;
 
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -26,7 +24,7 @@ public class BoardService implements IBoardService {
 
     @Override
     @Transactional
-    public PageResponse<BoardResponse> getPostListWithPagination(String category, int currentPage, int pageSize, int totalButtons) throws SQLException, UserNotFoundException {
+    public PageResponse<BoardResponse> getPostListWithPagination(String category, int currentPage, int pageSize, int totalButtons) throws SQLException {
         List<BoardResponse> fixedNotices = repo.findFixedNotices();
 
         // 1. 기본 게시글 목록 조회 (현재 페이지)
@@ -120,9 +118,9 @@ public class BoardService implements IBoardService {
 
     @Override
     @Transactional
-    public ViewResponse getPostDetail(int postId, Token token) throws SQLException, PostNotFountException {
+    public ViewResponse getPostDetail(int postId, Token token) throws SQLException {
         var posts = repo.findPost(postId);
-        if (posts == null) throw new PostNotFountException();
+        if (posts == null) throw new RuntimeException("게시글을 찾을 수 없습니다.");
 
         var comments = new HashMap<Integer, Comment>();
         for (Comments comm : posts.comments) {

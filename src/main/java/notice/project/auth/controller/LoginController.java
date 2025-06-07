@@ -10,12 +10,8 @@ import notice.project.auth.DTO.Token;
 import notice.project.auth.service.AuthService;
 import notice.project.auth.service.IAuthService;
 import notice.project.core.ServiceFactory;
-import notice.project.exceptions.InvalidPasswordException;
-import notice.project.exceptions.UserNotFoundException;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.sql.SQLException;
 
 @WebServlet("/auth/login")
 public class LoginController extends HttpServlet {
@@ -44,17 +40,8 @@ public class LoginController extends HttpServlet {
             session.setAttribute("token", new Token(user.id, user.userName, user.role));
 
             response.sendRedirect(request.getContextPath() + "/");
-        } catch (UserNotFoundException e) {
-            LoginResponse loginDO = new LoginResponse("유저가 존재하지 않습니다.");
-            request.setAttribute("LoginResponse", loginDO);
-            request.getRequestDispatcher("/login.jsp").forward(request, response);
-        } catch (InvalidPasswordException e) {
-            LoginResponse loginDO = new LoginResponse("비밀번호가 일치하지 않습니다.");
-            request.setAttribute("LoginResponse", loginDO);
-            request.getRequestDispatcher("/login.jsp").forward(request, response);
-        }
-        catch (Exception e) {
-            LoginResponse loginDO = new LoginResponse("알 수 없는 오류가 발생했습니다.");
+        } catch (Exception e) {
+            LoginResponse loginDO = new LoginResponse(e.getMessage());
             request.setAttribute("LoginResponse", loginDO);
             request.getRequestDispatcher("/login.jsp").forward(request, response);
         }

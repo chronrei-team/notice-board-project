@@ -12,8 +12,6 @@ import notice.project.core.Authorization;
 import notice.project.core.ServiceFactory;
 import notice.project.entity.PostCategory;
 import notice.project.entity.UserRole;
-import notice.project.entity.Users;
-import notice.project.exceptions.UnauthorizedException;
 import notice.project.posts.service.IUploadService;
 import notice.project.posts.service.UploadService;
 
@@ -22,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -65,22 +64,19 @@ public class WriteController extends AuthBaseServlet {
         files.add(request.getPart("file2"));
         files.add(request.getPart("file3"));
 
+        if (title == null || title.isEmpty() || category == null || category.isEmpty() || content == null || content.isEmpty()) {
+            throw new RuntimeException();
+        }
+
+        var uploadDir = getServletContext().getInitParameter("upload_dir");
+        int postId = 0;
         try {
-            if (title == null || title.isEmpty() || category == null || category.isEmpty() || content == null || content.isEmpty()) {
-                throw new RuntimeException();
-            }
-
-            var uploadDir = getServletContext().getInitParameter("upload_dir");
-            var postId = uploadService.uploadPost((Token)request.getSession(false).getAttribute("token"),
+            postId = uploadService.uploadPost((Token)request.getSession(false).getAttribute("token"),
                     title, PostCategory.valueOf(category), content, files, getServletContext().getRealPath(""), uploadDir);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
-            response.sendRedirect(request.getContextPath() + "/board/view?postId=" + postId);
-        }
-        catch (Exception e) {
-            response.sendRedirect(request.getContextPath() + "/");
-        } catch (UnauthorizedException e) {
-            // 정상적인 방법으로는 올 수 없다.
-            response.sendRedirect(request.getContextPath() + "/");
-        }
+        response.sendRedirect(request.getContextPath() + "/board/view?postId=" + postId);
     }
 }

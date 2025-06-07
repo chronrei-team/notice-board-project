@@ -9,12 +9,9 @@ import notice.project.auth.DTO.Token;
 import notice.project.core.AuthBaseServlet;
 import notice.project.core.Authorization;
 import notice.project.core.ServiceFactory;
-import notice.project.entity.Users;
 import notice.project.my.DO.UserResponse;
 import notice.project.my.service.IMyService;
 import notice.project.my.service.MyService;
-import notice.project.exceptions.InvalidPasswordException;
-import notice.project.exceptions.UserNotFoundException;
 
 import java.io.IOException;
 
@@ -56,12 +53,8 @@ public class DeleteController extends AuthBaseServlet {
             response.sendRedirect(request.getContextPath() + "/login?message=withdraw_success");
             return;
 
-        } catch (InvalidPasswordException e) {
-            userResponse = new UserResponse("비밀번호가 올바르지 않습니다.", null);
-        } catch (UserNotFoundException e) {
-            userResponse = new UserResponse("유저를 찾을 수 없습니다.", null);
         } catch (Exception e) {
-            userResponse = new UserResponse("알 수 없는 오류가 발생했습니다.", null);
+            userResponse = new UserResponse(e.getMessage(), null);
         }
 
         request.setAttribute("UserResponse", userResponse);

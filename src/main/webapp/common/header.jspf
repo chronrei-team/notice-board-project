@@ -1,5 +1,11 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core"%>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<c:if test="${not empty ErrMessage}">
+<script>
+    alert('${ErrMessage}');
+</script>
+<c:remove var="ErrMessage" scope="session"/>
+</c:if>
 <header class="bg-white shadow-sm">
     <div class="container mx-auto px-4 py-4">
         <div class="relative flex items-center justify-between">
@@ -159,15 +165,6 @@
                                     <i class="ri-file-list-line"></i>
                                 </div>
                                 내 게시글
-                            </a>
-                            <a
-                                    href="#"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
-                            >
-                                <div class="w-4 h-4 flex items-center justify-center mr-2">
-                                    <i class="ri-chat-1-line"></i>
-                                </div>
-                                내 댓글
                             </a>
                             <div class="border-t border-gray-100">
                                 <a
