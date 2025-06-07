@@ -189,10 +189,45 @@
                                     class="flex items-center p-3 bg-gray-50 rounded hover:bg-gray-100 transition-colors group"
                                     download="${fn:escapeXml(file.name)}"
                             >
-                                <div
-                                        class="w-10 h-10 flex items-center justify-center bg-gray-200 rounded mr-3"
-                                >
-                                    <i class="ri-file-excel-2-line text-green-600 text-xl"></i>
+                                <div class="w-10 h-10 flex items-center justify-center bg-gray-200 rounded mr-3">
+                                    <%-- 확장자에 따라 다른 아이콘 클래스를 변수에 할당합니다. --%>
+                                    <c:set var="iconClass" value="ri-file-line text-gray-500" /> <%-- 기본 아이콘 --%>
+
+                                    <c:choose>
+                                        <%-- MS Office & 한컴 --%>
+                                        <c:when test="${file.extension == 'xls' || file.extension == 'xlsx'}">
+                                            <c:set var="iconClass" value="ri-file-excel-2-line text-green-600" />
+                                        </c:when>
+                                        <c:when test="${file.extension == 'doc' || file.extension == 'docx'}">
+                                            <c:set var="iconClass" value="ri-file-word-2-line text-blue-600" />
+                                        </c:when>
+                                        <c:when test="${file.extension == 'ppt' || file.extension == 'pptx'}">
+                                            <c:set var="iconClass" value="ri-file-ppt-2-line text-orange-600" />
+                                        </c:when>
+                                        <c:when test="${file.extension == 'hwp'}">
+                                            <c:set var="iconClass" value="ri-file-text-line text-blue-500" />
+                                        </c:when>
+
+                                        <%-- 기타 파일 형식 --%>
+                                        <c:when test="${file.extension == 'pdf'}">
+                                            <c:set var="iconClass" value="ri-file-pdf-line text-red-600" />
+                                        </c:when>
+                                        <c:when test="${file.extension == 'zip' || file.extension == 'rar' || file.extension == '7z' || file.extension == 'tar' || file.extension == 'gz'}">
+                                            <c:set var="iconClass" value="ri-file-zip-line text-yellow-500" />
+                                        </c:when>
+                                        <c:when test="${file.extension == 'jpg' || file.extension == 'jpeg' || file.extension == 'png' || file.extension == 'gif' || file.extension == 'bmp'}">
+                                            <c:set var="iconClass" value="ri-image-line text-purple-600" />
+                                        </c:when>
+                                        <c:when test="${file.extension == 'txt'}">
+                                            <c:set var="iconClass" value="ri-file-text-line text-gray-600" />
+                                        </c:when>
+                                        <c:when test="${file.extension == 'html' || file.extension == 'js' || file.extension == 'css' || file.extension == 'java' || file.extension == 'jsp'}">
+                                            <c:set var="iconClass" value="ri-file-code-line text-indigo-600" />
+                                        </c:when>
+                                    </c:choose>
+
+                                        <%-- 최종적으로 결정된 아이콘 클래스를 사용해 아이콘을 렌더링합니다. --%>
+                                    <i class="${iconClass} text-xl"></i>
                                 </div>
                                 <div class="flex-1">
                                     <p class="text-sm font-medium text-gray-900">
@@ -223,8 +258,8 @@
                         id="comment-sort"
                         class="text-sm border border-gray-200 rounded-button py-1.5 px-3 pr-8 text-gray-700 focus:outline-none focus:border-primary"
                 >
+                    <option value="oldest">등록순</option>
                     <option value="latest">최신순</option>
-                    <option value="oldest">오래된순</option>
                     <option value="replies">답글순</option>
                 </select>
             </div>
@@ -244,7 +279,7 @@
                     <div class="flex-1">
                         <div class="flex items-center mb-1">
                             <span class="font-medium text-gray-900 mr-2">${comment.authorName}</span>
-                            <span class="text-sm text-gray-500">
+                            <span class="text-sm text-gray-500 date-time">
                                 <fmt:formatDate value="${comment.writtenAt}" pattern="yyyy-MM-dd HH:mm:ss" />
                             </span>
                         </div>
@@ -360,21 +395,6 @@
                     />
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2">
-                            <label class="relative cursor-pointer">
-                                <input
-                                        type="file"
-                                        class="hidden"
-                                        id="comment-file"
-                                        accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx"
-                                />
-                                <div
-                                        class="flex items-center gap-1 text-sm text-gray-600 hover:text-primary"
-                                >
-                                    <i class="ri-attachment-2"></i>
-                                    <span>파일첨부</span>
-                                </div>
-                            </label>
-                            <span id="selected-file" class="text-sm text-gray-500"></span>
                         </div>
                         <button
                                 type="submit"
@@ -435,36 +455,6 @@
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-
-
-        // 파일 선택 처리 - 모든 파일 입력에 대해
-        document.querySelectorAll('input[type="file"]').forEach((fileInput) => {
-            fileInput.addEventListener("change", function () {
-                const selectedFileSpan =
-                    this.closest(".flex-1").querySelector(".selected-file");
-                if (this.files.length > 0) {
-                    const file = this.files[0];
-                    const fileName = file.name;
-                    const fileSize = (file.size / 1024 / 1024).toFixed(2);
-                    selectedFileSpan.textContent = fileName + ` (` + fileSize + `MB)`;
-                } else {
-                    selectedFileSpan.textContent = "";
-                }
-            });
-        });
-        // 파일 선택 처리
-        const fileInput = document.getElementById("comment-file");
-        const selectedFileSpan = document.getElementById("selected-file");
-        fileInput.addEventListener("change", function () {
-            if (this.files.length > 0) {
-                const file = this.files[0];
-                const fileName = file.name;
-                const fileSize = (file.size / 1024 / 1024).toFixed(2); // MB로 변환
-                selectedFileSpan.textContent = fileName + ` (` + fileSize + `MB)`;
-            } else {
-                selectedFileSpan.textContent = "";
-            }
-        });
         // 댓글 정렬 처리
         const sortSelect = document.getElementById("comment-sort");
         const commentsList = document.querySelector(".space-y-6");
@@ -472,8 +462,8 @@
             const comments = Array.from(commentsList.children);
             const sortValue = this.value;
             comments.sort((a, b) => {
-                const dateA = new Date(a.querySelector(".text-gray-500").textContent);
-                const dateB = new Date(b.querySelector(".text-gray-500").textContent);
+                const dateA = new Date(a.querySelector(".date-time").textContent);
+                const dateB = new Date(b.querySelector(".date-time").textContent);
                 const repliesA = a.querySelectorAll(".border-l-2").length;
                 const repliesB = b.querySelectorAll(".border-l-2").length;
                 switch (sortValue) {
@@ -566,13 +556,9 @@
                             downloadButton.setAttribute('onclick', 'downloadImageFromViewer(this)');
 
 
-                            const icon = document.createElement('i');
-                            icon.className = 'ri-download-line';
-
                             const span = document.createElement('span');
                             span.textContent = '이미지 다운로드';
 
-                            downloadButton.appendChild(icon);
                             downloadButton.appendChild(span);
                             buttonWrapper.appendChild(downloadButton);
 
