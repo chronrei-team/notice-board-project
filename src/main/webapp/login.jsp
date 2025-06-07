@@ -84,7 +84,7 @@
 
         <div class="text-center mt-8 text-sm text-gray-600">
             아직 계정이 없으신가요?
-            <a href="<%=request.getContextPath()%>/auth/register"
+            <a href="${pageContext.request.contextPath}/auth/register"
                class="text-primary hover:text-primary/90 font-medium">회원가입</a>
         </div>
     </div>

@@ -1,3 +1,4 @@
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -71,29 +72,29 @@
 <main class="container2">
     <h2 class="text-2xl font-bold mb-6">게시글 작성</h2>
     <!-- enctype="multipart/form-data" 필수 -->
-    <form id="postUploadForm" action="write" method="post" enctype="multipart/form-data">
+    <form id="postUploadForm" action="${empty EditResponse ? 'write' : 'edit'}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="postId" value="${EditResponse.postId}">
         <div class="form-group">
             <label for="title">제목 <span style="color:red;">*</span></label>
-            <input type="text" id="title" name="title" required />
+            <input type="text" id="title" name="title" value="${fn:escapeXml(EditResponse.title)}" required />
         </div>
 
         <div class="form-group">
             <label for="category">카테고리 <span style="color:red;">*</span></label>
             <select id="category" name="category" required>
-                <option value="" disabled selected>카테고리를 선택하세요</option>
+                <option value="" disabled ${empty EditResponse.category ? 'selected' : ''}>카테고리를 선택하세요</option>
                 <c:if test="${admin}">
-                    <option value="Notice">공지사항</option>
+                    <option value="Notice" ${EditResponse.category == 'Notice' ? 'selected' : ''}>공지사항</option>
                 </c:if>
-                <option value="Normal">자유게시판</option>
-                <option value="Qna">Q&A</option>
-                <option value="Information">정보공유</option>
-                <!-- 필요에 따라 옵션 추가 -->
+                <option value="Normal" ${EditResponse.category == 'Normal' ? 'selected' : ''}>자유게시판</option>
+                <option value="Qna" ${EditResponse.category == 'Qna' ? 'selected' : ''}>Q&A</option>
+                <option value="Information" ${EditResponse.category == 'Information' ? 'selected' : ''}>정보공유</option>
             </select>
         </div>
 
         <div class="form-group">
             <label for="content">내용 <span style="color:red;">*</span></label>
-            <textarea id="content" name="content" style="display: none;"></textarea>
+            <textarea id="content" name="content" style="display: none;">${fn:escapeXml(EditResponse.content)}</textarea>
             <div id="editor"></div>
         </div>
 
@@ -113,6 +114,7 @@
                             accept="image/*,application/pdf,application/octet-stream"
                             onchange="handleFileChange(1)"
                     />
+                    <input type="hidden" id="file1_before_id" name="file1_before_id" value="${EditResponse.fileIdList[0]}">
                     <!-- 커스텀 파일 선택 버튼 (label 활용) -->
                     <label
                             for="file1"
@@ -138,6 +140,7 @@
                 <!-- 파일 입력 그룹 2 -->
                 <div class="file-input-group flex items-center space-x-3 p-4 border border-gray-300 rounded-lg bg-gray-50 shadow-sm">
                     <input type="file" id="file2" name="file2" class="sr-only" accept="image/*,application/pdf,application/octet-stream" onchange="handleFileChange(2)"/>
+                    <input type="hidden" id="file2_before_id" name="file2_before_id" value="${EditResponse.fileIdList[1]}">
                     <label for="file2" class="cursor-pointer bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-md transition-colors duration-150 ease-in-out whitespace-nowrap">
                         파일 선택
                     </label>
@@ -152,6 +155,7 @@
                 <!-- 파일 입력 그룹 3 -->
                 <div class="file-input-group flex items-center space-x-3 p-4 border border-gray-300 rounded-lg bg-gray-50 shadow-sm">
                     <input type="file" id="file3" name="file3" class="sr-only" accept="image/*,application/pdf,application/octet-stream" onchange="handleFileChange(3)"/>
+                    <input type="hidden" id="file3_before_id" name="file3_before_id" value="${EditResponse.fileIdList[2]}">
                     <label for="file3" class="cursor-pointer bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded-md transition-colors duration-150 ease-in-out whitespace-nowrap">
                         파일 선택
                     </label>
@@ -178,6 +182,7 @@
         const fileInput = document.querySelector(`#file` + index);
         const fileNameDisplay = document.getElementById(`fileName` + index);
         const removeBtn = document.getElementById(`removeBtn` + index);
+        const fileBeforeId = document.querySelector(`#file` + index + `_before_id`);
 
         if (fileInput) {
             fileInput.value = ""; // 파일 입력 값 초기화
@@ -189,6 +194,8 @@
         if (removeBtn) {
             removeBtn.classList.add('hidden'); // Tailwind: hidden 클래스 추가로 버튼 숨기기
         }
+
+        fileBeforeId.value = '';
     }
 
     // 파일 선택 시 파일명 표시 및 삭제 버튼 표시
@@ -196,6 +203,7 @@
         const fileInput = document.getElementById(`file` + index);
         const removeBtn = document.getElementById(`removeBtn` + index);
         const fileNameDisplay = document.getElementById(`fileName` + index);
+        const fileBeforeId = document.querySelector(`#file` + index + `_before_id`);
 
         if (fileInput.files && fileInput.files.length > 0) {
             const fileName = fileInput.files[0].name;
@@ -208,6 +216,8 @@
             fileNameDisplay.setAttribute('title', "선택된 파일 없음");
             removeBtn.classList.add('hidden'); // Tailwind: hidden 클래스 추가로 버튼 숨기기
         }
+
+        fileBeforeId.value = '';
     }
 
     const form = document.querySelector('#postUploadForm');
@@ -222,8 +232,6 @@
         if (editorContent.trim() === '') {
             alert('내용을 입력해주세요.'); // 사용자에게 알림
             event.preventDefault(); // 폼 제출 막기
-            // 사용자가 에디터에 쉽게 포커스하도록 할 수 있다면 더 좋습니다.
-            // (예: editor.focus() - API 확인 필요)
             return;
         }
     });
@@ -231,8 +239,23 @@
     let editor;
 
     window.addEventListener('DOMContentLoaded', () => {
+        let fileNameDisplay;
+        let removeBtn;
+        <c:forEach items="${EditResponse.fileNames}" var="fileName" varStatus="loop">
+            fileNameDisplay = document.getElementById(`fileName` + ${loop.index + 1});
+
+            fileNameDisplay.textContent = '${fileName}';
+            fileNameDisplay.setAttribute('title', '${fileName}'); // 긴 파일 이름을 위해 title 속성 추가
+
+            removeBtn = document.getElementById(`removeBtn` + ${loop.index + 1});
+            removeBtn.classList.remove('hidden'); // Tailwind: hidden 클래스 제거로 버튼 보이기
+        </c:forEach>
+
+        const contentText = document.querySelector('#content').value;
+
         editor = new toastui.Editor({
             el: document.querySelector('#editor'),
+            initialValue: contentText,
             height: '800px',
             initialEditType: 'wysiwyg',
             previewStyle: 'vertical',

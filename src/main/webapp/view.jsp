@@ -131,11 +131,13 @@
             </h1>
             <c:if test="${ViewResponse.canEdit}">
                 <div class="flex space-x-2">
-                    <button class="text-gray-500 hover:text-primary transition-colors">
+                    <a
+                            href="${pageContext.request.contextPath}/board/edit?postId=${ViewResponse.postId}"
+                            class="text-gray-500 hover:text-primary transition-colors">
                         <div class="w-6 h-6 flex items-center justify-center">
                             <i class="ri-edit-line"></i>
                         </div>
-                    </button>
+                    </a>
                     <button class="text-gray-500 hover:text-red-500 transition-colors">
                         <div class="w-6 h-6 flex items-center justify-center">
                             <i class="ri-delete-bin-line"></i>

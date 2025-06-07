@@ -75,6 +75,31 @@ public class BoardRepository extends BaseRepository {
         return pk;
     }
 
+    public void save(Posts post) throws SQLException {
+        StringBuilder sql = new StringBuilder("DELETE FROM post_files " +
+                "WHERE postId = ? ");
+        for (var postFile : post.postFiles) {
+            if (postFile.id != null) {
+                sql.append("AND id <> ").append(postFile.id).append(" ");
+            }
+        }
+        executeCommand(sql.toString(), post.id);
+
+        executeCommand("UPDATE posts " +
+                "SET title = ?, content = ?, updatedAt = ?, category = ? " +
+                "WHERE id = ? ",
+                post.title, post.content, post.updatedAt, post.category.name(), post.id);
+
+        for (var postFile : post.postFiles) {
+            postFile.postId = post.id;
+            if (postFile.id == null) {
+                executeCommand("INSERT INTO post_files(postId, name, url, uploadedAt, size) " +
+                                "VALUES(?, ?, ?, ?, ?)",
+                                postFile.postId, postFile.name, postFile.url, postFile.uploadedAt, postFile.size);
+            }
+        }
+    }
+
     public List<BoardResponse> searchByKeyword(String keyword, String type, String op, String category, int page, int pageSize) throws SQLException {
         if (page < 1) page = 1;
         int offset = (page - 1) * pageSize;
@@ -314,13 +339,14 @@ public class BoardRepository extends BaseRepository {
                 return null;
         }
 
-        try (var query = executeQuery("SELECT pf.name AS file_name, pf.url AS file_url, pf.size AS file_size " +
+        try (var query = executeQuery("SELECT pf.id AS file_id, pf.name AS file_name, pf.url AS file_url, pf.size AS file_size " +
                 "FROM post_files pf " +
                 "JOIN posts p ON pf.postId = p.id " +
                 "WHERE pf.postId = ?", postId)) {
             var rs = query.Set;
             while (rs.next()) {
                 var file = new PostFiles();
+                file.id = rs.getInt("file_id");
                 file.postId = postId;
                 file.url = rs.getString("file_url");
                 file.name = rs.getString("file_name");
@@ -354,6 +380,7 @@ public class BoardRepository extends BaseRepository {
                 comment.referenceComment.userId = rs.getString("c_reference_user_id");
                 comment.referenceComment.writer = new Users();
                 comment.referenceComment.writer.userName = rs.getString("rc_writer_name");
+                comment.referenceComment.writer.id = rs.getString("c_reference_user_id");
 
                 post.comments.add(comment);
             }

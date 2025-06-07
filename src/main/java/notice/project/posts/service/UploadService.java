@@ -4,7 +4,6 @@ import jakarta.servlet.http.Part;
 import notice.project.auth.DTO.Token;
 import notice.project.core.Transactional;
 import notice.project.entity.*;
-import notice.project.exceptions.UnauthorizedException;
 import notice.project.posts.repository.BoardRepository;
 
 import java.io.File;
@@ -54,46 +53,8 @@ public class UploadService implements IUploadService {
     public int uploadPost(Token user, String title, PostCategory category, String content,
                           List<Part> files, String rootPath, String uploadDirPath) throws SQLException {
 
-        if (user.getRole() != UserRole.Admin && category == PostCategory.Notice) {
-            throw new UnauthorizedException();
-        }
-
-        // 파일 데이터 받기 및 저장
-        List<String> uploadedFileNames = new ArrayList<>(); // 업로드된 파일의 (서버 저장) 이름 목록
-        List<String> originalFileNames = new ArrayList<>(); // 원본 파일 이름 목록
-        List<Long> fileSize = new ArrayList<>();
-
-        // 서버에 파일 저장할 경로 설정
-        String uploadPath = rootPath + File.separator + uploadDirPath;
-        File uploadDir = new File(uploadPath);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdirs(); // 폴더 없으면 생성
-        }
-
-        for (Part file : files) {
-            if (file != null && file.getSize() > 0) {
-                String originalFileName = getSubmittedFileName(file); // 원본 파일 이름 추출
-                if (originalFileName != null && !originalFileName.isEmpty()) {
-                    // 파일 이름 중복 방지를 위해 UUID 추가 (선택적)
-                    String extension = "";
-                    int dotIndex = originalFileName.lastIndexOf('.');
-                    if (dotIndex > 0) {
-                        extension = originalFileName.substring(dotIndex);
-                    }
-                    String serverFileName = UUID.randomUUID().toString() + extension; // 서버에 저장될 파일 이름
-
-                    // 파일 저장
-                    try (InputStream input = file.getInputStream()) {
-                        Files.copy(input, Paths.get(uploadPath, serverFileName), StandardCopyOption.REPLACE_EXISTING);
-                        uploadedFileNames.add(serverFileName); // 서버 저장 파일 이름 추가
-                        originalFileNames.add(originalFileName); // 원본 파일 이름 추가
-                        fileSize.add(file.getSize()); // 파일 용량 추가
-                        System.out.println("Uploaded file: " + originalFileName + " as " + serverFileName);
-                    } catch (IOException e) {
-                        System.err.println("File upload failed for " + originalFileName + ": " + e.getMessage());
-                    }
-                }
-            }
+        if (!Posts.canWrite(user.getRole(), category)) {
+            throw new RuntimeException("권한이 없습니다.");
         }
 
         Posts post = new Posts();
@@ -102,30 +63,8 @@ public class UploadService implements IUploadService {
         post.content = content;
         post.userId = user.getId();
         post.createdAt = LocalDateTime.now();
-        post.postFiles = new ArrayList<>();
-
-        for (int i = 0; i < uploadedFileNames.size(); i++) {
-            var postFile = new PostFiles();
-            postFile.uploadedAt = LocalDateTime.now();
-            postFile.name = originalFileNames.get(i);
-            postFile.url = uploadDirPath + "/" + uploadedFileNames.get(i);
-            postFile.size = fileSize.get(i);
-
-            post.postFiles.add(postFile);
-        }
+        post.fileUpload(files, rootPath, uploadDirPath);
 
         return boardRepository.upload(post);
-    }
-
-
-    private String getSubmittedFileName(Part part) {
-        for (String cd : part.getHeader("content-disposition").split(";")) {
-            if (cd.trim().startsWith("filename")) {
-                String fileName = cd.substring(cd.indexOf('=') + 1).trim().replace("\"", "");
-                // 일부 브라우저는 전체 경로를 포함할 수 있으므로 파일 이름만 추출
-                return Paths.get(fileName).getFileName().toString();
-            }
-        }
-        return null;
     }
 }

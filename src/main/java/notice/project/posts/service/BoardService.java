@@ -119,18 +119,18 @@ public class BoardService implements IBoardService {
     @Override
     @Transactional
     public ViewResponse getPostDetail(int postId, Token token) throws SQLException {
-        var posts = repo.findPost(postId);
-        if (posts == null) throw new RuntimeException("게시글을 찾을 수 없습니다.");
+        var post = repo.findPost(postId);
+        if (post == null) throw new RuntimeException("게시글을 찾을 수 없습니다.");
 
         var comments = new HashMap<Integer, Comment>();
-        for (Comments comm : posts.comments) {
+        for (Comments comm : post.comments) {
             if (comm.parentCommentId == 0) {
                 comments.put(comm.id, new Comment(
                         comm.id, comm.userId, comm.writer.userName, comm.content, comm.createdAt, null, new ArrayList<>()
                 ));
             }
         }
-        for (Comments comm : posts.comments) {
+        for (Comments comm : post.comments) {
             if (comm.parentCommentId != 0) {
                 comments.get(comm.parentCommentId)
                         .getChildren()
@@ -141,39 +141,21 @@ public class BoardService implements IBoardService {
             }
         }
 
-        posts.viewCount++;
-        repo.updateViewCount(posts);
+        post.viewCount++;
+        repo.updateViewCount(post);
 
         return new ViewResponse(
                 postId,
-                posts.title,
-                posts.user.userName,
-                posts.createdAt,
-                posts.viewCount,
-                posts.content,
-                token != null && (token.getRole() == UserRole.Admin || token.getUserName().equals(posts.user.userName)),
-                posts.postFiles.stream().map(f -> new File(f.name, f.url, getFormattedSize(f.size),
-                        f.name.lastIndexOf('.') >= 0
-                                ? f.name.toLowerCase().substring(f.name.lastIndexOf('.') + 1)
-                                : null
-                        )).toList(),
+                post.title,
+                post.user.userName,
+                post.createdAt,
+                post.viewCount,
+                post.content,
+                token != null && post.canEdit(token.getRole(), token.getUserName()),
+                post.postFiles.stream().map(f -> new File(f.name, f.url, f.getFormattedSize(), f.getExtension())).toList(),
                 comments.values().stream().sorted(Comparator.comparing(Comment::getWrittenAt)).toList()
         );
     }
 
-    private String getFormattedSize(long size) {
-        if (size <= 0) {
-            return "0B";
-        }
 
-        // 단위를 나타내는 문자열 배열
-        final String[] units = new String[] { "B", "KB", "MB", "GB", "TB" };
-
-        // 1024로 몇 번 나눌 수 있는지 계산 (log 연산)
-        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
-
-        // 해당 단위로 파일 크기를 계산하고, 소수점 첫째 자리까지 포맷팅
-        return new DecimalFormat("#,##0.#").format(size / Math.pow(1024, digitGroups))
-                + units[digitGroups];
-    }
 }
