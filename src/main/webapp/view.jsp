@@ -189,10 +189,45 @@
                                     class="flex items-center p-3 bg-gray-50 rounded hover:bg-gray-100 transition-colors group"
                                     download="${fn:escapeXml(file.name)}"
                             >
-                                <div
-                                        class="w-10 h-10 flex items-center justify-center bg-gray-200 rounded mr-3"
-                                >
-                                    <i class="ri-file-excel-2-line text-green-600 text-xl"></i>
+                                <div class="w-10 h-10 flex items-center justify-center bg-gray-200 rounded mr-3">
+                                    <%-- 확장자에 따라 다른 아이콘 클래스를 변수에 할당합니다. --%>
+                                    <c:set var="iconClass" value="ri-file-line text-gray-500" /> <%-- 기본 아이콘 --%>
+
+                                    <c:choose>
+                                        <%-- MS Office & 한컴 --%>
+                                        <c:when test="${file.extension == 'xls' || file.extension == 'xlsx'}">
+                                            <c:set var="iconClass" value="ri-file-excel-2-line text-green-600" />
+                                        </c:when>
+                                        <c:when test="${file.extension == 'doc' || file.extension == 'docx'}">
+                                            <c:set var="iconClass" value="ri-file-word-2-line text-blue-600" />
+                                        </c:when>
+                                        <c:when test="${file.extension == 'ppt' || file.extension == 'pptx'}">
+                                            <c:set var="iconClass" value="ri-file-ppt-2-line text-orange-600" />
+                                        </c:when>
+                                        <c:when test="${file.extension == 'hwp'}">
+                                            <c:set var="iconClass" value="ri-file-text-line text-blue-500" />
+                                        </c:when>
+
+                                        <%-- 기타 파일 형식 --%>
+                                        <c:when test="${file.extension == 'pdf'}">
+                                            <c:set var="iconClass" value="ri-file-pdf-line text-red-600" />
+                                        </c:when>
+                                        <c:when test="${file.extension == 'zip' || file.extension == 'rar' || file.extension == '7z' || file.extension == 'tar' || file.extension == 'gz'}">
+                                            <c:set var="iconClass" value="ri-file-zip-line text-yellow-500" />
+                                        </c:when>
+                                        <c:when test="${file.extension == 'jpg' || file.extension == 'jpeg' || file.extension == 'png' || file.extension == 'gif' || file.extension == 'bmp'}">
+                                            <c:set var="iconClass" value="ri-image-line text-purple-600" />
+                                        </c:when>
+                                        <c:when test="${file.extension == 'txt'}">
+                                            <c:set var="iconClass" value="ri-file-text-line text-gray-600" />
+                                        </c:when>
+                                        <c:when test="${file.extension == 'html' || file.extension == 'js' || file.extension == 'css' || file.extension == 'java' || file.extension == 'jsp'}">
+                                            <c:set var="iconClass" value="ri-file-code-line text-indigo-600" />
+                                        </c:when>
+                                    </c:choose>
+
+                                        <%-- 최종적으로 결정된 아이콘 클래스를 사용해 아이콘을 렌더링합니다. --%>
+                                    <i class="${iconClass} text-xl"></i>
                                 </div>
                                 <div class="flex-1">
                                     <p class="text-sm font-medium text-gray-900">
@@ -566,13 +601,9 @@
                             downloadButton.setAttribute('onclick', 'downloadImageFromViewer(this)');
 
 
-                            const icon = document.createElement('i');
-                            icon.className = 'ri-download-line';
-
                             const span = document.createElement('span');
                             span.textContent = '이미지 다운로드';
 
-                            downloadButton.appendChild(icon);
                             downloadButton.appendChild(span);
                             buttonWrapper.appendChild(downloadButton);
 

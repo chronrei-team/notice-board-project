@@ -154,7 +154,11 @@ public class BoardService implements IBoardService {
                 posts.viewCount,
                 posts.content,
                 token != null && (token.getRole() == UserRole.Admin || token.getUserName().equals(posts.user.userName)),
-                posts.postFiles.stream().map(f -> new File(f.name, f.url, getFormattedSize(f.size))).toList(),
+                posts.postFiles.stream().map(f -> new File(f.name, f.url, getFormattedSize(f.size),
+                        f.name.lastIndexOf('.') >= 0
+                                ? f.name.toLowerCase().substring(f.name.lastIndexOf('.') + 1)
+                                : null
+                        )).toList(),
                 comments.values().stream().sorted(Comparator.comparing(Comment::getWrittenAt).reversed()).toList()
         );
     }
