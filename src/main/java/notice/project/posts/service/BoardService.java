@@ -7,6 +7,8 @@ import notice.project.entity.UserRole;
 import notice.project.posts.DTO.*;
 import notice.project.posts.repository.BoardRepository;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -66,12 +68,27 @@ public class BoardService implements IBoardService {
         // 7. startPage 재조정 (totalButtons 개수 유지)
         startPage = Math.max(1, endPage - totalButtons + 1);
 
-        return new PageResponse<>(fixedNotices, currentPagePosts, currentPage, startPage, endPage, totalButtons);
+        StringBuilder sb = new StringBuilder();
+        if (category != null && !category.isEmpty()) {
+            sb.append("&category=").append(URLEncoder.encode(category, StandardCharsets.UTF_8));
+        }
+        String queryString = sb.toString();
+
+        // --- rightArrowPage 계산 (다음 오른쪽 화살표 이동 페이지) ---
+        int rightArrowPage = currentPage + totalButtons;
+        int maxMovablePage = calculateMaxMovablePage(category, currentPage, pageSize, 5);
+        rightArrowPage = Math.min(rightArrowPage, maxMovablePage);
+        // maxMovablePage가 있다면 비교 후 조정하는 로직을 추가할 수 있음
+        // ex) int maxMovablePage = calculateMaxMovablePage(...);
+        // rightArrowPage = Math.min(rightArrowPage, maxMovablePage);
+
+        return new PageResponse<>(fixedNotices, currentPagePosts, currentPage, startPage, endPage, totalButtons, rightArrowPage, queryString);
     }
 
     @Override
     @Transactional
-    public PageResponse<BoardResponse> searchPostsWithPagination(String keyword, String type, String op, String category, int currentPage, int pageSize, int totalButtons) throws SQLException {
+    public PageResponse<BoardResponse> searchPostsWithPagination(String keyword, String type, String op, String category,
+                                                                 int currentPage, int pageSize, int totalButtons) throws SQLException {
         List<BoardResponse> fixedNotices = repo.findFixedNotices();
 
         // 1. 현재 페이지 게시글 조회
@@ -113,7 +130,83 @@ public class BoardService implements IBoardService {
         // 7. startPage 재조정 (totalButtons 개수 유지)
         startPage = Math.max(1, endPage - totalButtons + 1);
 
-        return new PageResponse<>(fixedNotices, currentPagePosts, currentPage, startPage, endPage, totalButtons);
+        StringBuilder sb = new StringBuilder();
+        if (type != null && !type.isEmpty()) {
+            sb.append("&type=").append(URLEncoder.encode(type, StandardCharsets.UTF_8));
+        }
+        if (keyword != null && !keyword.isEmpty()) {
+            sb.append("&keyword=").append(URLEncoder.encode(keyword, StandardCharsets.UTF_8));
+        }
+        if (category != null && !category.isEmpty()) {
+            sb.append("&category=").append(URLEncoder.encode(category, StandardCharsets.UTF_8));
+        }
+        if (op != null && !op.isEmpty()) {
+            sb.append("&op=").append(URLEncoder.encode(op, StandardCharsets.UTF_8));
+        }
+        String queryString = sb.toString();
+
+        // --- rightArrowPage 계산 (다음 오른쪽 화살표 이동 페이지) ---
+        int rightArrowPage = currentPage + totalButtons;
+        int maxMovablePage = calculateMaxMovablePageForSearch(keyword, type, op, category, currentPage, pageSize, 5);
+        rightArrowPage = Math.min(rightArrowPage, maxMovablePage);
+        // maxMovablePage가 있다면 비교 후 조정하는 로직을 추가할 수 있음
+        // ex) int maxMovablePage = calculateMaxMovablePage(...);
+        // rightArrowPage = Math.min(rightArrowPage, maxMovablePage);
+
+        return new PageResponse<>(fixedNotices, currentPagePosts, currentPage, startPage, endPage, totalButtons, rightArrowPage, queryString);
+    }
+
+    @Override
+    @Transactional
+    public int calculateMaxMovablePage(String category, int currentPage, int pageSize, int maxMovePageCount) throws SQLException {
+        // 조회할 게시글 개수 = (maxMovePageCount * pageSize) + 1
+        int fetchCount = maxMovePageCount * pageSize + 1;
+
+        // 현재 페이지 이후 게시글 조회 시작 offset
+        int offset = currentPage * pageSize;
+
+        // DB에서 현재 페이지 이후 게시글 일부를 조회 (Raw 쿼리 사용)
+        List<BoardResponse> extraPosts = repo.findAllRaw(category, offset, fetchCount);
+
+        // 조회된 게시글 수로 최대 이동 가능한 페이지 계산
+        int postCount = extraPosts.size();
+
+        if (postCount == 0) {
+            // 더 이상 이동 불가
+            return currentPage;
+        }
+
+        // 게시글 수가 한 페이지당 게시글 수보다 작으면 한 페이지 이동 가능
+        int maxPagesAvailable = postCount / pageSize;
+
+        // 나머지 게시글이 있으면 페이지 수에 1 추가
+        if (postCount % pageSize > 0) {
+            maxPagesAvailable += 1;
+        }
+
+        // 최대 이동 가능 페이지 번호 계산 (현재 페이지 + 최대 이동 가능한 페이지 수, 최대 maxMovePageCount 제한)
+        int maxMovablePage = currentPage + Math.min(maxPagesAvailable, maxMovePageCount);
+
+        return maxMovablePage;
+    }
+
+    @Override
+    @Transactional
+    public int calculateMaxMovablePageForSearch(String keyword, String type, String op, String category,
+                                                int currentPage, int pageSize, int maxMovePageCount) throws SQLException {
+        int fetchCount = maxMovePageCount * pageSize + 1;
+        int offset = currentPage * pageSize;
+
+        List<BoardResponse> extraPosts = repo.searchByKeywordRaw(keyword, type, op, category, offset, fetchCount);
+
+        int postCount = extraPosts.size();
+
+        if (postCount == 0) return currentPage;
+
+        int maxPagesAvailable = postCount / pageSize;
+        if (postCount % pageSize > 0) maxPagesAvailable += 1;
+
+        return currentPage + Math.min(maxPagesAvailable, maxMovePageCount);
     }
 
     @Override
@@ -157,5 +250,9 @@ public class BoardService implements IBoardService {
         );
     }
 
-
+    @Override
+    @Transactional
+    public void deletePost(int id) throws SQLException {
+        repo.delete(id);
+    }
 }

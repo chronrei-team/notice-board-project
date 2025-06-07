@@ -17,7 +17,7 @@ import java.sql.SQLException;
 
 @WebServlet("/")
 public class BoardController extends HttpServlet {
-    private static final int PAGE_SIZE = 4; //테스트를 위해 1로 설정. 기본 10
+    private static final int PAGE_SIZE = 2; //테스트를 위해 1로 설정. 기본 10
     private static final int TOTAL_BUTTONS = 5;
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setContentType("text/html");
@@ -49,8 +49,12 @@ public class BoardController extends HttpServlet {
                 }
                 pageResult = service.searchPostsWithPagination(keyword, type, op, categoryParam, page, PAGE_SIZE, TOTAL_BUTTONS);
                 for (BoardResponse post : pageResult.getData()) {
-                    post.setHighlightedTitle(HighlightUtil.highlight(post.getTitle(), keyword));
-                    post.setHighlightedUserName(HighlightUtil.highlight(post.getUserName(), keyword));
+                    if ("title".equals(type)) {
+                        post.setHighlightedTitle(HighlightUtil.highlight(post.getTitle(), keyword));
+                    }
+                    else if ("author".equals(type)) {
+                        post.setHighlightedUserName(HighlightUtil.highlight(post.getUserName(), keyword));
+                    }
                 }
                 request.setAttribute("keyword", keyword);
                 request.setAttribute("type", type);
@@ -60,11 +64,14 @@ public class BoardController extends HttpServlet {
                 pageResult = service.getPostListWithPagination(categoryParam, page, PAGE_SIZE, TOTAL_BUTTONS);
             }
 
+            int maxMovablePage = service.calculateMaxMovablePage(categoryParam, page, PAGE_SIZE, TOTAL_BUTTONS);
+
             request.setAttribute("category", categoryParam);
             request.setAttribute("pageResult", pageResult);
             request.setAttribute("posts", pageResult.getData());
             request.setAttribute("notices", pageResult.getFixedNotices());
             request.setAttribute("currentPage", page);
+            request.setAttribute("maxMovablePage", maxMovablePage);
 
             // ✅ 게시글이 없으면 'empty', 있으면 'ok'
             if (pageResult.getData() == null || pageResult.getData().isEmpty()) {

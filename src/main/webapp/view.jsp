@@ -138,11 +138,14 @@
                             <i class="ri-edit-line"></i>
                         </div>
                     </a>
-                    <button class="text-gray-500 hover:text-red-500 transition-colors">
-                        <div class="w-6 h-6 flex items-center justify-center">
-                            <i class="ri-delete-bin-line"></i>
-                        </div>
-                    </button>
+                    <form action="deletePost" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                        <input type="hidden" name="id" value="${ViewResponse.postId}" />
+                        <button type="submit" class="text-gray-500 hover:text-red-500 transition-colors">
+                            <div class="w-6 h-6 flex items-center justify-center">
+                                <i class="ri-delete-bin-line"></i>
+                            </div>
+                        </button>
+                    </form>
                 </div>
             </c:if>
         </div>
