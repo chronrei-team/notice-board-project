@@ -365,4 +365,8 @@ public class BoardRepository extends BaseRepository {
     public void updateViewCount(Posts post) throws SQLException {
         executeCommand("UPDATE posts SET viewCount = ? WHERE id = ?", post.viewCount, post.id);
     }
+
+    public void delete(int id) throws SQLException {
+        executeCommand("DELETE FROM posts WHERE id = ?", id);
+    }
 }

@@ -14,5 +14,8 @@ import java.util.List;
 public interface IBoardService {
     PageResponse<BoardResponse> getPostListWithPagination(String category, int currentPage, int pageSize, int totalButtons) throws SQLException, UserNotFoundException;
     PageResponse<BoardResponse> searchPostsWithPagination(String keyword, String type, String op, String category, int currentPage, int pageSize, int totalButtons) throws SQLException;
+    int calculateMaxMovablePage(String category, int currentPage, int pageSize, int maxMovePageCount) throws SQLException;
+    int calculateMaxMovablePageForSearch(String keyword, String type, String op, String category, int currentPage, int pageSize, int maxMovePageCount) throws SQLException;
     ViewResponse getPostDetail(int postId, Token token) throws SQLException, PostNotFountException;
+    void deletePost(int id) throws SQLException;
 }

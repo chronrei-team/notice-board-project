@@ -1,25 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List, notice.project.posts.DTO.BoardResponse, notice.project.posts.DTO.PageResponse" %>
-<%
-    PageResponse<BoardResponse> pageResult = (PageResponse<BoardResponse>)request.getAttribute("pageResult");
-    List<BoardResponse> posts = pageResult != null ? pageResult.getData() : null;
-    String errorMessage = (String) request.getAttribute("errorMessage");
-    int currentPage = pageResult != null ? pageResult.getCurrentPage() : 0;
-    int startPage = pageResult != null ? pageResult.getStartPage() : 0;
-    int endPage = pageResult != null ? pageResult.getEndPage() : 0;
-    int maxButtons = (request.getAttribute("totalButtons") != null) ? (int) request.getAttribute("totalButtons") : 5;
-    String keyword = request.getParameter("keyword");
-    String type = request.getParameter("type");
-    String category = request.getParameter("category");
-    String op = request.getParameter("op");
-    String alertMessage = (String) session.getAttribute("alertMessage");
-    String message = request.getParameter("message");
-    String queryString = "";
-%>
-<!--
-추가 및 수정 사항
-검색 시 단어 and, or 선택하게 하기
--->
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -98,22 +80,22 @@
 <!-- 메인 컨텐츠 영역 -->
 <main class="flex-1 container mx-auto px-4 py-8">
     <div class="bg-white rounded shadow-sm p-6">
-        <% if (alertMessage != null) { %>
-        <script>
-            alert("<%= alertMessage.replace("\"", "\\\"") %>");
-        </script>
-        <% session.removeAttribute("alertMessage"); %>
-        <% } %>
-        <% if ("withdraw_success".equals(message)) { %>
-        <script>
-            alert("회원탈퇴가 되었습니다.");
-        </script>
-        <% } %>
+        <c:if test="${param.message eq 'withdraw_success'}">
+            <script>alert("회원탈퇴가 되었습니다.");</script>
+        </c:if>
         <!-- 게시판 제목 및 글쓰기 버튼 -->
         <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">전체 게시판</h1>
+            <h1 class="text-2xl font-bold text-gray-800">
+                <c:choose>
+                    <c:when test="${param.category eq 'Normal'}">자유 게시판</c:when>
+                    <c:when test="${param.category eq 'Notice'}">공지사항</c:when>
+                    <c:when test="${param.category eq 'Qna'}">질문/답변 게시판</c:when>
+                    <c:when test="${param.category eq 'Information'}">정보공유 게시판</c:when>
+                    <c:otherwise>전체 게시판</c:otherwise>
+                </c:choose>
+            </h1>
             <a
-                    href="<%=request.getContextPath()%>/board/write"
+                    href="${pageContext.request.contextPath}/board/write"
                     class="bg-primary text-white px-4 py-2 !rounded-button flex items-center whitespace-nowrap hover:bg-primary/90"
             >
                 <div class="w-5 h-5 flex items-center justify-center mr-1">
@@ -127,7 +109,7 @@
             <div class="bg-gray-100 p-1 rounded-full flex space-x-1">
                 <button
                         class="px-4 py-2 !rounded-full bg-primary text-white whitespace-nowrap
-                        <%= (category == null || category.isEmpty()) ? "bg-primary text-white" : "text-gray-700" %>"
+                        ${empty param.category ? 'bg-primary text-white' : 'text-gray-700'}"
                         data-category=""
                         onclick="filterByCategory(this)"
                 >
@@ -135,7 +117,7 @@
                 </button>
                 <button
                         class="px-4 py-2 !rounded-full text-gray-700 whitespace-nowrap
-                        <%= "Normal".equals(category) ? "bg-primary text-white" : "text-gray-700" %>"
+                        ${param.category eq 'Normal' ? 'bg-primary text-white' : 'text-gray-700'}"
                         data-category="Normal"
                         onclick="filterByCategory(this)"
                 >
@@ -143,7 +125,7 @@
                 </button>
                 <button
                         class="px-4 py-2 !rounded-full text-gray-700 whitespace-nowrap
-                        <%= "Notice".equals(category) ? "bg-primary text-white" : "text-gray-700" %>"
+                        ${param.category eq 'Notice' ? 'bg-primary text-white' : 'text-gray-700'}"
                         data-category="Notice"
                         onclick="filterByCategory(this)"
                 >
@@ -151,7 +133,7 @@
                 </button>
                 <button
                         class="px-4 py-2 !rounded-full text-gray-700 whitespace-nowrap
-                        <%= "Qna".equals(category) ? "bg-primary text-white" : "text-gray-700" %>"
+                        ${param.category eq 'Qna' ? 'bg-primary text-white' : 'text-gray-700'}"
                         data-category="Qna"
                         onclick="filterByCategory(this)"
                 >
@@ -159,7 +141,7 @@
                 </button>
                 <button
                         class="px-4 py-2 !rounded-full text-gray-700 whitespace-nowrap
-                        <%= "Information".equals(category) ? "bg-primary text-white" : "text-gray-700" %>"
+                        ${param.category eq 'Information' ? 'bg-primary text-white' : 'text-gray-700'}"
                         data-category="Information"
                         onclick="filterByCategory(this)"
                 >
@@ -172,7 +154,10 @@
             <c:choose>
                 <c:when test="${postStatus eq 'error'}">
                     <div style="background-color:#fee2e2; color:#b91c1c; padding: 12px; margin-bottom: 16px; border-radius: 4px; font-weight:bold;">
-                        오류: <%= errorMessage != null ? errorMessage : "알 수 없는 오류가 발생했습니다." %>
+                        오류: <c:choose>
+                        <c:when test="${not empty errorMessage}">${fn:escapeXml(errorMessage)}</c:when>
+                        <c:otherwise>알 수 없는 오류가 발생했습니다.</c:otherwise>
+                    </c:choose>
                     </div>
                 </c:when>
                 <c:when test="${postStatus eq 'empty'}">
@@ -212,21 +197,21 @@
                             <c:forEach var="notice" items="${notices}">
                                 <tr class="bg-gray-50/50" onclick="window.location.href='${pageContext.request.contextPath}/board/view?postId=${notice.id}'">
                                     <td class="py-3 px-4 text-sm text-gray-500 font-medium text-center">
-                                            ${notice.id}
+                                            ${fn:escapeXml(notice.id)}
                                     </td>
                                     <td class="py-3 px-4 text-sm text-center font-medium">공지</td>
                                     <td class="py-3 px-4">
                                         <a href="#" class="text-sm font-medium hover:text-primary"
-                                        >${notice.title}</a
+                                        >${fn:escapeXml(notice.title)}</a
                                         >
-                                        <span class="ml-1 text-gray-500 text-xs">[${notice.commentCount}]</span>
+                                        <span class="ml-1 text-gray-500 text-xs">[${fn:escapeXml(notice.commentCount)}]</span>
                                     </td>
-                                    <td class="py-3 px-4 text-sm text-gray-600">${notice.userName}</td>
-                                    <td class="py-3 px-4 text-sm text-gray-500">${notice.createdAtFormatted}</td>
+                                    <td class="py-3 px-4 text-sm text-gray-600">${fn:escapeXml(notice.userName)}</td>
+                                    <td class="py-3 px-4 text-sm text-gray-500">${fn:escapeXml(notice.createdAtFormatted)}</td>
                                     <td class="py-3 px-4 text-sm text-gray-500 text-center">
-                                            ${notice.viewCount}
+                                            ${fn:escapeXml(notice.viewCount)}
                                     </td>
-                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${notice.recommendCount}
+                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${fn:escapeXml(notice.recommendCount)}
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -235,37 +220,37 @@
                                 <tr class="border-t border-gray-200 hover:bg-gray-50/50"
                                     onclick="window.location.href='${pageContext.request.contextPath}/board/view?postId=${post.id}'">
 
-                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${post.id}
+                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${fn:escapeXml(post.id)}
                                     </td>
-                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${post.postCategory.displayName}</td>
+                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${fn:escapeXml(post.postCategory.displayName)}</td>
                                     <td class="py-3 px-4">
                                         <a href="#" class="text-sm hover:text-primary">
                                             <c:choose>
-                                                <c:when test="${not empty keyword}">
+                                                <c:when test="${type == 'title'}">
                                                     <c:out value="${post.highlightedTitle}" escapeXml="false" />
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <c:out value="${post.title}" />
+                                                    <c:out value="${fn:escapeXml(post.title)}" />
                                                 </c:otherwise>
                                             </c:choose>
                                         </a>
-                                        <span class="ml-1 text-gray-500 text-xs">[${post.commentCount}]</span>
+                                        <span class="ml-1 text-gray-500 text-xs">[${fn:escapeXml(post.commentCount)}]</span>
                                     </td>
                                     <td class="py-3 px-4 text-sm text-gray-600">
                                         <c:choose>
-                                            <c:when test="${not empty keyword}">
+                                            <c:when test="${type == 'author'}">
                                                 <c:out value="${post.highlightedUserName}" escapeXml="false" />
                                             </c:when>
                                             <c:otherwise>
-                                                <c:out value="${post.userName}" />
+                                                <c:out value="${fn:escapeXml(post.userName)}" />
                                             </c:otherwise>
                                         </c:choose>
                                     </td>
-                                    <td class="py-3 px-4 text-sm text-gray-500">${post.createdAtFormatted}
+                                    <td class="py-3 px-4 text-sm text-gray-500">${fn:escapeXml(post.createdAtFormatted)}
                                     </td>
-                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${post.viewCount}
+                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${fn:escapeXml(post.viewCount)}
                                     </td>
-                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${post.recommendCount}
+                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${fn:escapeXml(post.recommendCount)}
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -274,120 +259,38 @@
                 </c:otherwise>
             </c:choose>
         </div>
-        <!-- 게시글 카드 (모바일) -->
-        <div class="board-cards space-y-4 mb-6">
-            <!-- 공지사항 -->
-            <div class="bg-gray-50/50 p-4 rounded">
-                <div class="flex justify-between items-start mb-2">
-                    <div>
-                <span
-                        class="inline-block bg-primary text-white px-2 py-0.5 rounded text-xs mr-2"
-                >공지</span
-                >
-                        <a href="#" class="font-medium hover:text-primary"
-                        >커뮤니티 이용 규칙 안내 (필독)</a
-                        >
-                        <span class="ml-2 text-red-500 text-xs">NEW</span>
-                    </div>
-                </div>
-                <div class="flex justify-between text-sm">
-                    <div class="text-gray-600">관리자</div>
-                    <div class="flex items-center space-x-3 text-gray-500">
-                        <span>2025-05-12</span>
-                        <div class="flex items-center">
-                            <i class="ri-eye-line mr-1 text-gray-400"></i>
-                            <span>1,245</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="ri-chat-1-line mr-1 text-gray-400"></i>
-                            <span>23</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- 일반 게시글 -->
-            <%
-                if (posts != null) {
-                    for (BoardResponse post : posts) {
-
-            %>
-            <div class="border border-gray-200 p-4 rounded bg-white">
-                <div class="mb-2">
-                    <a href="#" class="font-medium hover:text-primary"
-                    ><%= post.getTitle() %></a
-                    >
-                </div>
-                <div class="flex justify-between text-sm">
-                    <div class="text-gray-600"><%= post.getUserName() %></div>
-                    <div class="flex items-center space-x-3 text-gray-500">
-                        <span><%= post.getCreatedAtFormatted() %></span>
-                        <div class="flex items-center">
-                            <i class="ri-eye-line mr-1 text-gray-400"></i>
-                            <span><%= post.getViewCount() %></span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="ri-chat-1-line mr-1 text-gray-400"></i>
-                            <span><%= post.getRecommendCount() %></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <%
-                    }
-                }
-            %>
-        </div>
         <!-- 페이지네이션 -->
-        <%
-            if (type != null && !type.isEmpty()) {
-                queryString += "&type=" + java.net.URLEncoder.encode(type, "UTF-8");
-            }
-            if (keyword != null && !keyword.isEmpty()) {
-                queryString += "&keyword=" + java.net.URLEncoder.encode(keyword, "UTF-8");
-            }
-            if (category != null && !category.isEmpty()) {
-                queryString += "&category=" + java.net.URLEncoder.encode(category, "UTF-8");
-            }
-            if (op != null && !op.isEmpty()) {
-                queryString += "&op=" + java.net.URLEncoder.encode(op, "UTF-8");
-            }
+        <c:set var="queryString" value="${pageResult.queryString}" />
 
-            if (startPage < 1) {
-                startPage = 1;
-                endPage = startPage + maxButtons - 1;
-            }
-            if (endPage < startPage) {
-                endPage = startPage;
-            }
-        %>
+        <c:set var="leftArrowPage" value="${currentPage - 5}" />
+        <c:if test="${leftArrowPage < 1}">
+            <c:set var="leftArrowPage" value="1" />
+        </c:if>
+
+        <c:set var="startPage" value="${pageResult.startPage}" />
+        <c:set var="endPage" value="${pageResult.endPage}" />
+        <c:set var="totalButtons" value="${pageResult.totalButtons}" />
         <div class="flex items-center mt-8">
             <div class="flex-1 flex justify-center">
 
                 <nav class="flex items-center space-x-1">
 
                     <a
-                            href="?page=<%= (currentPage > 1) ? (currentPage - 5) : 1 %><%= queryString %>"
+                            href="?page=${leftArrowPage}${queryString}"
                             class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-500"
                     >
                         <i class="ri-arrow-left-s-line"></i>
                     </a>
-                    <%
-                        if (pageResult != null) {
-                            for (int i = startPage; i <= endPage; i++) {
-                                boolean isActive = (i == currentPage);
-                    %>
-                    <a
-                            href="?page=<%= i %><%= queryString %>"
-                            class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full <%= isActive ? "active" : "text-gray-500" %>"
-                    ><%= i %></a
-                    >
-                    <%
-                            }
-                        }
-                    %>
+                    <c:forEach begin="${startPage}" end="${endPage}" var="i">
+                        <c:set var="isActive" value="${i == currentPage}" />
+                        <a
+                            href="?page=${i}${queryString}"
+                            class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full ${isActive ? 'active' : 'text-gray-500'}"
+                        >${fn:escapeXml(i)}</a>
+                    </c:forEach>
 
                     <a
-                            href="?page=<%= (currentPage < endPage) ? (currentPage + 5) : endPage %><%= queryString %>"
+                            href="?page=${pageResult.rightArrowPage}${queryString}"
                             class="pagination-btn w-9 h-9 flex items-center justify-center rounded-full text-gray-500"
                     >
                         <i class="ri-arrow-right-s-line"></i>
