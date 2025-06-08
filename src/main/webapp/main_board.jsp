@@ -173,14 +173,11 @@
                                 <th class="py-3 px-4 text-sm font-medium text-gray-500 w-32">
                                     작성자
                                 </th>
-                                <th class="py-3 px-4 text-sm font-medium text-gray-500 w-32">
+                                <th class="py-3 px-4 text-sm font-medium text-gray-500 w-48">
                                     작성일
                                 </th>
                                 <th class="py-3 px-4 text-sm font-medium text-gray-500 w-24 text-center">
                                     조회수
-                                </th>
-                                <th class="py-3 px-4 text-sm font-medium text-gray-500 w-24 text-center">
-                                    추천수
                                 </th>
                             </tr>
                         </thead>
@@ -203,8 +200,6 @@
                                     <td class="py-3 px-4 text-sm text-gray-500">${fn:escapeXml(notice.createdAtFormatted)}</td>
                                     <td class="py-3 px-4 text-sm text-gray-500 text-center">
                                             ${fn:escapeXml(notice.viewCount)}
-                                    </td>
-                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${fn:escapeXml(notice.recommendCount)}
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -242,8 +237,6 @@
                                     <td class="py-3 px-4 text-sm text-gray-500">${fn:escapeXml(post.createdAtFormatted)}
                                     </td>
                                     <td class="py-3 px-4 text-sm text-gray-500 text-center">${fn:escapeXml(post.viewCount)}
-                                    </td>
-                                    <td class="py-3 px-4 text-sm text-gray-500 text-center">${fn:escapeXml(post.recommendCount)}
                                     </td>
                                 </tr>
                             </c:forEach>

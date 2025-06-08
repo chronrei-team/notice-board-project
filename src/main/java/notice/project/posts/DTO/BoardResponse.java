@@ -77,7 +77,7 @@ public class BoardResponse {
 
     public String getCreatedAtFormatted() {
         if (createdAt == null) return "";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         return createdAt.format(formatter);
     }
 

@@ -234,6 +234,6 @@
         });
     });
 </script>
-<%-- <script src="https://cdn.tailwindcss.com?plugins=forms"></script> --%>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
 </body>
 </html>
