@@ -37,6 +37,9 @@ public class Users {
     /** 계정 상태 (e.g., "ACTIVE", "INACTIVE") */
     public UserStatus status;
 
+    /** 정지 해제일 (e.g., "ACTIVE", "INACTIVE") */
+    public LocalDateTime unsuspended_at;
+
     /** 닉네임 (사용자 이름) */
     public String userName;
 

@@ -21,7 +21,7 @@ public class ExceptionFilter implements Filter {
 
             response.setContentType("text/html; charset=UTF-8");
             response.getWriter().write("<script>alert('"
-                    + (e.getMessage() == null ? e.toString() : e.getMessage())
+                    + (e.getMessage() == null ? "예상치 못한 오류가 발생했습니다." : e.getMessage())
                     + "');history.back();</script>");
         }
 
