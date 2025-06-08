@@ -18,7 +18,7 @@ public class AdminService implements IAdminService {
     @Transactional
     public ArrayList<UserResponse> getUsers(String name) throws SQLException {
         var users = adminRepository.getNormalUsers(name);
-        return users.stream().map(u -> new UserResponse(u.id, u.userName, u.status.toString(), u.createdAt, u.unsuspended_at))
+        return users.stream().map(u -> new UserResponse(u.id, u.userName, u.status.toString(), u.createdAt, u.suspend.suspendedEndAt))
                 .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
     }
 }

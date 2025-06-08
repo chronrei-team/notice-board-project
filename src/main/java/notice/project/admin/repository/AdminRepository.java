@@ -3,6 +3,7 @@ package notice.project.admin.repository;
 import notice.project.core.BaseRepository;
 import notice.project.entity.UserRole;
 import notice.project.entity.UserStatus;
+import notice.project.entity.UserSuspend;
 import notice.project.entity.Users;
 
 import java.sql.SQLException;
@@ -13,7 +14,9 @@ import java.util.ArrayList;
 public class AdminRepository extends BaseRepository {
     public ArrayList<Users> getNormalUsers(String userName) throws SQLException {
         var sql = new StringBuilder();
-        sql.append("SELECT * FROM users WHERE role <> '").append(UserRole.Admin.name()).append("' ");
+        sql.append("SELECT * FROM users u " +
+                "LEFT JOIN user_suspend us ON u.id = us.id " +
+                "WHERE role <> '").append(UserRole.Admin.name()).append("' ");
         var params = new ArrayList<Object>();
         if (userName != null && !userName.isEmpty()) {
             sql.append(" AND userName = ? ");
@@ -31,9 +34,18 @@ public class AdminRepository extends BaseRepository {
                 user.status = UserStatus.valueOf(rs.getString("status"));
                 user.role = UserRole.valueOf(rs.getString("role"));
                 user.createdAt = LocalDateTime.parse(rs.getString("createdAt"));
-                user.unsuspended_at = rs.getString("unsuspended_at") != null
-                        ? LocalDateTime.parse(rs.getString("unsuspended_at"))
-                        : null;
+                user.suspend = new UserSuspend();
+                user.suspend.id = rs.getString("id");
+                if (rs.getString("suspendedAt") != null) {
+                    user.suspend.suspendedAt = LocalDateTime.parse(rs.getString("suspendedAt"));
+                }
+                if (rs.getString("reason") != null) {
+                    user.suspend.reason = rs.getString("reason");
+                }
+                if (rs.getString("suspendedEndAt") != null) {
+                    user.suspend.suspendedEndAt = LocalDateTime.parse(rs.getString("suspendedEndAt"));
+                }
+
                 users.add(user);
             }
         }
