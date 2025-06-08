@@ -9,4 +9,5 @@ import java.util.ArrayList;
 public interface IAdminService {
     ArrayList<UserResponse> getUsers(String name) throws SQLException;
     void suspendUser(String userId, LocalDateTime suspendedEndAt, String reason) throws SQLException;
+    void releaseUser(String userId) throws SQLException;
 }

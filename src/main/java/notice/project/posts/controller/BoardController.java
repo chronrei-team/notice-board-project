@@ -17,7 +17,7 @@ import java.sql.SQLException;
 
 @WebServlet("/")
 public class BoardController extends HttpServlet {
-    private static final int PAGE_SIZE = 2; //테스트를 위해 1로 설정. 기본 10
+    private static final int PAGE_SIZE = 6;
     private static final int TOTAL_BUTTONS = 5;
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setContentType("text/html");

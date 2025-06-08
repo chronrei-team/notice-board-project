@@ -82,4 +82,8 @@ public class AdminRepository extends BaseRepository {
     public void updateStatus(UserStatus status, String userId) throws SQLException {
         executeCommand("UPDATE users SET status = ? WHERE id = ?", status.name(), userId);
     }
+
+    public void removeSuspend(String userId) throws SQLException {
+        executeCommand("DELETE FROM user_suspend WHERE id = ? ", userId);
+    }
 }

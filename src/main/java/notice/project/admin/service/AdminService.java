@@ -45,4 +45,11 @@ public class AdminService implements IAdminService {
         }
         adminRepository.updateStatus(UserStatus.Suspended, userId);
     }
+
+    @Override
+    @Transactional
+    public void releaseUser(String userId) throws SQLException {
+        adminRepository.removeSuspend(userId);
+        adminRepository.updateStatus(UserStatus.Active, userId);
+    }
 }
