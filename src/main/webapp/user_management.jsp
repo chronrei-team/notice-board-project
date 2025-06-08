@@ -1,7 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
-
+<%@ page import="notice.project.entity.UserStatus" %>
 
 <%--
   [개발자 참고]
@@ -83,12 +83,11 @@
                             <tr class="bg-white border-b hover:bg-gray-50">
                                 <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">${user.username}</td>
                                 <td class="px-6 py-4 hidden md:table-cell">
-<%--                                    <fmt:formatDate value="${user.joinDate}" pattern="yyyy-MM-dd"/>--%>
                                     <fmt:formatDate value="${user.joinDate}" pattern="yyyy-MM-dd HH:mm:ss" />
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                     <c:choose>
-                                        <c:when test="${user.status == 'SUSPENDED'}">
+                                        <c:when test="${user.status == UserStatus.Suspended}">
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">정지</span>
                                         </c:when>
                                         <c:otherwise>
@@ -98,11 +97,11 @@
                                 </td>
                                 <td class="px-6 py-4 text-center">
                                         <%-- 정지된 사용자에게만 정지 해제일 또는 영구 정지 표시 --%>
-                                    <c:if test="${user.status == 'SUSPENDED'}">
+                                    <c:if test="${user.status == UserStatus.Suspended}">
                                         <c:choose>
                                             <c:when test="${not empty user.suspensionEndDate}">
                                                 <span class="text-red-600 font-medium">
-                                                    <fmt:formatDate value="${user.suspensionEndDate}" pattern="yyyy-MM-dd"/>
+                                                    <fmt:formatDate value="${user.suspensionEndDate}" pattern="yyyy-MM-dd HH:mm:ss"/>
                                                 </span>
                                             </c:when>
                                             <c:otherwise>
@@ -110,19 +109,19 @@
                                             </c:otherwise>
                                         </c:choose>
                                     </c:if>
-                                    <c:if test="${user.status != 'SUSPENDED'}">
+                                    <c:if test="${user.status != UserStatus.Suspended}">
                                         -
                                     </c:if>
                                 </td>
                                 <td class="px-6 py-4 text-center">
-                                    <c:if test="${user.status != 'SUSPENDED'}">
+                                    <c:if test="${user.status != UserStatus.Suspended}">
                                         <button type="button"
                                                 class="suspend-btn font-medium text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-4 focus:ring-yellow-300 rounded-lg text-xs px-3 py-1.5"
                                                 data-userid="${user.userId}" data-username="${user.username}">
                                             계정 정지
                                         </button>
                                     </c:if>
-                                    <c:if test="${user.status == 'SUSPENDED'}">
+                                    <c:if test="${user.status == UserStatus.Suspended}">
                                         <button type="button"
                                                 class="release-btn font-medium text-white bg-blue-500 hover:bg-blue-600 focus:ring-4 focus:ring-blue-300 rounded-lg text-xs px-3 py-1.5"
                                                 data-userid="${user.userId}">

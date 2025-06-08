@@ -36,6 +36,7 @@ public class UserResponse {
     }
 
     public Date getSuspensionEndDate() {
+        if (suspensionEndDate == null) return null;
         return Date.from(suspensionEndDate.atZone(ZoneId.systemDefault()).toInstant());
 
     }

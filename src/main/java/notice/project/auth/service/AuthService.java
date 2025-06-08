@@ -1,5 +1,6 @@
 package notice.project.auth.service;
 
+import notice.project.admin.repository.AdminRepository;
 import notice.project.auth.repository.UserRepository;
 import notice.project.core.Transactional;
 import notice.project.entity.UserRole;
@@ -29,6 +30,7 @@ public class AuthService implements IAuthService {
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new RuntimeException();
         }
+        if (user.isSuspended()) throw new RuntimeException(user.suspendMessage());
 
         user.lastLoginAt = LocalDateTime.now();
         userRepository.update(user);

@@ -51,4 +51,35 @@ public class AdminRepository extends BaseRepository {
         }
         return users;
     }
+
+    public UserSuspend getUserSuspend(String userId) throws SQLException {
+        try (var query = executeQuery("SELECT * FROM user_suspend WHERE id = ?", userId)) {
+            var rs = query.Set;
+            if (rs.next()) {
+                var suspend = new UserSuspend();
+                suspend.id = rs.getString("id");
+                suspend.reason = rs.getString("reason");
+                suspend.suspendedAt = LocalDateTime.parse(rs.getString("suspendedAt"));
+                if (rs.getString("suspendedEndAt") != null) {
+                    suspend.suspendedEndAt = LocalDateTime.parse(rs.getString("suspendedEndAt"));
+                }
+                return suspend;
+            }
+        }
+        return null;
+    }
+
+    public void add(UserSuspend suspend) throws SQLException {
+        executeCommand("INSERT INTO user_suspend " +
+                "VALUES(?, ?, ?, ?)", suspend.id, suspend.suspendedAt, suspend.suspendedEndAt, suspend.reason);
+    }
+
+    public void update(UserSuspend suspend) throws SQLException {
+        executeCommand("UPDATE user_suspend SET suspendedAt = ?, suspendedEndAt = ?, reason = ? " +
+                "WHERE id = ?", suspend.suspendedAt, suspend.suspendedEndAt, suspend.reason, suspend.id);
+    }
+
+    public void updateStatus(UserStatus status, String userId) throws SQLException {
+        executeCommand("UPDATE users SET status = ? WHERE id = ?", status.name(), userId);
+    }
 }

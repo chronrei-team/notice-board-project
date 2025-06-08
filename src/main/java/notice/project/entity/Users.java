@@ -7,6 +7,7 @@ import java.security.SecureRandom;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -52,6 +53,18 @@ public class Users {
     private static final int ITERATIONS = 1000; // 반복 횟수, 높을수록 안전하지만 느려짐
     private static final int KEY_LENGTH = 256;   // 결과 해시의 비트 길이
     private static final int SALT_LENGTH = 16;   // 솔트 바이트 길이 (128 bits)
+
+    public boolean isSuspended() {
+        return status == UserStatus.Suspended && (suspend.suspendedEndAt == null || suspend.suspendedEndAt.isAfter(LocalDateTime.now()));
+    }
+
+    public String suspendMessage() {
+        return "차단된 유저입니다.<br>"
+                + "사유: "
+                + (suspend.reason == null ? "" : suspend.reason)
+                + "<br>기간: "
+                + (suspend.suspendedEndAt == null ? "영구" : suspend.suspendedEndAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+    }
 
     public void initUserName(String userName) {
         if (userName == null) throw new RuntimeException("닉네임이 없습니다.");

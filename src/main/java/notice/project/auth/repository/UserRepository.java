@@ -4,6 +4,7 @@ import notice.project.core.BaseRepository;
 import notice.project.core.QueryResult;
 import notice.project.entity.UserRole;
 import notice.project.entity.UserStatus;
+import notice.project.entity.UserSuspend;
 import notice.project.entity.Users;
 
 import java.sql.SQLException;
@@ -11,7 +12,9 @@ import java.time.LocalDateTime;
 
 public class UserRepository extends BaseRepository {
     public Users findBy(String userName) throws SQLException {
-        try (QueryResult query = executeQuery("SELECT * FROM Users WHERE userName = ?", userName)) {
+        try (QueryResult query = executeQuery("SELECT * FROM Users u " +
+                "LEFT JOIN user_suspend us ON us.id = u.id " +
+                "WHERE userName = ?", userName)) {
             var rs = query.Set;
             if (rs.next()) {
                 var user = new Users();
@@ -30,6 +33,15 @@ public class UserRepository extends BaseRepository {
                 user.status = UserStatus.valueOf(rs.getString("status"));
                 user.userName = rs.getString("userName");
                 user.role = UserRole.valueOf(rs.getString("role"));
+                user.suspend = new UserSuspend();
+                user.suspend.id = rs.getString("id");
+                user.suspend.reason = rs.getString("reason");
+                if (rs.getString("suspendedAt") != null) {
+                    user.suspend.suspendedAt = LocalDateTime.parse(rs.getString("suspendedAt"));
+                }
+                if (rs.getString("suspendedEndAt") != null) {
+                    user.suspend.suspendedEndAt = LocalDateTime.parse(rs.getString("suspendedEndAt"));
+                }
 
                 return user;
             }
