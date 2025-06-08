@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public abstract class AuthBaseServlet extends HttpServlet {
 
@@ -32,9 +34,14 @@ public abstract class AuthBaseServlet extends HttpServlet {
             if (targetMethod.isAnnotationPresent(Authorization.class)) {
                 HttpSession session = req.getSession(false); // 세션이 없으면 새로 생성하지 않음
 
+                String redirectUrl = "";
+                if (req.getParameter("redirectUrl") != null) {
+                    redirectUrl = URLEncoder.encode(req.getParameter("redirectUrl"), StandardCharsets.UTF_8);
+                }
+
                 if (session == null || session.getAttribute("token") == null) {
                     // 로그인 페이지로 리다이렉트
-                    resp.sendRedirect(req.getContextPath() + "/auth/login");
+                    resp.sendRedirect(req.getContextPath() + "/auth/login?redirectUrl=" + redirectUrl);
                     return; // 메서드 실행 중단
                 }
             }

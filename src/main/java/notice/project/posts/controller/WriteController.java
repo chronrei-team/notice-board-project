@@ -18,6 +18,8 @@ import notice.project.posts.service.UploadService;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.SQLException;
@@ -77,6 +79,10 @@ public class WriteController extends AuthBaseServlet {
             throw new RuntimeException(e);
         }
 
-        response.sendRedirect(request.getContextPath() + "/board/view?postId=" + postId);
+        String redirectUrl = "";
+        if (request.getParameter("redirectUrl") != null) {
+            redirectUrl = URLEncoder.encode(request.getParameter("redirectUrl"), StandardCharsets.UTF_8);
+        }
+        response.sendRedirect(request.getContextPath() + "/board/view?postId=" + postId + "&redirectUrl=" + redirectUrl);
     }
 }

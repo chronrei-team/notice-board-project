@@ -116,13 +116,13 @@
                 <div class="flex items-center space-x-3">
                     <a
                             href="${pageContext.request.contextPath}/auth/login"
-                            class="text-gray-700 hover:text-primary whitespace-nowrap text-sm"
+                            class="redirect-link text-gray-700 hover:text-primary whitespace-nowrap text-sm"
                     >
                         로그인
                     </a>
                     <a
                             href="${pageContext.request.contextPath}/auth/register"
-                            class="bg-primary text-white bg-blue-700 px-4 py-2 rounded-lg text-sm hover:bg-primary/90 whitespace-nowrap inline-block"
+                            class="redirect-link bg-primary text-white bg-blue-700 px-4 py-2 rounded-lg text-sm hover:bg-primary/90 whitespace-nowrap inline-block"
                     >회원가입</a
                     >
                     <!-- 모바일 메뉴 버튼 -->
@@ -170,7 +170,7 @@
                             <c:if test="${token.role == UserRole.Admin}">
                                 <a
                                         href="${pageContext.request.contextPath}/admin/users"
-                                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
+                                        class="redirect-link block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
                                 >
                                     <div class="w-4 h-4 flex items-center justify-center mr-2">
                                         <i class="ri-admin-line"></i>
@@ -181,7 +181,7 @@
                             <div class="border-t border-gray-100">
                                 <a
                                         href="${pageContext.request.contextPath}/auth/logout"
-                                        class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-50 flex items-center"
+                                        class="redirect-link block px-4 py-2 text-sm text-red-600 hover:bg-gray-50 flex items-center"
                                 >
                                     <div class="w-4 h-4 flex items-center justify-center mr-2">
                                         <i class="ri-logout-box-line"></i>
@@ -213,6 +213,21 @@
 </header>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll('.redirect-link').forEach(function(link) {
+            const currentUrl = window.location.href;
+            const encodedRedirectUrl = encodeURIComponent(currentUrl);
+
+            // '?'가 있으면 '&'를, 없으면 '?'를 구분자로 선택
+            const separator = link.href.includes('?') ? '&' : '?';
+
+            // 최종 URL을 링크의 href 속성에 할당
+            link.href += separator + 'redirectUrl=' + encodedRedirectUrl;
+        });
+
+        document.querySelectorAll('.redirect-input').forEach(function(input) {
+            input.value = window.location.href;
+        });
+
         const searchTypeButton = document.getElementById("searchTypeButton");
         const searchTypeDropdown = document.getElementById("searchTypeDropdown");
         const selectedSearchType = document.getElementById("selectedSearchType");

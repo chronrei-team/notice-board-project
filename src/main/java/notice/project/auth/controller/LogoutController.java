@@ -9,6 +9,8 @@ import notice.project.core.AuthBaseServlet;
 import notice.project.core.Authorization;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @WebServlet("/auth/logout")
 public class LogoutController extends AuthBaseServlet {
@@ -16,6 +18,7 @@ public class LogoutController extends AuthBaseServlet {
     @Authorization
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getSession().invalidate();
-        response.sendRedirect(request.getContextPath() + "/");
+        var redirectUrl = request.getParameter("redirectUrl");
+        response.sendRedirect(redirectUrl == null ? request.getContextPath() + "/" : redirectUrl);
     }
 }

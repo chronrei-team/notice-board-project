@@ -12,6 +12,8 @@ import notice.project.auth.service.IAuthService;
 import notice.project.core.ServiceFactory;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @WebServlet("/auth/login")
 public class LoginController extends HttpServlet {
@@ -33,13 +35,14 @@ public class LoginController extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         var userName = request.getParameter("userName");
         var password = request.getParameter("password");
+        var redirectUrl = request.getParameter("redirectUrl");
 
         try {
             var user = authService.verifyLogin(userName, password);
             var session = request.getSession();
             session.setAttribute("token", new Token(user.id, user.userName, user.role));
 
-            response.sendRedirect(request.getContextPath() + "/");
+            response.sendRedirect(redirectUrl != null ? redirectUrl : request.getContextPath() + "/");
         } catch (Exception e) {
             LoginResponse loginDO = new LoginResponse(e.getMessage());
             request.setAttribute("LoginResponse", loginDO);

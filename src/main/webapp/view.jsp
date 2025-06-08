@@ -111,8 +111,8 @@
 <main class="container mx-auto px-4 py-6 max-w-4xl">
     <!-- 목록으로 돌아가기 링크 -->
     <div class="mb-4">
-        <button
-                onclick="window.history.back();"
+        <a
+                href="${param.redirectUrl}"
                 data-readdy="true"
                 class="inline-flex items-center text-gray-600 hover:text-primary transition-colors"
         >
@@ -120,7 +120,7 @@
                 <i class="ri-arrow-left-line"></i>
             </div>
             <span>목록으로 돌아가기</span>
-        </button>
+        </a>
     </div>
     <!-- 게시글 본문 카드 -->
     <div class="bg-white rounded shadow-sm p-6 mb-6">
@@ -340,6 +340,7 @@
                         <!-- 답글 작성 폼 -->
                         <form action="${pageContext.request.contextPath}/write-comment" method="post"
                               class="reply-form mt-3" id="reply-form-${comment.id}">
+                            <input type="hidden" class="redirect-input" name="redirectUrl">
                             <input type="hidden" name="postId" value="${ViewResponse.postId}">
                             <input type="hidden" name="parentId" value="${comment.id}">
                             <input type="hidden" name="refUserId" value="">
@@ -383,6 +384,7 @@
         </c:if>
         <!-- 댓글 작성 폼 -->
         <form action="${pageContext.request.contextPath}/write-comment" method="post" class="flex items-start gap-3">
+            <input type="hidden" class="redirect-input" name="redirectUrl">
             <input type="hidden" name="postId" value="${ViewResponse.postId}">
             <div
                     class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden flex-shrink-0 flex items-center justify-center"
@@ -413,13 +415,13 @@
         </form>
     </div>
     <div class="mt-6 flex flex-col sm:flex-row justify-between gap-3">
-        <button
-                onclick="window.history.back();"
+        <a
+                href="${param.redirectUrl}"
                 data-readdy="true"
                 class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-button text-center whitespace-nowrap transition-colors"
         >
             목록으로 돌아가기
-        </button>
+        </a>
     </div>
 </main>
 <script id="comment-reply-script">

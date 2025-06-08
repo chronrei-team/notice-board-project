@@ -16,6 +16,8 @@ import notice.project.posts.service.EditService;
 import notice.project.posts.service.IEditService;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -85,7 +87,11 @@ public class EditController extends AuthBaseServlet {
             editService.editPost(postId, token, title, fileBeforeIdList, PostCategory.valueOf(category), content, files,
                     getServletContext().getRealPath(""), getServletContext().getInitParameter("upload_dir"));
 
-            response.sendRedirect(request.getContextPath() + "/board/view?postId=" + postId);
+            String redirectUrl = "";
+            if (request.getParameter("redirectUrl") != null) {
+                redirectUrl = URLEncoder.encode(request.getParameter("redirectUrl"), StandardCharsets.UTF_8);
+            }
+            response.sendRedirect(request.getContextPath() + "/board/view?postId=" + postId + "&redirectUrl=" + redirectUrl);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

@@ -73,6 +73,7 @@
     <h2 class="text-2xl font-bold mb-6">게시글 작성</h2>
     <!-- enctype="multipart/form-data" 필수 -->
     <form id="postUploadForm" action="${empty EditResponse ? 'write' : 'edit'}" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="redirectUrl" value="${param.redirectUrl}">
         <input type="hidden" name="postId" value="${EditResponse.postId}">
         <div class="form-group">
             <label for="title">제목 <span style="color:red;">*</span></label>

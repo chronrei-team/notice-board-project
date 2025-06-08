@@ -13,6 +13,9 @@ import notice.project.core.Authorization;
 import notice.project.core.ServiceFactory;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 
 @WebServlet("/write-comment")
@@ -44,7 +47,12 @@ public class CommentsController extends AuthBaseServlet {
             // 이거 어디에 쓰는거지?
             CommentsResponse resp = commentsService.upload(postId, parentId, refUserId, userId, content);
 
-            response.sendRedirect(request.getContextPath() + "/board/view?postId=" + postId);
+            String redirectUrl = "";
+            if (request.getParameter("redirectUrl") != null) {
+                redirectUrl = URLEncoder.encode(request.getParameter("redirectUrl"), StandardCharsets.UTF_8);
+            }
+            // 로그인 페이지로 넘어갈 수 있기 때문에, redirectUrl은 게시글 페이지가 담겨있다.
+            response.sendRedirect(URLDecoder.decode(redirectUrl, StandardCharsets.UTF_8));
         }
         catch (IOException e) {
             // 예외 처리

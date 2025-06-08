@@ -1,4 +1,6 @@
 <%@ page import="notice.project.auth.DTO.RegisterResponse" %>
+<%@ page import="java.net.URLEncoder" %>
+<%@ page import="java.nio.charset.StandardCharsets" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html>
@@ -47,7 +49,7 @@
   <div class="bg-white rounded-lg shadow-md p-8 w-full max-w-lg">
     <h1 class="text-3xl font-bold text-gray-800 mb-8 text-center">회원가입</h1>
     <form id="registrationForm" action="${pageContext.request.contextPath}/auth/register" method="post" class="space-y-6">
-
+      <input type="hidden" name="redirectUrl" value="${param.redirectUrl}">
       <div>
         <label for="regNickname" class="block text-sm font-medium text-gray-700 mb-1">닉네임</label>
         <input type="text" id="regNickname" name="userName" required
@@ -95,7 +97,7 @@
 
     <div class="text-center mt-8 text-sm text-gray-600">
       이미 계정이 있으신가요?
-      <a href="${pageContext.request.contextPath}/auth/login"
+      <a href="${pageContext.request.contextPath}/auth/login?redirectUrl=${URLEncoder.encode(param.redirectUrl, StandardCharsets.UTF_8)}"
          class="text-primary hover:text-primary/90 font-medium">로그인</a>
     </div>
   </div>

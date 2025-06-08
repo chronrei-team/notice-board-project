@@ -75,9 +75,6 @@
 <!-- 메인 컨텐츠 영역 -->
 <main class="flex-1 container mx-auto px-4 py-8">
     <div class="bg-white rounded shadow-sm p-6">
-        <c:if test="${param.message eq 'withdraw_success'}">
-            <script>alert("회원탈퇴가 되었습니다.");</script>
-        </c:if>
         <!-- 게시판 제목 및 글쓰기 버튼 -->
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-gray-800">
@@ -91,7 +88,7 @@
             </h1>
             <a
                     href="${pageContext.request.contextPath}/board/write"
-                    class="bg-primary text-white px-4 py-2 !rounded-button flex items-center whitespace-nowrap hover:bg-primary/90"
+                    class="redirect-link bg-primary text-white px-4 py-2 !rounded-button flex items-center whitespace-nowrap hover:bg-primary/90"
             >
                 <div class="w-5 h-5 flex items-center justify-center mr-1">
                     <i class="ri-pencil-line"></i>
@@ -190,7 +187,8 @@
                         <tbody>
                             <!-- 공지사항 -->
                             <c:forEach var="notice" items="${notices}">
-                                <tr class="bg-gray-50/50" onclick="window.location.href='${pageContext.request.contextPath}/board/view?postId=${notice.id}'">
+                                <tr class="bg-gray-50/50"
+                                    onclick="goToViewWithRedirect(${notice.id})">
                                     <td class="py-3 px-4 text-sm text-gray-500 font-medium text-center">
                                             ${fn:escapeXml(notice.id)}
                                     </td>
@@ -213,7 +211,7 @@
                             <!-- 일반 게시글 -->
                             <c:forEach var="post" items="${posts}">
                                 <tr class="border-t border-gray-200 hover:bg-gray-50/50"
-                                    onclick="window.location.href='${pageContext.request.contextPath}/board/view?postId=${post.id}'">
+                                    onclick="goToViewWithRedirect(${post.id})">
 
                                     <td class="py-3 px-4 text-sm text-gray-500 text-center">${fn:escapeXml(post.id)}
                                     </td>
@@ -296,6 +294,24 @@
     </div>
 </main>
 <script>
+    function goToViewWithRedirect(postId) {
+        // 1. 기본 이동 URL을 만듭니다.
+        // EL을 JavaScript 변수에 담을 때는 따옴표로 감싸주는 것이 안전합니다.
+        const baseUrl = '${pageContext.request.contextPath}/board/view';
+
+        // 2. 현재 페이지의 URL을 가져와 인코딩합니다.
+        const redirectUrl = encodeURIComponent(window.location.href);
+
+        // 3. 최종 URL을 조립합니다. 템플릿 리터럴(``)을 사용하면 훨씬 깔끔합니다.
+        const finalUrl = baseUrl + `?postId=` + postId + `&redirectUrl=` + redirectUrl;
+
+        // 디버깅: F12 개발자 도구의 콘솔에서 최종 URL이 올바른지 확인해보세요.
+        console.log("이동할 URL:", finalUrl);
+
+        // 4. 해당 URL로 페이지를 이동시킵니다.
+        window.location.href = finalUrl;
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         const menuButton = document.querySelector(".ri-menu-line").parentElement;
         const mobileNav = document.querySelector("nav");
