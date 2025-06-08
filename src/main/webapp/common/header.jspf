@@ -159,7 +159,7 @@
                                 프로필 설정
                             </a>
                             <a
-                                    href="${pageContext.request.contextPath}?type=author&keyword=${token.userName}"
+                                    href="${pageContext.request.contextPath}/?type=author&keyword=${token.userName}"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center"
                             >
                                 <div class="w-4 h-4 flex items-center justify-center mr-2">

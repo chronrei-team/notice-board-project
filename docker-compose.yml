@@ -1,6 +1,6 @@
 services:
   wp-project: # 서비스 이름 (원하는 대로 지정 가능)
-    image: jsm150/wp-project:1.0
+    image: jsm150/wp-project:1.2
     ports:
       - "8090:8080" # "호스트_포트:컨테이너_포트(8080 고정)"
     environment:
