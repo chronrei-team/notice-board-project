@@ -51,10 +51,6 @@
             border-width: 0 2px 2px 0;
             transform: rotate(45deg);
         }
-        .custom-search:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
-        }
         @media (max-width: 768px) {
             .board-table {
                 display: none;

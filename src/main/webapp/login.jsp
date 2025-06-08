@@ -18,7 +18,6 @@
             font-family: 'Noto Sans KR', sans-serif;
             color: #333;
         }
-        .custom-search:focus,
         .form-input:focus { /* Unified focus style for inputs */
             outline: none;
             border-color: #4F46E5;
