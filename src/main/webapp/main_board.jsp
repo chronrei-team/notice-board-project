@@ -1,5 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
 <!DOCTYPE html>
 <html>
@@ -225,7 +225,7 @@
                                                     <c:out value="${post.highlightedTitle}" escapeXml="false" />
                                                 </c:when>
                                                 <c:otherwise>
-                                                    <c:out value="${fn:escapeXml(post.title)}" />
+                                                    ${fn:escapeXml(post.title)}
                                                 </c:otherwise>
                                             </c:choose>
                                         </a>
@@ -237,7 +237,7 @@
                                                 <c:out value="${post.highlightedUserName}" escapeXml="false" />
                                             </c:when>
                                             <c:otherwise>
-                                                <c:out value="${fn:escapeXml(post.userName)}" />
+                                                ${fn:escapeXml(post.userName)}
                                             </c:otherwise>
                                         </c:choose>
                                     </td>
