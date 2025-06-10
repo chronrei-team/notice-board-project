@@ -1,10 +1,11 @@
 package notice.project.utils;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class HighlightUtil {
 
-    // HTML 특수문자 이스케이프 직접 구현
+    // HTML 특수문자 이스케이프
     private static String escapeHtml(String str) {
         if (str == null) return null;
         return str.replace("&", "&amp;")
@@ -15,14 +16,30 @@ public class HighlightUtil {
     }
 
     public static String highlight(String text, String keyword) {
-        if (text == null || keyword == null || keyword.isEmpty()) {
-            return HtmlEscapeUtil.escapeHtml(text);
+        if (text == null || keyword == null || keyword.trim().isEmpty()) {
+            return escapeHtml(text);
         }
 
-        String escapedText = HtmlEscapeUtil.escapeHtml(text);
-        String escapedKeyword = HtmlEscapeUtil.escapeHtml(keyword);
+        String escapedText = escapeHtml(text);
 
-        // keyword를 하이라이팅 (대소문자 무시)
-        return escapedText.replaceAll("(?i)(" + Pattern.quote(escapedKeyword) + ")", "<mark>$1</mark>");
+        // 다중 키워드 처리
+        String[] words = keyword.trim().split("\\s+"); // 공백 기준 분리
+        StringBuilder patternBuilder = new StringBuilder();
+
+        for (int i = 0; i < words.length; i++) {
+            if (i > 0) patternBuilder.append("|");
+            patternBuilder.append(Pattern.quote(escapeHtml(words[i]))); // HTML 이스케이프된 단어
+        }
+
+        Pattern pattern = Pattern.compile("(" + patternBuilder.toString() + ")", Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(escapedText);
+        StringBuffer result = new StringBuffer();
+
+        while (matcher.find()) {
+            matcher.appendReplacement(result, "<mark>" + Matcher.quoteReplacement(matcher.group(1)) + "</mark>");
+        }
+        matcher.appendTail(result);
+
+        return result.toString();
     }
 }
